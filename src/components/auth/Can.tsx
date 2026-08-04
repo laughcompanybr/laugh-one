@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { usePermissions } from "@/hooks/use-permissions";
+import { usePermissions } from "@/domains/auth/hooks/use-permissions";
 
 interface CanProps {
   perform: string | string[];

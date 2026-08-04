@@ -14,10 +14,10 @@ import { reportError } from "../lib/error-reporting";
 import { Toaster } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { ThemeProvider } from "@/hooks/use-theme";
-import { CompanyProvider } from "@/hooks/use-company";
+import { CompanyProvider } from "@/domains/tenants/hooks/use-company";
 import { ImpersonationBanner } from "@/components/admin/ImpersonationBanner";
-import { ModulesProvider } from "@/hooks/use-modules";
-import { PermissionsProvider } from "@/hooks/use-permissions";
+import { ModulesProvider } from "@/domains/tenants/hooks/use-modules";
+import { PermissionsProvider } from "@/domains/auth/hooks/use-permissions";
 
 function NotFoundComponent() {
   return (

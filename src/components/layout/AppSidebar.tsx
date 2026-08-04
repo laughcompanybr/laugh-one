@@ -14,8 +14,8 @@ import {
 import { LaughLogo } from "@/components/brand/LaughLogo";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { NAV_ITEMS, type NavItem } from "./nav-config";
-import { useUserRole } from "@/hooks/use-user-role";
-import { useModules } from "@/hooks/use-modules";
+import { useUserRole } from "@/domains/auth/hooks/use-user-role";
+import { useModules } from "@/domains/tenants/hooks/use-modules";
 import { ShieldAlert } from "lucide-react";
 
 const GROUP_LABELS: Record<NavItem["group"], string> = {

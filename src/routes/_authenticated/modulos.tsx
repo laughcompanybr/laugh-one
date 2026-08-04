@@ -1,5 +1,6 @@
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
-import { useModules, type Module } from "@/hooks/use-modules";
+import { useModules } from "@/domains/tenants/hooks/use-modules";
+import type { Module } from "@/domains/tenants/hooks/use-modules";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -7,7 +8,7 @@ import { Switch } from "@/components/ui/switch";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { useCompany } from "@/hooks/use-company";
+import { useCompany } from "@/domains/tenants/hooks/use-company";
 import * as Icons from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/modulos")({
@@ -45,7 +46,7 @@ function ModulesPage() {
 
   if (isLoading) return <div className="p-8 text-center text-muted-foreground">Carregando módulos...</div>;
 
-  const categories = Array.from(new Set(modules.map((m) => m.category)));
+  const categories = Array.from(new Set(modules.map((m: any) => m.category)));
 
   return (
     <div className="space-y-8 p-8">
@@ -54,13 +55,13 @@ function ModulesPage() {
         description="Ative ou desative funcionalidades conforme a necessidade da sua empresa."
       />
 
-      {categories.map((category) => (
-        <div key={category} className="space-y-4">
-          <h3 className="text-lg font-semibold tracking-tight">{category}</h3>
+      {categories.map((category: any) => (
+        <div key={String(category)} className="space-y-4">
+          <h3 className="text-lg font-semibold tracking-tight">{String(category)}</h3>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {modules
-              .filter((m) => m.category === category)
-              .map((module) => {
+              .filter((m: any) => m.category === category)
+              .map((module: any) => {
                 const Icon = (Icons as any)[module.icon || "Package"] || Icons.Package;
                 const isEnabled = enabledModules.has(module.id);
                 

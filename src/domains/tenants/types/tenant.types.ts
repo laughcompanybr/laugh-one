@@ -1,0 +1,31 @@
+export interface Company {
+  id: string;
+  name: string;
+  display_name: string | null;
+  slug: string;
+  logo_url: string | null;
+  logo_reduced_url: string | null;
+  favicon_url: string | null;
+  mobile_icon_url: string | null;
+  primary_color: string | null;
+  secondary_color: string | null;
+  accent_color: string | null;
+  success_color: string | null;
+  warning_color: string | null;
+  error_color: string | null;
+  sidebar_color: string | null;
+  navbar_color: string | null;
+  button_color: string | null;
+  card_color: string | null;
+  primary_font: string | null;
+  secondary_font: string | null;
+  theme_mode: string | null;
+  border_radius: string | null;
+  login_background_url: string | null;
+  login_welcome_message: string | null;
+  login_title: string | null;
+  login_subtitle: string | null;
+  login_footer: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+}
