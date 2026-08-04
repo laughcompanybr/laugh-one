@@ -26,6 +26,7 @@ import { Route as AuthenticatedConfiguracoesRouteImport } from './routes/_authen
 import { Route as AuthenticatedClientesRouteImport } from './routes/_authenticated/clientes'
 import { Route as AuthenticatedAnexosRouteImport } from './routes/_authenticated/anexos'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedAdminEmpresasRouteImport } from './routes/_authenticated/admin/empresas'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
@@ -114,6 +115,12 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAdminEmpresasRoute =
+  AuthenticatedAdminEmpresasRouteImport.update({
+    id: '/empresas',
+    path: '/empresas',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -121,7 +128,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/mfa-verify': typeof MfaVerifyRoute
   '/reset-password': typeof ResetPasswordRoute
-  '/admin': typeof AuthenticatedAdminRoute
+  '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/anexos': typeof AuthenticatedAnexosRoute
   '/clientes': typeof AuthenticatedClientesRoute
   '/configuracoes': typeof AuthenticatedConfiguracoesRoute
@@ -132,6 +139,7 @@ export interface FileRoutesByFullPath {
   '/pedidos': typeof AuthenticatedPedidosRoute
   '/produtos': typeof AuthenticatedProdutosRoute
   '/relatorios': typeof AuthenticatedRelatoriosRoute
+  '/admin/empresas': typeof AuthenticatedAdminEmpresasRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -139,7 +147,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/mfa-verify': typeof MfaVerifyRoute
   '/reset-password': typeof ResetPasswordRoute
-  '/admin': typeof AuthenticatedAdminRoute
+  '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/anexos': typeof AuthenticatedAnexosRoute
   '/clientes': typeof AuthenticatedClientesRoute
   '/configuracoes': typeof AuthenticatedConfiguracoesRoute
@@ -150,6 +158,7 @@ export interface FileRoutesByTo {
   '/pedidos': typeof AuthenticatedPedidosRoute
   '/produtos': typeof AuthenticatedProdutosRoute
   '/relatorios': typeof AuthenticatedRelatoriosRoute
+  '/admin/empresas': typeof AuthenticatedAdminEmpresasRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -159,7 +168,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/mfa-verify': typeof MfaVerifyRoute
   '/reset-password': typeof ResetPasswordRoute
-  '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/anexos': typeof AuthenticatedAnexosRoute
   '/_authenticated/clientes': typeof AuthenticatedClientesRoute
   '/_authenticated/configuracoes': typeof AuthenticatedConfiguracoesRoute
@@ -170,6 +179,7 @@ export interface FileRoutesById {
   '/_authenticated/pedidos': typeof AuthenticatedPedidosRoute
   '/_authenticated/produtos': typeof AuthenticatedProdutosRoute
   '/_authenticated/relatorios': typeof AuthenticatedRelatoriosRoute
+  '/_authenticated/admin/empresas': typeof AuthenticatedAdminEmpresasRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -190,6 +200,7 @@ export interface FileRouteTypes {
     | '/pedidos'
     | '/produtos'
     | '/relatorios'
+    | '/admin/empresas'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -208,6 +219,7 @@ export interface FileRouteTypes {
     | '/pedidos'
     | '/produtos'
     | '/relatorios'
+    | '/admin/empresas'
   id:
     | '__root__'
     | '/'
@@ -227,6 +239,7 @@ export interface FileRouteTypes {
     | '/_authenticated/pedidos'
     | '/_authenticated/produtos'
     | '/_authenticated/relatorios'
+    | '/_authenticated/admin/empresas'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -359,11 +372,29 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/empresas': {
+      id: '/_authenticated/admin/empresas'
+      path: '/empresas'
+      fullPath: '/admin/empresas'
+      preLoaderRoute: typeof AuthenticatedAdminEmpresasRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
   }
 }
 
+interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminEmpresasRoute: typeof AuthenticatedAdminEmpresasRoute
+}
+
+const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminEmpresasRoute: AuthenticatedAdminEmpresasRoute,
+}
+
+const AuthenticatedAdminRouteWithChildren =
+  AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
+
 interface AuthenticatedRouteRouteChildren {
-  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
   AuthenticatedAnexosRoute: typeof AuthenticatedAnexosRoute
   AuthenticatedClientesRoute: typeof AuthenticatedClientesRoute
   AuthenticatedConfiguracoesRoute: typeof AuthenticatedConfiguracoesRoute
@@ -377,7 +408,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
   AuthenticatedAnexosRoute: AuthenticatedAnexosRoute,
   AuthenticatedClientesRoute: AuthenticatedClientesRoute,
   AuthenticatedConfiguracoesRoute: AuthenticatedConfiguracoesRoute,

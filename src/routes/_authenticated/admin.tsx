@@ -1,4 +1,4 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { 
   ShieldAlert, 
   Users, 
@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { getPlatformStats } from "@/features/admin/admin.functions";
 
@@ -32,7 +33,7 @@ function AdminDashboard() {
     <div className="space-y-8 animate-in fade-in duration-500">
       <PageHeader 
         title="Super Admin" 
-          description="Gerencie todas as empresas, planos e a saúde global do Laugh One."
+        description="Controle global da plataforma Laugh One."
       />
 
       <div className="flex items-center gap-4 mb-8">

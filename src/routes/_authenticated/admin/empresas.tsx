@@ -38,7 +38,7 @@ function AdminCompanies() {
   });
 
   const statusMutation = useMutation({
-    mutationFn: (vars: { id: string, status: string }) => updateCompanyStatus(vars),
+    mutationFn: (vars: { id: string, status: string }) => updateCompanyStatus({ data: vars }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-companies"] });
       toast.success("Status da empresa atualizado.");
@@ -46,7 +46,7 @@ function AdminCompanies() {
   });
 
   const impersonateMutation = useMutation({
-    mutationFn: (companyId: string) => impersonateCompany({ companyId }),
+    mutationFn: (companyId: string) => impersonateCompany({ data: { companyId } }),
     onSuccess: () => {
       toast.success("Entrando como empresa... Redirecionando para o Dashboard.");
       window.location.href = "/dashboard";
