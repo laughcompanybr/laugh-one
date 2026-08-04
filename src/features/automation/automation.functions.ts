@@ -8,7 +8,7 @@ export const getWorkflows = createServerFn({ method: "GET" })
   }).parse(data))
   .handler(async ({ data }) => {
     const { data: workflows, error } = await supabaseAdmin
-      .from('automation_workflows')
+      .from('automation_workflows' as any)
       .select('*')
       .eq('company_id', data.companyId)
       .order('created_at', { ascending: false });
@@ -27,7 +27,7 @@ export const createWorkflow = createServerFn({ method: "POST" })
   }).parse(data))
   .handler(async ({ data }) => {
     const { data: workflow, error } = await supabaseAdmin
-      .from('automation_workflows')
+      .from('automation_workflows' as any)
       .insert(data)
       .select()
       .single();
