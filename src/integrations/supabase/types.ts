@@ -582,11 +582,14 @@ export type Database = {
       payments: {
         Row: {
           amount: number
+          card_fee: number | null
+          card_fee_percent: number | null
           created_at: string
           created_by: string | null
           direction: Database["public"]["Enums"]["payment_direction"]
           employee_id: string | null
           id: string
+          installments: number | null
           method: string | null
           notes: string | null
           order_id: string | null
@@ -595,11 +598,14 @@ export type Database = {
         }
         Insert: {
           amount: number
+          card_fee?: number | null
+          card_fee_percent?: number | null
           created_at?: string
           created_by?: string | null
           direction: Database["public"]["Enums"]["payment_direction"]
           employee_id?: string | null
           id?: string
+          installments?: number | null
           method?: string | null
           notes?: string | null
           order_id?: string | null
@@ -608,11 +614,14 @@ export type Database = {
         }
         Update: {
           amount?: number
+          card_fee?: number | null
+          card_fee_percent?: number | null
           created_at?: string
           created_by?: string | null
           direction?: Database["public"]["Enums"]["payment_direction"]
           employee_id?: string | null
           id?: string
+          installments?: number | null
           method?: string | null
           notes?: string | null
           order_id?: string | null
@@ -758,6 +767,9 @@ export type Database = {
         | "ready_delivery"
         | "delivered"
         | "cancelled"
+        | "partial_payment"
+        | "separating"
+        | "shipped"
       payment_direction: "in" | "out"
     }
     CompositeTypes: {
@@ -897,6 +909,9 @@ export const Constants = {
         "ready_delivery",
         "delivered",
         "cancelled",
+        "partial_payment",
+        "separating",
+        "shipped",
       ],
       payment_direction: ["in", "out"],
     },
