@@ -14,7 +14,7 @@ export const logEvent = createServerFn({ method: "POST" })
     status: z.string().optional(),
     metadata: z.any().optional(),
   }).parse(data))
-  .handler(async ({ data, context }) => {
+  .handler(async ({ data }) => {
     // In a real environment, we'd get company_id and user_id from context
     return { success: true };
   });
@@ -36,4 +36,3 @@ export const getAuditLogs = createServerFn({ method: "GET" })
     if (error) throw new Error(error.message);
     return logs;
   });
-EOF
