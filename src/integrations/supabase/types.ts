@@ -1720,13 +1720,15 @@ export type Database = {
       }
       apply_order_stock_out: { Args: { _order_id: string }; Returns: undefined }
       get_user_company_id: { Args: never; Returns: string }
-      has_role: {
-        Args: {
-          _role: Database["public"]["Enums"]["app_role"]
-          _user_id: string
-        }
-        Returns: boolean
-      }
+      has_role:
+        | {
+            Args: {
+              _role: Database["public"]["Enums"]["app_role"]
+              _user_id: string
+            }
+            Returns: boolean
+          }
+        | { Args: { _role: string; _user_id: string }; Returns: boolean }
       is_staff_or_admin: { Args: { _user_id: string }; Returns: boolean }
       revert_order_stock: { Args: { _order_id: string }; Returns: undefined }
     }
