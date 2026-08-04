@@ -247,6 +247,7 @@ export type Database = {
           description: string | null
           id: string
           incurred_at: string
+          receipt_url: string | null
         }
         Insert: {
           amount: number
@@ -256,6 +257,7 @@ export type Database = {
           description?: string | null
           id?: string
           incurred_at?: string
+          receipt_url?: string | null
         }
         Update: {
           amount?: number
@@ -265,6 +267,7 @@ export type Database = {
           description?: string | null
           id?: string
           incurred_at?: string
+          receipt_url?: string | null
         }
         Relationships: []
       }
@@ -441,6 +444,7 @@ export type Database = {
         Row: {
           amount_received: number
           brand: string | null
+          card_fee: number | null
           client_id: string | null
           commission: number | null
           cost_price: number
@@ -453,6 +457,7 @@ export type Database = {
           model: string | null
           notes: string | null
           order_number: number
+          other_costs: number | null
           payment_method: string | null
           photo_path: string | null
           profit: number | null
@@ -460,6 +465,15 @@ export type Database = {
           quantity: number
           reference: string | null
           sale_price: number
+          ship_city: string | null
+          ship_complement: string | null
+          ship_district: string | null
+          ship_number: string | null
+          ship_reference: string | null
+          ship_state: string | null
+          ship_street: string | null
+          ship_zip: string | null
+          shipping: number | null
           status: Database["public"]["Enums"]["order_status"]
           supplier_id: string | null
           tracking_code: string | null
@@ -468,6 +482,7 @@ export type Database = {
         Insert: {
           amount_received?: number
           brand?: string | null
+          card_fee?: number | null
           client_id?: string | null
           commission?: number | null
           cost_price?: number
@@ -480,6 +495,7 @@ export type Database = {
           model?: string | null
           notes?: string | null
           order_number?: number
+          other_costs?: number | null
           payment_method?: string | null
           photo_path?: string | null
           profit?: number | null
@@ -487,6 +503,15 @@ export type Database = {
           quantity?: number
           reference?: string | null
           sale_price?: number
+          ship_city?: string | null
+          ship_complement?: string | null
+          ship_district?: string | null
+          ship_number?: string | null
+          ship_reference?: string | null
+          ship_state?: string | null
+          ship_street?: string | null
+          ship_zip?: string | null
+          shipping?: number | null
           status?: Database["public"]["Enums"]["order_status"]
           supplier_id?: string | null
           tracking_code?: string | null
@@ -495,6 +520,7 @@ export type Database = {
         Update: {
           amount_received?: number
           brand?: string | null
+          card_fee?: number | null
           client_id?: string | null
           commission?: number | null
           cost_price?: number
@@ -507,6 +533,7 @@ export type Database = {
           model?: string | null
           notes?: string | null
           order_number?: number
+          other_costs?: number | null
           payment_method?: string | null
           photo_path?: string | null
           profit?: number | null
@@ -514,6 +541,15 @@ export type Database = {
           quantity?: number
           reference?: string | null
           sale_price?: number
+          ship_city?: string | null
+          ship_complement?: string | null
+          ship_district?: string | null
+          ship_number?: string | null
+          ship_reference?: string | null
+          ship_state?: string | null
+          ship_street?: string | null
+          ship_zip?: string | null
+          shipping?: number | null
           status?: Database["public"]["Enums"]["order_status"]
           supplier_id?: string | null
           tracking_code?: string | null
