@@ -14,6 +14,7 @@ import { reportError } from "../lib/error-reporting";
 import { Toaster } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { ThemeProvider } from "@/hooks/use-theme";
+import { CompanyProvider } from "@/hooks/use-company";
 
 function NotFoundComponent() {
   return (
@@ -80,16 +81,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Arkano Club — Gestão de Encomendas Premium" },
+      { title: "Laugh One — Plataforma SaaS Multi-Tenant" },
       {
         name: "description",
         content:
-          "Plataforma de gestão de encomendas de alto padrão para a Arkano Club: clientes, fornecedores, pedidos, financeiro e relatórios em um só lugar.",
+          "Laugh One: a plataforma SaaS White Label definitiva para gestão empresarial multi-tenant desenvolvida pela Laugh Company.",
       },
-      { name: "author", content: "Arkano Club" },
+      { name: "author", content: "Laugh Company" },
       { name: "robots", content: "noindex, nofollow" },
       { name: "theme-color", content: "#0a0a0a" },
-      { property: "og:title", content: "Arkano Club — Gestão de Encomendas Premium" },
+      { property: "og:title", content: "Laugh One — Plataforma SaaS Multi-Tenant" },
       {
         property: "og:description",
         content: "Controle completo da operação de encomendas: pedidos, clientes, fornecedores e financeiro.",
@@ -150,8 +151,10 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
-        <Outlet />
-        <Toaster richColors position="top-right" />
+        <CompanyProvider>
+          <Outlet />
+          <Toaster richColors position="top-right" />
+        </CompanyProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );

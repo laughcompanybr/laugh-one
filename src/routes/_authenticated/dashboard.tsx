@@ -149,7 +149,7 @@ function DashboardPage() {
       <PageHeader
         eyebrow="Painel Executivo"
         title="O tempo é seu maior ativo."
-        description="Gestão operacional Arkano com sofisticação e precisão em tempo real."
+        description="Painel SaaS com o controle total da sua operação Laugh One."
       />
       <Suspense fallback={<DashboardSkeleton />}>
         <DashboardContent />
