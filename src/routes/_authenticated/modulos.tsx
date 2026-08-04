@@ -46,7 +46,7 @@ function ModulesPage() {
 
   if (isLoading) return <div className="p-8 text-center text-muted-foreground">Carregando módulos...</div>;
 
-  const categories = Array.from(new Set(modules.map((m) => m.category)));
+  const categories = Array.from(new Set(modules.map((m: any) => m.category)));
 
   return (
     <div className="space-y-8 p-8">
@@ -55,13 +55,13 @@ function ModulesPage() {
         description="Ative ou desative funcionalidades conforme a necessidade da sua empresa."
       />
 
-      {categories.map((category) => (
+      {categories.map((category: any) => (
         <div key={category} className="space-y-4">
           <h3 className="text-lg font-semibold tracking-tight">{category}</h3>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {modules
-              .filter((m) => m.category === category)
-              .map((module) => {
+              .filter((m: any) => m.category === category)
+              .map((module: any) => {
                 const Icon = (Icons as any)[module.icon || "Package"] || Icons.Package;
                 const isEnabled = enabledModules.has(module.id);
                 
