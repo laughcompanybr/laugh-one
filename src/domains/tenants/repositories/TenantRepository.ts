@@ -1,24 +1,29 @@
 import { createServerFn } from "@tanstack/react-start";
-import { supabase } from "@/integrations/supabase/client";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 export const getCurrentCompany = createServerFn({ method: "GET" })
-  .handler(async () => {
-    const { data: sessionData } = await supabase.auth.getSession();
-    if (!sessionData.session) return null;
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabase, userId } = context;
 
-    const { data: profile } = await supabase
+    const { data: profile, error: profileError } = await supabase
       .from("profiles")
       .select("company_id")
-      .eq("id", sessionData.session.user.id)
-      .single();
+      .eq("id", userId)
+      .maybeSingle();
 
-    if (!profile?.company_id) return null;
+    if (profileError || !profile?.company_id) return null;
 
-    const { data: company } = await supabase
+    const { data: company, error: companyError } = await supabase
       .from("companies")
       .select("*")
       .eq("id", profile.company_id)
-      .single();
+      .maybeSingle();
+
+    if (companyError) {
+      console.error("[TenantRepo] Error fetching company:", companyError);
+      return null;
+    }
 
     return company;
   });
