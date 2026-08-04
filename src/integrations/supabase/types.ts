@@ -199,77 +199,131 @@ export type Database = {
         Row: {
           accent_color: string | null
           block_reason: string | null
+          border_radius: string | null
+          button_color: string | null
+          card_color: string | null
           created_at: string | null
           currency: string | null
+          display_name: string | null
+          error_color: string | null
           favicon_url: string | null
           font_family: string | null
           id: string
           is_blocked: boolean | null
           language: string | null
+          login_background_url: string | null
+          login_footer: string | null
           login_image_url: string | null
+          login_subtitle: string | null
+          login_title: string | null
+          login_welcome_message: string | null
+          logo_reduced_url: string | null
           logo_url: string | null
+          mobile_icon_url: string | null
           name: string
+          navbar_color: string | null
           plan_id: string | null
           plan_tier: string | null
           primary_color: string | null
+          primary_font: string | null
           secondary_color: string | null
+          secondary_font: string | null
+          sidebar_color: string | null
           sidebar_image_url: string | null
           slug: string
           status: string | null
           storage_used_bytes: number | null
+          success_color: string | null
           theme_mode: string | null
           timezone: string | null
           updated_at: string | null
+          warning_color: string | null
         }
         Insert: {
           accent_color?: string | null
           block_reason?: string | null
+          border_radius?: string | null
+          button_color?: string | null
+          card_color?: string | null
           created_at?: string | null
           currency?: string | null
+          display_name?: string | null
+          error_color?: string | null
           favicon_url?: string | null
           font_family?: string | null
           id?: string
           is_blocked?: boolean | null
           language?: string | null
+          login_background_url?: string | null
+          login_footer?: string | null
           login_image_url?: string | null
+          login_subtitle?: string | null
+          login_title?: string | null
+          login_welcome_message?: string | null
+          logo_reduced_url?: string | null
           logo_url?: string | null
+          mobile_icon_url?: string | null
           name: string
+          navbar_color?: string | null
           plan_id?: string | null
           plan_tier?: string | null
           primary_color?: string | null
+          primary_font?: string | null
           secondary_color?: string | null
+          secondary_font?: string | null
+          sidebar_color?: string | null
           sidebar_image_url?: string | null
           slug: string
           status?: string | null
           storage_used_bytes?: number | null
+          success_color?: string | null
           theme_mode?: string | null
           timezone?: string | null
           updated_at?: string | null
+          warning_color?: string | null
         }
         Update: {
           accent_color?: string | null
           block_reason?: string | null
+          border_radius?: string | null
+          button_color?: string | null
+          card_color?: string | null
           created_at?: string | null
           currency?: string | null
+          display_name?: string | null
+          error_color?: string | null
           favicon_url?: string | null
           font_family?: string | null
           id?: string
           is_blocked?: boolean | null
           language?: string | null
+          login_background_url?: string | null
+          login_footer?: string | null
           login_image_url?: string | null
+          login_subtitle?: string | null
+          login_title?: string | null
+          login_welcome_message?: string | null
+          logo_reduced_url?: string | null
           logo_url?: string | null
+          mobile_icon_url?: string | null
           name?: string
+          navbar_color?: string | null
           plan_id?: string | null
           plan_tier?: string | null
           primary_color?: string | null
+          primary_font?: string | null
           secondary_color?: string | null
+          secondary_font?: string | null
+          sidebar_color?: string | null
           sidebar_image_url?: string | null
           slug?: string
           status?: string | null
           storage_used_bytes?: number | null
+          success_color?: string | null
           theme_mode?: string | null
           timezone?: string | null
           updated_at?: string | null
+          warning_color?: string | null
         }
         Relationships: [
           {
