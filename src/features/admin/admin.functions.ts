@@ -83,11 +83,19 @@ export const impersonateCompany = createServerFn({ method: "POST" })
     if (updateError) throw updateError;
 
     // Registrar log de impersonificação
-    const logData = data.companyId 
-      ? { user_id: userId, company_id: data.companyId, action: "impersonation_start", metadata: { target_company_id: data.companyId } }
-      : { user_id: userId, action: "impersonation_stop" };
-
-    await supabase.from("platform_logs").insert(logData);
+    if (data.companyId) {
+      await supabase.from("platform_logs").insert({
+        user_id: userId,
+        company_id: data.companyId,
+        action: "impersonation_start",
+        metadata: { target_company_id: data.companyId }
+      });
+    } else {
+      await supabase.from("platform_logs").insert({
+        user_id: userId,
+        action: "impersonation_stop"
+      });
+    }
 
     return { success: true };
   });
