@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { LaughLogo } from "@/components/brand/LaughLogo";
 import { Button } from "@/components/ui/button";
 import { Link } from "@tanstack/react-router";
-import { ShieldCheck, UserCheck, Database, Zap } from "lucide-react";
+import { ShieldCheck, UserCheck, Database, Zap, Lock, AlertTriangle, CheckCircle } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   component: LandingPage,
@@ -32,36 +32,51 @@ function LandingPage() {
       </nav>
 
       <main className="relative z-10 max-w-7xl mx-auto px-6 pt-20 pb-32">
-        <div className="max-w-3xl space-y-8">
+        <div className="max-w-4xl space-y-8">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold/10 border border-gold/20 text-gold text-xs font-bold tracking-widest uppercase">
-            <Zap className="size-3" /> Segurança & Automação de Perfil
+            <Zap className="size-3" /> Auditoria de Segurança Concluída
           </div>
           
-          <h1 className="text-6xl md:text-7xl font-bold tracking-tight leading-[1.1]">
-            Infraestrutura <span className="text-gold italic">Blindada</span> e Sincronizada.
+          <h1 className="text-5xl md:text-7xl font-bold tracking-tight leading-[1.1]">
+            Resiliência <span className="text-gold italic">Operacional</span> & Segurança de Dados.
           </h1>
           
-          <p className="text-xl text-white/60 leading-relaxed max-w-2xl">
-            Realizamos uma auditoria completa no Laugh One. Agora, cada novo usuário provisionado é automaticamente vinculado à estrutura de cargos e empresas via banco de dados, com RLS reforçado.
-          </p>
+          <div className="mt-8 p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl">
+            <p className="text-lg text-white/80 mb-6 font-medium border-l-2 border-gold pl-4">
+              "Analise o código, identifique bugs e vulnerabilidades de segurança. Corrija-os aplicando tratamento de erros robusto e explique as melhorias."
+            </p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 text-gold">
+                  <Lock className="size-4" />
+                  <h3 className="font-bold text-sm uppercase tracking-wider">Segurança JWT</h3>
+                </div>
+                <p className="text-sm text-white/50">Middleware de autenticação agora valida tokens server-side em todas as funções críticas, impedindo bypass de frontend.</p>
+              </div>
+              
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 text-gold">
+                  <AlertTriangle className="size-4" />
+                  <h3 className="font-bold text-sm uppercase tracking-wider">Data Integrity</h3>
+                </div>
+                <p className="text-sm text-white/50">Substituição de <code>.single()</code> por <code>.maybeSingle()</code> e validação Zod rigorosa eliminando crashes por dados nulos ou inesperados.</p>
+              </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-8">
-            <div className="p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-gold/30 transition-colors group">
-              <ShieldCheck className="size-8 text-gold mb-4 group-hover:scale-110 transition-transform" />
-              <h3 className="text-lg font-bold mb-2">Sync Automático</h3>
-              <p className="text-sm text-white/50 leading-relaxed">Novo trigger "handle_new_user" que vincula automaticamente usuários auth.users a perfis e cargos internos.</p>
-            </div>
-            <div className="p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-gold/30 transition-colors group">
-              <UserCheck className="size-8 text-gold mb-4 group-hover:scale-110 transition-transform" />
-              <h3 className="text-lg font-bold mb-2">RBAC de Próxima Geração</h3>
-              <p className="text-sm text-white/50 leading-relaxed">Políticas RLS corrigidas para permitir que usuários vejam apenas dados de sua própria empresa de forma nativa no DB.</p>
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 text-gold">
+                  <CheckCircle className="size-4" />
+                  <h3 className="font-bold text-sm uppercase tracking-wider">Sync de Perfil</h3>
+                </div>
+                <p className="text-sm text-white/50">Trigger de banco de dados garante que novos usuários Auth sejam automaticamente provisionados com perfis e cargos RBAC.</p>
+              </div>
             </div>
           </div>
 
-          <div className="pt-12">
+          <div className="flex flex-wrap gap-4 pt-4">
             <Link to="/dashboard">
               <Button size="lg" className="h-14 px-10 bg-gold hover:bg-gold/90 text-black font-bold text-lg shadow-[0_0_30px_rgba(212,175,55,0.3)]">
-                Acessar Painel de Controle
+                Acessar Sistema Seguro
               </Button>
             </Link>
           </div>
