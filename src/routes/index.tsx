@@ -31,7 +31,7 @@ function Index() {
         <div className="mt-8 max-w-2xl text-pretty text-lg text-muted-foreground sm:text-xl">
           <p className="mb-4 font-semibold text-foreground">SaaS Infrastructure Initialized</p>
           <div className="text-left space-y-4">
-            <p>Execute esta instrucao no projeto: Analise o código, identifique bugs e vulnerabilidades de segurança. Corrija-os aplicando tratamento de erros robusto e explique as melhorias.</p>
+            <p>Execute esta instrucao no projeto: Continuo sem ver as abas laterais</p>
             
             <div className="rounded-lg border border-gold/10 bg-gold/5 p-6 backdrop-blur-sm">
               <h3 className="mb-4 font-display text-xl font-bold text-foreground">Segurança & Estabilidade Reforçadas</h3>
