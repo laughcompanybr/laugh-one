@@ -36,7 +36,7 @@ function Index() {
         <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
           <div className="h-px w-12 bg-gold/30" />
           <span className="text-xs font-medium uppercase tracking-[0.3em] text-muted-foreground/60">
-            RBAC System Active
+            Audit & Observability System Active
           </span>
           <div className="h-px w-12 bg-gold/30" />
         </div>
