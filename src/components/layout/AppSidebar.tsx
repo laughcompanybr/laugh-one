@@ -14,6 +14,8 @@ import {
 import { LaughLogo } from "@/components/brand/LaughLogo";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { NAV_ITEMS, type NavItem } from "./nav-config";
+import { useUserRole } from "@/hooks/use-user-role";
+import { ShieldAlert } from "lucide-react";
 
 const GROUP_LABELS: Record<NavItem["group"], string> = {
   operação: "Operação",
@@ -25,6 +27,7 @@ export function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const currentPath = useRouterState({ select: (s) => s.location.pathname });
+  const { isSuperAdmin } = useUserRole();
 
   const groups = (["operação", "gestão", "sistema"] as const).map((group) => ({
     group,
@@ -86,6 +89,33 @@ export function AppSidebar() {
             </SidebarGroupContent>
           </SidebarGroup>
         ))}
+
+        {isSuperAdmin && (
+          <SidebarGroup>
+            {!collapsed && (
+              <SidebarGroupLabel className="text-[10px] font-medium uppercase tracking-[0.2em] text-gold/80">
+                Super Admin
+              </SidebarGroupLabel>
+            )}
+            <SidebarGroupContent>
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={currentPath.startsWith("/admin")}
+                    tooltip="Painel Super Admin"
+                    className="h-10 rounded-lg data-[active=true]:bg-gold/10 data-[active=true]:text-gold"
+                  >
+                    <Link to="/admin" className="flex items-center gap-3">
+                      <ShieldAlert className="size-4 shrink-0" />
+                      {!collapsed && <span className="text-sm">Painel Super Admin</span>}
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
       </SidebarContent>
     </Sidebar>
   );
