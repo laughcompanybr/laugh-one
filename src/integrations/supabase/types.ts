@@ -121,48 +121,66 @@ export type Database = {
       clients: {
         Row: {
           city: string | null
+          complement: string | null
           cpf: string | null
           created_at: string
           created_by: string | null
           deleted_at: string | null
+          district: string | null
           id: string
           instagram: string | null
           name: string
           notes: string | null
+          number: string | null
           phone: string | null
+          reference: string | null
           state: string | null
+          street: string | null
           updated_at: string
           whatsapp: string | null
+          zip: string | null
         }
         Insert: {
           city?: string | null
+          complement?: string | null
           cpf?: string | null
           created_at?: string
           created_by?: string | null
           deleted_at?: string | null
+          district?: string | null
           id?: string
           instagram?: string | null
           name: string
           notes?: string | null
+          number?: string | null
           phone?: string | null
+          reference?: string | null
           state?: string | null
+          street?: string | null
           updated_at?: string
           whatsapp?: string | null
+          zip?: string | null
         }
         Update: {
           city?: string | null
+          complement?: string | null
           cpf?: string | null
           created_at?: string
           created_by?: string | null
           deleted_at?: string | null
+          district?: string | null
           id?: string
           instagram?: string | null
           name?: string
           notes?: string | null
+          number?: string | null
           phone?: string | null
+          reference?: string | null
           state?: string | null
+          street?: string | null
           updated_at?: string
           whatsapp?: string | null
+          zip?: string | null
         }
         Relationships: []
       }
@@ -348,8 +366,10 @@ export type Database = {
           notes: string | null
           order_number: number
           payment_method: string | null
+          photo_path: string | null
           profit: number | null
           purchase_date: string | null
+          quantity: number
           reference: string | null
           sale_price: number
           status: Database["public"]["Enums"]["order_status"]
@@ -372,8 +392,10 @@ export type Database = {
           notes?: string | null
           order_number?: number
           payment_method?: string | null
+          photo_path?: string | null
           profit?: number | null
           purchase_date?: string | null
+          quantity?: number
           reference?: string | null
           sale_price?: number
           status?: Database["public"]["Enums"]["order_status"]
@@ -396,8 +418,10 @@ export type Database = {
           notes?: string | null
           order_number?: number
           payment_method?: string | null
+          photo_path?: string | null
           profit?: number | null
           purchase_date?: string | null
+          quantity?: number
           reference?: string | null
           sale_price?: number
           status?: Database["public"]["Enums"]["order_status"]
