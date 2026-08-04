@@ -15,6 +15,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { ThemeProvider } from "@/hooks/use-theme";
 import { CompanyProvider } from "@/hooks/use-company";
+import { ImpersonationBanner } from "@/components/admin/ImpersonationBanner";
 
 function NotFoundComponent() {
   return (
@@ -152,6 +153,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <CompanyProvider>
+          <ImpersonationBanner />
           <Outlet />
           <Toaster richColors position="top-right" />
         </CompanyProvider>
