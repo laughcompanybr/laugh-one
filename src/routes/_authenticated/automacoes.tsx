@@ -19,7 +19,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useCompany } from "@/hooks/use-company";
+import { useCompany } from "@/domains/tenants/hooks/use-company";
 
 export const Route = createFileRoute("/_authenticated/automacoes")({
   component: AutomationPage,

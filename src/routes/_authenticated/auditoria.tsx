@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useCompany } from "@/hooks/use-company";
+import { useCompany } from "@/domains/tenants/hooks/use-company";
 import { 
   Activity, 
   Search, 

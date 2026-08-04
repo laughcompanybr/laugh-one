@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { usePermissions } from "@/hooks/use-permissions";
+import { usePermissions } from "@/domains/auth/hooks/use-permissions";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { useCompany } from "@/hooks/use-company";
+import { useCompany } from "@/domains/tenants/hooks/use-company";
 import { Shield, Plus, Copy, Trash2, Search, CheckCircle2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 

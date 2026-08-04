@@ -1,5 +1,6 @@
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
-import { useModules, type Module } from "@/hooks/use-modules";
+import { useModules } from "@/domains/tenants/hooks/use-modules";
+import type { Module } from "@/domains/tenants/hooks/use-modules";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -7,7 +8,7 @@ import { Switch } from "@/components/ui/switch";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { useCompany } from "@/hooks/use-company";
+import { useCompany } from "@/domains/tenants/hooks/use-company";
 import * as Icons from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/modulos")({
