@@ -29,8 +29,8 @@ function Index() {
         </h1>
         
         <div className="mt-8 max-w-2xl text-pretty text-lg text-muted-foreground sm:text-xl">
-          <p className="mb-4 font-semibold text-foreground">Identidade Visual Laugh One</p>
-          <p>Esta é a nova logo oficial da empresa, integrada em toda a plataforma SaaS.</p>
+          <p className="mb-4 font-semibold text-foreground">SaaS Infrastructure Initialized</p>
+          <p>Execute esta instrução no projeto: # Implementar Sistema Completo de Assinaturas do Laugh One...</p>
         </div>
         
         <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
