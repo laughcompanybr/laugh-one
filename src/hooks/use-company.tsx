@@ -6,16 +6,22 @@ interface Company {
   id: string;
   name: string;
   slug: string;
-  logo_url?: string | null;
-  favicon_url?: string | null;
+  logo_url: string | null;
+  favicon_url: string | null;
   primary_color: string | null;
   secondary_color: string | null;
   accent_color: string | null;
   font_family: string | null;
+  login_image_url: string | null;
+  sidebar_image_url: string | null;
   theme_mode: string | null;
   language: string | null;
   currency: string | null;
   timezone: string | null;
+  plan_tier: string | null;
+  status: string | null;
+  created_at: string | null;
+  updated_at: string | null;
 }
 
 interface CompanyContextValue {
