@@ -14,16 +14,410 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      clients: {
+        Row: {
+          city: string | null
+          cpf: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          instagram: string | null
+          name: string
+          notes: string | null
+          phone: string | null
+          state: string | null
+          updated_at: string
+          whatsapp: string | null
+        }
+        Insert: {
+          city?: string | null
+          cpf?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          instagram?: string | null
+          name: string
+          notes?: string | null
+          phone?: string | null
+          state?: string | null
+          updated_at?: string
+          whatsapp?: string | null
+        }
+        Update: {
+          city?: string | null
+          cpf?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          instagram?: string | null
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          state?: string | null
+          updated_at?: string
+          whatsapp?: string | null
+        }
+        Relationships: []
+      }
+      expenses: {
+        Row: {
+          amount: number
+          category: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          incurred_at: string
+        }
+        Insert: {
+          amount: number
+          category?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          incurred_at?: string
+        }
+        Update: {
+          amount?: number
+          category?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          incurred_at?: string
+        }
+        Relationships: []
+      }
+      order_attachments: {
+        Row: {
+          created_at: string
+          filename: string | null
+          id: string
+          kind: string | null
+          mime: string | null
+          order_id: string
+          size: number | null
+          storage_path: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          filename?: string | null
+          id?: string
+          kind?: string | null
+          mime?: string | null
+          order_id: string
+          size?: number | null
+          storage_path: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          filename?: string | null
+          id?: string
+          kind?: string | null
+          mime?: string | null
+          order_id?: string
+          size?: number | null
+          storage_path?: string
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_attachments_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      order_events: {
+        Row: {
+          actor: string | null
+          created_at: string
+          id: string
+          message: string | null
+          meta: Json | null
+          order_id: string
+          type: string
+        }
+        Insert: {
+          actor?: string | null
+          created_at?: string
+          id?: string
+          message?: string | null
+          meta?: Json | null
+          order_id: string
+          type: string
+        }
+        Update: {
+          actor?: string | null
+          created_at?: string
+          id?: string
+          message?: string | null
+          meta?: Json | null
+          order_id?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_events_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          amount_received: number
+          brand: string | null
+          client_id: string | null
+          cost_price: number
+          created_at: string
+          created_by: string | null
+          expected_delivery: string | null
+          id: string
+          model: string | null
+          notes: string | null
+          order_number: number
+          payment_method: string | null
+          profit: number | null
+          purchase_date: string | null
+          reference: string | null
+          sale_price: number
+          status: Database["public"]["Enums"]["order_status"]
+          supplier_id: string | null
+          tracking_code: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount_received?: number
+          brand?: string | null
+          client_id?: string | null
+          cost_price?: number
+          created_at?: string
+          created_by?: string | null
+          expected_delivery?: string | null
+          id?: string
+          model?: string | null
+          notes?: string | null
+          order_number?: number
+          payment_method?: string | null
+          profit?: number | null
+          purchase_date?: string | null
+          reference?: string | null
+          sale_price?: number
+          status?: Database["public"]["Enums"]["order_status"]
+          supplier_id?: string | null
+          tracking_code?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount_received?: number
+          brand?: string | null
+          client_id?: string | null
+          cost_price?: number
+          created_at?: string
+          created_by?: string | null
+          expected_delivery?: string | null
+          id?: string
+          model?: string | null
+          notes?: string | null
+          order_number?: number
+          payment_method?: string | null
+          profit?: number | null
+          purchase_date?: string | null
+          reference?: string | null
+          sale_price?: number
+          status?: Database["public"]["Enums"]["order_status"]
+          supplier_id?: string | null
+          tracking_code?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payments: {
+        Row: {
+          amount: number
+          created_at: string
+          created_by: string | null
+          direction: Database["public"]["Enums"]["payment_direction"]
+          id: string
+          method: string | null
+          notes: string | null
+          order_id: string | null
+          paid_at: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          created_by?: string | null
+          direction: Database["public"]["Enums"]["payment_direction"]
+          id?: string
+          method?: string | null
+          notes?: string | null
+          order_id?: string | null
+          paid_at?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          created_by?: string | null
+          direction?: Database["public"]["Enums"]["payment_direction"]
+          id?: string
+          method?: string | null
+          notes?: string | null
+          order_id?: string | null
+          paid_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          full_name: string | null
+          id: string
+          theme: string | null
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id: string
+          theme?: string | null
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          theme?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      suppliers: {
+        Row: {
+          avg_delivery_days: number | null
+          company: string | null
+          created_at: string
+          created_by: string | null
+          email: string | null
+          id: string
+          instagram: string | null
+          name: string
+          notes: string | null
+          phone: string | null
+          updated_at: string
+          whatsapp: string | null
+        }
+        Insert: {
+          avg_delivery_days?: number | null
+          company?: string | null
+          created_at?: string
+          created_by?: string | null
+          email?: string | null
+          id?: string
+          instagram?: string | null
+          name: string
+          notes?: string | null
+          phone?: string | null
+          updated_at?: string
+          whatsapp?: string | null
+        }
+        Update: {
+          avg_delivery_days?: number | null
+          company?: string | null
+          created_at?: string
+          created_by?: string | null
+          email?: string | null
+          id?: string
+          instagram?: string | null
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          updated_at?: string
+          whatsapp?: string | null
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "staff"
+      order_status:
+        | "new"
+        | "awaiting_deposit"
+        | "paid"
+        | "purchasing"
+        | "in_transit"
+        | "received"
+        | "ready_delivery"
+        | "delivered"
+        | "cancelled"
+      payment_direction: "in" | "out"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +544,20 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "staff"],
+      order_status: [
+        "new",
+        "awaiting_deposit",
+        "paid",
+        "purchasing",
+        "in_transit",
+        "received",
+        "ready_delivery",
+        "delivered",
+        "cancelled",
+      ],
+      payment_direction: ["in", "out"],
+    },
   },
 } as const
