@@ -2,7 +2,7 @@ import { Suspense, useEffect } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { logPermissionDenied } from "@/lib/audit.functions";
+import { logPermissionDenied } from "@/domains/audit/services/audit.functions";
 import { motion } from "framer-motion";
 import {
   Area,
@@ -37,7 +37,8 @@ import { PageHeader } from "@/components/common/PageHeader";
 import { EmptyState } from "@/components/common/EmptyState";
 import { DashboardSkeleton } from "@/components/dashboard/DashboardSkeleton";
 import { formatBRL, formatNumber } from "@/lib/format";
-import { getDashboardStats, type DashboardStats } from "@/lib/dashboard.functions";
+import { getDashboardStats } from "@/domains/reports/services/dashboard.functions";
+import type { DashboardStats } from "@/domains/reports/services/dashboard.functions";
 import { cn } from "@/lib/utils";
 
 const dashboardQueryOptions = (fn: () => Promise<DashboardStats>) =>
