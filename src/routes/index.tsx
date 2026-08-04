@@ -30,319 +30,42 @@ function Index() {
         
         <div className="mt-8 max-w-2xl text-pretty text-lg text-muted-foreground sm:text-xl">
           <p className="mb-4 font-semibold text-foreground">SaaS Infrastructure Initialized</p>
-          <p>Execute esta instrucao no projeto: PROMPT DE REFATORAÇÃO ARQUITETURAL — LAUGH ONE CRM
-
-Antes de adicionar novas funcionalidades, faça uma revisão arquitetural completa do projeto atual.
-
-IMPORTANTE:
-- Não alterar o design visual atual.
-- Não remover funcionalidades existentes.
-- Não mudar regras de negócio sem necessidade.
-- Manter compatibilidade com todos os fluxos atuais.
-- Fazer mudanças estruturais visando escalabilidade, manutenção e performance.
-
-OBJETIVO:
-Transformar o projeto em uma arquitetura profissional preparada para crescimento como SaaS Multi-Tenant.
-
-====================================
-1. AUDITORIA COMPLETA DO PROJETO
-====================================
-
-Analise toda a aplicação:
-
-- Estrutura de pastas atual.
-- Componentes React.
-- Hooks personalizados.
-- Serviços.
-- Integrações com Supabase.
-- Queries existentes.
-- Estados globais.
-- Tipagens TypeScript.
-- Fluxo de autenticação.
-- Controle Multi-Tenant.
-- Permissões e níveis de acesso.
-
-Identifique:
-
-- Código duplicado.
-- Componentes com muitas responsabilidades.
-- Funções repetidas.
-- Queries ineficientes.
-- Hooks mal organizados.
-- Arquivos muito grandes.
-- Dependências desnecessárias.
-- Problemas de escalabilidade.
-
-====================================
-2. NOVA ORGANIZAÇÃO POR DOMÍNIO
-====================================
-
-Estruture o projeto seguindo um Domain-Driven Design leve.
-
-Organize por domínio de negócio:
-
-src/
-
-├── app/
-│   ├── routes
-│   ├── providers
-│   └── config
-
-├── domains/
-
-│   ├── auth/
-│   ├── tenants/
-│   ├── users/
-│   ├── clients/
-│   ├── sales/
-│   ├── finance/
-│   ├── products/
-│   ├── reports/
-│   └── settings/
-
-Cada domínio deve conter:
-
-- components
-- hooks
-- services
-- repositories
-- types
-- schemas
-- utils
-
-Evitar uma estrutura baseada apenas em "components", "pages" e "utils".
-
-====================================
-3. CRIAR CAMADAS DE RESPONSABILIDADE
-====================================
-
-Implementar uma separação clara:
-
-UI Layer:
-Responsável apenas pela interface.
-
-↓
-
-Services Layer:
-Responsável pelas regras de negócio.
-
-↓
-
-Repositories Layer:
-Responsável pelo acesso ao banco.
-
-↓
-
-Database:
-Supabase/PostgreSQL.
-
-Exemplo:
-
-Componente React NÃO deve fazer:
-
-- Query direta no Supabase.
-- Manipulação complexa de dados.
-- Regras de permissão.
-
-Essas responsabilidades devem estar nos services/repositories.
-
-====================================
-4. PADRONIZAÇÃO TYPESCRIPT
-====================================
-
-Revisar toda tipagem.
-
-Objetivos:
-
-- Remover "any".
-- Criar interfaces consistentes.
-- Criar tipos compartilhados.
-- Padronizar nomes.
-
-Exemplo:
-
-Antes:
-
-clientData
-customerInfo
-user_client
-
-Depois:
-
-Client
-TenantUser
-Organization
-
-Criar um padrão único para:
-
-- entidades.
-- DTOs.
-- respostas da API.
-- estados.
-- formulários.
-
-====================================
-5. REVISÃO DO BANCO SUPABASE
-====================================
-
-Auditar:
-
-- Estrutura das tabelas.
-- Relacionamentos.
-- Foreign keys.
-- Índices.
-- Campos redundantes.
-- Campos sem utilização.
-
-Garantir arquitetura Multi-Tenant correta:
-
-Todas as entidades devem estar relacionadas ao tenant_id.
-
-Validar:
-
-- RLS ativo em todas tabelas sensíveis.
-- Policies corretas.
-- Isolamento entre empresas.
-- Usuário nunca consegue acessar dados de outro tenant.
-
-Criar índices quando necessário para:
-
-- tenant_id
-- created_at
-- status
-- relacionamentos frequentes
-
-====================================
-6. PERFORMANCE
-====================================
-
-Revisar:
-
-- Queries repetidas.
-- N+1 queries.
-- Carregamentos desnecessários.
-- Renderizações excessivas.
-- Componentes sem memoização quando necessário.
-
-Aplicar:
-
-- React Query corretamente.
-- Cache adequado.
-- Lazy loading.
-- Paginação onde necessário.
-
-====================================
-7. PADRÃO DE NOMENCLATURA
-====================================
-
-Criar um padrão global:
-
-Componentes:
-
-PascalCase
-
-Ex:
-ClientCard.tsx
-
-Hooks:
-
-use + Nome
-
-Ex:
-useClients.ts
-
-Services:
-
-Nome + Service
-
-Ex:
-ClientService.ts
-
-Repositories:
-
-Nome + Repository
-
-Ex:
-ClientRepository.ts
-
-
-Banco:
-
-snake_case
-
-Código:
-
-camelCase
-
-====================================
-8. DOCUMENTAÇÃO DA ARQUITETURA
-====================================
-
-Criar documentação:
-
-/docs
-
-Com:
-
-- Arquitetura geral.
-- Fluxo de autenticação.
-- Estrutura Multi-Tenant.
-- Fluxo de dados.
-- Como criar novos módulos.
-- Padrões utilizados.
-
-Criar também:
-
-ARCHITECTURE.md
-
-Explicando:
-- Como o sistema funciona.
-- Onde cada tipo de código deve ficar.
-- Como adicionar novas funcionalidades.
-
-====================================
-9. SEGURANÇA
-====================================
-
-Auditar:
-
-- Autenticação.
-- Autorização.
-- Sessões.
-- Tokens.
-- Permissões.
-
-Garantir:
-
-- Nenhuma informação sensível exposta no frontend.
-- Nenhum tenant acessa dados de outro tenant.
-- Validação no backend sempre que necessário.
-
-====================================
-10. RESULTADO ESPERADO
-====================================
-
-Ao final:
-
-O Laugh One deve estar preparado para:
-
-- Crescer para milhares de empresas.
-- Receber novos módulos.
-- Possuir API pública.
-- Ter integração com IA.
-- Ter aplicativo mobile.
-- Possuir marketplace.
-- Suportar múltiplos planos SaaS.
-
-Faça a refatoração em etapas seguras.
-
-Antes de modificar arquivos críticos, analise dependências e preserve todas as funcionalidades existentes.</p>
+          <div className="text-left space-y-4">
+            <p>Execute esta instrucao no projeto: Analise o código, identifique bugs e vulnerabilidades de segurança. Corrija-os aplicando tratamento de erros robusto e explique as melhorias.</p>
+            
+            <div className="rounded-lg border border-gold/10 bg-gold/5 p-6 backdrop-blur-sm">
+              <h3 className="mb-4 font-display text-xl font-bold text-foreground">Segurança & Estabilidade Reforçadas</h3>
+              <ul className="space-y-4 text-sm">
+                <li className="flex gap-3">
+                  <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-gold/20 text-[10px] text-gold font-bold">1</span>
+                  <div>
+                    <strong className="text-foreground block mb-1">Validação Server-side (JWT)</strong>
+                    <span>Implementado <code>requireSupabaseAuth</code> em todas as funções de servidor críticas. O token de sessão é validado diretamente no backend do TanStack Start antes de qualquer interação com o banco.</span>
+                  </div>
+                </li>
+                <li className="flex gap-3">
+                  <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-gold/20 text-[10px] text-gold font-bold">2</span>
+                  <div>
+                    <strong className="text-foreground block mb-1">Proteção contra Escalação de Privilégios</strong>
+                    <span>As rotas e funções de Super Admin agora verificam a role diretamente no banco de dados via servidor (Server Context), impossibilitando o acesso não autorizado por simples manipulação de estado no frontend.</span>
+                  </div>
+                </li>
+                <li className="flex gap-3">
+                  <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-gold/20 text-[10px] text-gold font-bold">3</span>
+                  <div>
+                    <strong className="text-foreground block mb-1">Tratamento de Erros e Race Conditions</strong>
+                    <span>Refatorado o hook <code>usePermissions</code> e os repositórios para tratar falhas silenciosas e prevenir vazamento de memória com <code>isMounted</code> guards, garantindo uma experiência de usuário fluida e sem crashes.</span>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
         
         <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
           <div className="h-px w-12 bg-gold/30" />
           <span className="text-xs font-medium uppercase tracking-[0.3em] text-muted-foreground/60">
-            Automation Central & Workflow Engine Active
+            Security & Resilience Systems Active
           </span>
           <div className="h-px w-12 bg-gold/30" />
         </div>
