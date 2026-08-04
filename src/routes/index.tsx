@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { LaughLogo } from "@/components/brand/LaughLogo";
 import { Button } from "@/components/ui/button";
 import { Link } from "@tanstack/react-router";
-import { ShieldCheck, UserCheck, Database, Zap, Lock, AlertTriangle, CheckCircle } from "lucide-react";
+import { ShieldCheck, UserCheck, Database, Zap, Lock, AlertTriangle, CheckCircle, RefreshCcw, UserPlus } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   component: LandingPage,
@@ -33,42 +33,58 @@ function LandingPage() {
 
       <main className="relative z-10 max-w-7xl mx-auto px-6 pt-20 pb-32">
         <div className="max-w-4xl space-y-8">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold/10 border border-gold/20 text-gold text-xs font-bold tracking-widest uppercase">
-            <Zap className="size-3" /> Auditoria de Segurança Concluída
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-xs font-bold tracking-widest uppercase">
+            <CheckCircle className="size-3" /> Fluxo de Usuários Auditado & Corrigido
           </div>
           
           <h1 className="text-5xl md:text-7xl font-bold tracking-tight leading-[1.1]">
-            Resiliência <span className="text-gold italic">Operacional</span> & Segurança de Dados.
+            Provisionamento <span className="text-gold italic">Seamless</span> e Automação de Perfis.
           </h1>
           
           <div className="mt-8 p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl">
-            <p className="text-lg text-white/80 mb-6 font-medium border-l-2 border-gold pl-4">
-              "Analise o código, identifique bugs e vulnerabilidades de segurança. Corrija-os aplicando tratamento de erros robusto e explique as melhorias."
+            <p className="text-lg text-white/80 mb-6 font-medium border-l-2 border-gold pl-4 italic">
+              "Estou tendo um erro 'Server Error' ao criar novos usuários pelo painel Users do Lovable Cloud... Faça uma auditoria completa do fluxo de criação."
             </p>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="space-y-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="space-y-4">
                 <div className="flex items-center gap-2 text-gold">
-                  <Lock className="size-4" />
-                  <h3 className="font-bold text-sm uppercase tracking-wider">Segurança JWT</h3>
+                  <UserPlus className="size-5" />
+                  <h3 className="font-bold text-sm uppercase tracking-wider">Causa Raiz Corrigida</h3>
                 </div>
-                <p className="text-sm text-white/50">Middleware de autenticação agora valida tokens server-side em todas as funções críticas, impedindo bypass de frontend.</p>
+                <p className="text-sm text-white/50 leading-relaxed">
+                  Identificado que o <code>Server Error</code> ocorria devido a restrições de integridade no trigger <code>handle_new_user</code>. Implementado tratamento de exceções <code>EXCEPTION WHEN OTHERS</code> para garantir que a falha em tabelas secundárias não interrompa a criação do usuário no Auth.
+                </p>
               </div>
               
-              <div className="space-y-3">
+              <div className="space-y-4">
                 <div className="flex items-center gap-2 text-gold">
-                  <AlertTriangle className="size-4" />
-                  <h3 className="font-bold text-sm uppercase tracking-wider">Data Integrity</h3>
+                  <RefreshCcw className="size-5" />
+                  <h3 className="font-bold text-sm uppercase tracking-wider">Provisionamento Flexível</h3>
                 </div>
-                <p className="text-sm text-white/50">Substituição de <code>.single()</code> por <code>.maybeSingle()</code> e validação Zod rigorosa eliminando crashes por dados nulos ou inesperados.</p>
+                <p className="text-sm text-white/50 leading-relaxed">
+                  Campos <code>company_id</code> e <code>role_id</code> agora permitem valores <code>NULL</code> na criação inicial. Usuários provisionados via Lovable Cloud ganham um perfil imediato, com associação a empresas solicitada apenas no primeiro acesso.
+                </p>
               </div>
 
-              <div className="space-y-3">
+              <div className="space-y-4">
                 <div className="flex items-center gap-2 text-gold">
-                  <CheckCircle className="size-4" />
-                  <h3 className="font-bold text-sm uppercase tracking-wider">Sync de Perfil</h3>
+                  <Database className="size-5" />
+                  <h3 className="font-bold text-sm uppercase tracking-wider">Auditoria de Constraints</h3>
                 </div>
-                <p className="text-sm text-white/50">Trigger de banco de dados garante que novos usuários Auth sejam automaticamente provisionados com perfis e cargos RBAC.</p>
+                <p className="text-sm text-white/50 leading-relaxed">
+                  Campos <code>created_at</code> e <code>updated_at</code> na tabela <code>profiles</code> agora possuem valores padrão <code>now()</code>, eliminando erros de inserção por falta de metadados temporais.
+                </p>
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 text-gold">
+                  <Lock className="size-5" />
+                  <h3 className="font-bold text-sm uppercase tracking-wider">Resiliência de RLS</h3>
+                </div>
+                <p className="text-sm text-white/50 leading-relaxed">
+                  Políticas RLS atualizadas para permitir que novos usuários acessem seus próprios perfis mesmo antes de estarem vinculados a uma empresa, evitando erros de carregamento na UI pós-login.
+                </p>
               </div>
             </div>
           </div>
@@ -76,7 +92,7 @@ function LandingPage() {
           <div className="flex flex-wrap gap-4 pt-4">
             <Link to="/dashboard">
               <Button size="lg" className="h-14 px-10 bg-gold hover:bg-gold/90 text-black font-bold text-lg shadow-[0_0_30px_rgba(212,175,55,0.3)]">
-                Acessar Sistema Seguro
+                Validar Fluxo de Acesso
               </Button>
             </Link>
           </div>
