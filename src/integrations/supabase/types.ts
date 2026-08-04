@@ -198,68 +198,88 @@ export type Database = {
       companies: {
         Row: {
           accent_color: string | null
+          block_reason: string | null
           created_at: string | null
           currency: string | null
           favicon_url: string | null
           font_family: string | null
           id: string
+          is_blocked: boolean | null
           language: string | null
           login_image_url: string | null
           logo_url: string | null
           name: string
+          plan_id: string | null
           plan_tier: string | null
           primary_color: string | null
           secondary_color: string | null
           sidebar_image_url: string | null
           slug: string
           status: string | null
+          storage_used_bytes: number | null
           theme_mode: string | null
           timezone: string | null
           updated_at: string | null
         }
         Insert: {
           accent_color?: string | null
+          block_reason?: string | null
           created_at?: string | null
           currency?: string | null
           favicon_url?: string | null
           font_family?: string | null
           id?: string
+          is_blocked?: boolean | null
           language?: string | null
           login_image_url?: string | null
           logo_url?: string | null
           name: string
+          plan_id?: string | null
           plan_tier?: string | null
           primary_color?: string | null
           secondary_color?: string | null
           sidebar_image_url?: string | null
           slug: string
           status?: string | null
+          storage_used_bytes?: number | null
           theme_mode?: string | null
           timezone?: string | null
           updated_at?: string | null
         }
         Update: {
           accent_color?: string | null
+          block_reason?: string | null
           created_at?: string | null
           currency?: string | null
           favicon_url?: string | null
           font_family?: string | null
           id?: string
+          is_blocked?: boolean | null
           language?: string | null
           login_image_url?: string | null
           logo_url?: string | null
           name?: string
+          plan_id?: string | null
           plan_tier?: string | null
           primary_color?: string | null
           secondary_color?: string | null
           sidebar_image_url?: string | null
           slug?: string
           status?: string | null
+          storage_used_bytes?: number | null
           theme_mode?: string | null
           timezone?: string | null
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "companies_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "plans"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       employees: {
         Row: {
@@ -854,6 +874,92 @@ export type Database = {
           },
         ]
       }
+      plans: {
+        Row: {
+          active: boolean | null
+          created_at: string | null
+          description: string | null
+          id: string
+          max_clients: number | null
+          max_users: number | null
+          modules: Json | null
+          name: string
+          price_monthly: number | null
+          price_yearly: number | null
+          storage_gb: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          active?: boolean | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          max_clients?: number | null
+          max_users?: number | null
+          modules?: Json | null
+          name: string
+          price_monthly?: number | null
+          price_yearly?: number | null
+          storage_gb?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          active?: boolean | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          max_clients?: number | null
+          max_users?: number | null
+          modules?: Json | null
+          name?: string
+          price_monthly?: number | null
+          price_yearly?: number | null
+          storage_gb?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      platform_logs: {
+        Row: {
+          action: string
+          company_id: string | null
+          created_at: string | null
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          company_id?: string | null
+          created_at?: string | null
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          company_id?: string | null
+          created_at?: string | null
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "platform_logs_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       product_movements: {
         Row: {
           actor: string | null
@@ -1118,7 +1224,7 @@ export type Database = {
       revert_order_stock: { Args: { _order_id: string }; Returns: undefined }
     }
     Enums: {
-      app_role: "admin" | "staff"
+      app_role: "admin" | "staff" | "super_admin"
       order_status:
         | "new"
         | "awaiting_deposit"
@@ -1260,7 +1366,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "staff"],
+      app_role: ["admin", "staff", "super_admin"],
       order_status: [
         "new",
         "awaiting_deposit",
