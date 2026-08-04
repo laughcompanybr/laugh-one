@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useCompany } from "./use-company";
+import { useCompany } from "@/domains/tenants/hooks/use-company";
 
 export function useAudit() {
   const { company } = useCompany();
