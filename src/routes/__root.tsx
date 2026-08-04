@@ -16,6 +16,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { ThemeProvider } from "@/hooks/use-theme";
 import { CompanyProvider } from "@/hooks/use-company";
 import { ImpersonationBanner } from "@/components/admin/ImpersonationBanner";
+import { ModulesProvider } from "@/hooks/use-modules";
 
 function NotFoundComponent() {
   return (
@@ -153,9 +154,11 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <CompanyProvider>
-          <ImpersonationBanner />
-          <Outlet />
-          <Toaster richColors position="top-right" />
+          <ModulesProvider>
+            <ImpersonationBanner />
+            <Outlet />
+            <Toaster richColors position="top-right" />
+          </ModulesProvider>
         </CompanyProvider>
       </ThemeProvider>
     </QueryClientProvider>
