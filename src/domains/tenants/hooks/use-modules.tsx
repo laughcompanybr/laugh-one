@@ -46,8 +46,8 @@ export function ModulesProvider({ children }: { children: ReactNode }) {
 
       try {
         const [modulesRes, companyModulesRes] = await Promise.all([
-          supabase.from("modules" as any).select("*").order("default_order"),
-          supabase.from("company_modules" as any).select("module_id, is_enabled").eq("company_id", company.id)
+          supabase.from("modules").select("*").order("default_order"),
+          supabase.from("company_modules").select("module_id, is_enabled").eq("company_id", company.id)
         ]);
 
         if (modulesRes.error) throw modulesRes.error;
