@@ -30,12 +30,11 @@ function ModulesPage() {
           company_id: company.id,
           module_id: moduleId,
           is_enabled: enabled,
-          updated_at: new Error().toISOString(),
+          updated_at: new Date().toISOString(),
         }, { onConflict: "company_id,module_id" });
 
       if (error) throw error;
-      toast.success(\`Módulo \${enabled ? "ativado" : "desativado"} com sucesso!\`);
-      // Force refresh usually handled by router.invalidate() in production
+      toast.success(`Módulo ${enabled ? "ativado" : "desativado"} com sucesso!`);
       window.location.reload();
     } catch (error: any) {
       toast.error("Erro ao alterar módulo: " + error.message);
@@ -44,7 +43,7 @@ function ModulesPage() {
     }
   };
 
-  if (isLoading) return <div className="p-8">Carregando módulos...</div>;
+  if (isLoading) return <div className="p-8 text-center text-muted-foreground">Carregando módulos...</div>;
 
   const categories = Array.from(new Set(modules.map((m) => m.category)));
 
