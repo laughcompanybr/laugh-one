@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getCurrentCompany } from "@/features/companies/companies.functions";
+import { getCurrentCompany } from "../legacy/companies.functions";
 
 interface Company {
   id: string;
