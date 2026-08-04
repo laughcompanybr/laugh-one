@@ -11,8 +11,10 @@ import {
   Boxes,
   LayoutGrid,
   Shield,
+  Activity,
   type LucideIcon,
 } from "lucide-react";
+
 
 export interface NavItem {
   title: string;
