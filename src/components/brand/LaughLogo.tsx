@@ -1,4 +1,4 @@
-import { Laugh } from "lucide-react";
+import logoAsset from "@/assets/laughone.png.asset.json";
 
 interface LaughLogoProps {
   size?: number;
@@ -10,10 +10,14 @@ export function LaughLogo({ size = 36, className, showWordmark = true }: LaughLo
   return (
     <div className={`flex items-center gap-3 ${className ?? ""}`}>
       <div 
-        className="flex items-center justify-center rounded-xl bg-primary shadow-lg"
+        className="flex items-center justify-center overflow-hidden"
         style={{ width: size, height: size }}
       >
-        <Laugh className="text-primary-foreground" style={{ width: size * 0.6, height: size * 0.6 }} />
+        <img 
+          src={logoAsset.url} 
+          alt="Laugh One Logo" 
+          className="h-full w-full object-contain"
+        />
       </div>
       {showWordmark && (
         <div className="flex flex-col">

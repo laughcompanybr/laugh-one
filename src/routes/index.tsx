@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Sparkles } from "lucide-react";
+import logoAsset from "@/assets/laughone.png.asset.json";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -17,13 +18,19 @@ function Index() {
           <span>Laugh One</span>
         </div>
         
+        <img 
+          src={logoAsset.url} 
+          alt="Laugh One Logo" 
+          className="mb-8 size-32 object-contain drop-shadow-2xl"
+        />
+        
         <h1 className="font-display text-balance text-4xl font-bold leading-[1.1] tracking-tight text-foreground sm:text-5xl lg:text-6xl">
           Laugh One
         </h1>
         
         <div className="mt-8 max-w-2xl text-pretty text-lg text-muted-foreground sm:text-xl">
-          <p className="mb-4 font-semibold text-foreground">Implementação do Painel Super Admin Laugh One</p>
-          <p>Iniciando a criação do centro de comando exclusivo para a Laugh Company gerenciar planos, empresas e a saúde global da plataforma.</p>
+          <p className="mb-4 font-semibold text-foreground">Identidade Visual Laugh One</p>
+          <p>Esta é a nova logo oficial da empresa, integrada em toda a plataforma SaaS.</p>
         </div>
         
         <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
