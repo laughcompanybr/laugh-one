@@ -20,43 +20,59 @@ export function PermissionsProvider({ children }: { children: ReactNode }) {
   const [userRoleId, setUserRoleId] = useState<string | null>(null);
 
   useEffect(() => {
+    let isMounted = true;
+
     async function loadUserPermissions() {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        setIsLoading(false);
+      setIsLoading(true);
+      
+      const { data: authData, error: authError } = await supabase.auth.getUser();
+      
+      if (authError || !authData.user) {
+        if (isMounted) {
+          setUserPermissions(new Set());
+          setIsLoading(false);
+        }
         return;
       }
 
       try {
         // 1. Get user profile to find their role_id
-        const { data: profile } = await supabase
+        const { data: profile, error: profileError } = await supabase
           .from("profiles")
-          .select("*")
-          .eq("id", user.id)
-          .single();
+          .select("role_id")
+          .eq("id", authData.user.id)
+          .maybeSingle();
 
-        const roleId = (profile as any)?.role_id;
+        if (profileError) throw profileError;
+
+        const roleId = profile?.role_id;
 
         if (roleId) {
-          setUserRoleId(roleId);
+          if (isMounted) setUserRoleId(roleId);
           
-          const { data: rolePerms } = await supabase
-            .from("role_permissions" as any)
+          const { data: rolePerms, error: permsError } = await supabase
+            .from("role_permissions")
             .select("permission_id")
             .eq("role_id", roleId);
 
-          if (rolePerms) {
+          if (permsError) throw permsError;
+
+          if (isMounted && rolePerms) {
             setUserPermissions(new Set(rolePerms.map((p: any) => p.permission_id)));
           }
+        } else {
+          if (isMounted) setUserPermissions(new Set());
         }
       } catch (error) {
-        console.error("Error loading permissions:", error);
+        console.error("[Permissions] Error loading permissions:", error);
+        if (isMounted) setUserPermissions(new Set());
       } finally {
-        setIsLoading(false);
+        if (isMounted) setIsLoading(false);
       }
     }
 
     loadUserPermissions();
+    return () => { isMounted = false; };
   }, [company?.id]);
 
   const hasPermission = useMemo(() => (permissionId: string) => {
