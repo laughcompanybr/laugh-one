@@ -15,6 +15,7 @@ import { LaughLogo } from "@/components/brand/LaughLogo";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { NAV_ITEMS, type NavItem } from "./nav-config";
 import { useUserRole } from "@/hooks/use-user-role";
+import { useModules } from "@/hooks/use-modules";
 import { ShieldAlert } from "lucide-react";
 
 const GROUP_LABELS: Record<NavItem["group"], string> = {
@@ -29,9 +30,11 @@ export function AppSidebar() {
   const currentPath = useRouterState({ select: (s) => s.location.pathname });
   const { isSuperAdmin } = useUserRole();
 
+  const { isModuleEnabled } = useModules();
+
   const groups = (["operação", "gestão", "sistema"] as const).map((group) => ({
     group,
-    items: NAV_ITEMS.filter((i) => i.group === group),
+    items: NAV_ITEMS.filter((i) => i.group === group && isModuleEnabled(i.moduleId)),
   }));
 
   return (
