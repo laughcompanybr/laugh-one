@@ -19,6 +19,7 @@ export const getCompanyUsers = createServerFn({ method: "GET" })
   });
 
 export const updateUserRole = createServerFn({ method: "POST" })
+  .validator((d: { profileId: string, roleId: string }) => d)
   .handler(async ({ data }) => {
     return updateUserRoleRepo({ data });
   });
