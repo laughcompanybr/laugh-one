@@ -14,12 +14,117 @@ export type Database = {
   }
   public: {
     Tables: {
+      app_settings: {
+        Row: {
+          created_at: string
+          description: string | null
+          key: string
+          updated_at: string
+          updated_by: string | null
+          value: Json
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          key: string
+          updated_at?: string
+          updated_by?: string | null
+          value?: Json
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          key?: string
+          updated_at?: string
+          updated_by?: string | null
+          value?: Json
+        }
+        Relationships: []
+      }
+      audit_log: {
+        Row: {
+          actor: string | null
+          changed_at: string
+          id: number
+          new_data: Json | null
+          old_data: Json | null
+          operation: string
+          record_id: string
+          table_name: string
+        }
+        Insert: {
+          actor?: string | null
+          changed_at?: string
+          id?: number
+          new_data?: Json | null
+          old_data?: Json | null
+          operation: string
+          record_id: string
+          table_name: string
+        }
+        Update: {
+          actor?: string | null
+          changed_at?: string
+          id?: number
+          new_data?: Json | null
+          old_data?: Json | null
+          operation?: string
+          record_id?: string
+          table_name?: string
+        }
+        Relationships: []
+      }
+      client_attachments: {
+        Row: {
+          client_id: string
+          created_at: string
+          filename: string | null
+          id: string
+          kind: string | null
+          mime: string | null
+          size: number | null
+          storage_path: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          client_id: string
+          created_at?: string
+          filename?: string | null
+          id?: string
+          kind?: string | null
+          mime?: string | null
+          size?: number | null
+          storage_path: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          client_id?: string
+          created_at?: string
+          filename?: string | null
+          id?: string
+          kind?: string | null
+          mime?: string | null
+          size?: number | null
+          storage_path?: string
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_attachments_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       clients: {
         Row: {
           city: string | null
           cpf: string | null
           created_at: string
           created_by: string | null
+          deleted_at: string | null
           id: string
           instagram: string | null
           name: string
@@ -34,6 +139,7 @@ export type Database = {
           cpf?: string | null
           created_at?: string
           created_by?: string | null
+          deleted_at?: string | null
           id?: string
           instagram?: string | null
           name: string
@@ -48,12 +154,67 @@ export type Database = {
           cpf?: string | null
           created_at?: string
           created_by?: string | null
+          deleted_at?: string | null
           id?: string
           instagram?: string | null
           name?: string
           notes?: string | null
           phone?: string | null
           state?: string | null
+          updated_at?: string
+          whatsapp?: string | null
+        }
+        Relationships: []
+      }
+      employees: {
+        Row: {
+          base_salary: number | null
+          commission_percent: number | null
+          created_at: string
+          created_by: string | null
+          deleted_at: string | null
+          email: string | null
+          full_name: string
+          hire_date: string | null
+          id: string
+          notes: string | null
+          phone: string | null
+          role: string | null
+          status: string
+          updated_at: string
+          whatsapp: string | null
+        }
+        Insert: {
+          base_salary?: number | null
+          commission_percent?: number | null
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          email?: string | null
+          full_name: string
+          hire_date?: string | null
+          id?: string
+          notes?: string | null
+          phone?: string | null
+          role?: string | null
+          status?: string
+          updated_at?: string
+          whatsapp?: string | null
+        }
+        Update: {
+          base_salary?: number | null
+          commission_percent?: number | null
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          email?: string | null
+          full_name?: string
+          hire_date?: string | null
+          id?: string
+          notes?: string | null
+          phone?: string | null
+          role?: string | null
+          status?: string
           updated_at?: string
           whatsapp?: string | null
         }
@@ -179,6 +340,8 @@ export type Database = {
           cost_price: number
           created_at: string
           created_by: string | null
+          deleted_at: string | null
+          employee_id: string | null
           expected_delivery: string | null
           id: string
           model: string | null
@@ -201,6 +364,8 @@ export type Database = {
           cost_price?: number
           created_at?: string
           created_by?: string | null
+          deleted_at?: string | null
+          employee_id?: string | null
           expected_delivery?: string | null
           id?: string
           model?: string | null
@@ -223,6 +388,8 @@ export type Database = {
           cost_price?: number
           created_at?: string
           created_by?: string | null
+          deleted_at?: string | null
+          employee_id?: string | null
           expected_delivery?: string | null
           id?: string
           model?: string | null
@@ -247,6 +414,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "orders_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "orders_supplier_id_fkey"
             columns: ["supplier_id"]
             isOneToOne: false
@@ -261,6 +435,7 @@ export type Database = {
           created_at: string
           created_by: string | null
           direction: Database["public"]["Enums"]["payment_direction"]
+          employee_id: string | null
           id: string
           method: string | null
           notes: string | null
@@ -272,6 +447,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           direction: Database["public"]["Enums"]["payment_direction"]
+          employee_id?: string | null
           id?: string
           method?: string | null
           notes?: string | null
@@ -283,6 +459,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           direction?: Database["public"]["Enums"]["payment_direction"]
+          employee_id?: string | null
           id?: string
           method?: string | null
           notes?: string | null
@@ -290,6 +467,13 @@ export type Database = {
           paid_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "payments_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "payments_order_id_fkey"
             columns: ["order_id"]
@@ -332,6 +516,7 @@ export type Database = {
           company: string | null
           created_at: string
           created_by: string | null
+          deleted_at: string | null
           email: string | null
           id: string
           instagram: string | null
@@ -346,6 +531,7 @@ export type Database = {
           company?: string | null
           created_at?: string
           created_by?: string | null
+          deleted_at?: string | null
           email?: string | null
           id?: string
           instagram?: string | null
@@ -360,6 +546,7 @@ export type Database = {
           company?: string | null
           created_at?: string
           created_by?: string | null
+          deleted_at?: string | null
           email?: string | null
           id?: string
           instagram?: string | null
@@ -404,6 +591,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_staff_or_admin: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "staff"
