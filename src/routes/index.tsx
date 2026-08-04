@@ -30,7 +30,7 @@ function Index() {
         
         <div className="mt-8 max-w-2xl text-pretty text-lg text-muted-foreground sm:text-xl">
           <p className="mb-4 font-semibold text-foreground">SaaS Infrastructure Initialized</p>
-          <p>Execute esta instrucao no projeto: # Implementar Sistema Completo de Permissões (RBAC) do Laugh One...</p>
+          <p>Execute esta instrucao no projeto: # Implementar Sistema Completo de Auditoria e Observabilidade do Laugh One...</p>
         </div>
         
         <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
