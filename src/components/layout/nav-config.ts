@@ -10,6 +10,7 @@ import {
   Paperclip,
   Boxes,
   LayoutGrid,
+  Shield,
   type LucideIcon,
 } from "lucide-react";
 
