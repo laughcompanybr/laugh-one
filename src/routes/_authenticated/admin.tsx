@@ -32,8 +32,25 @@ function AdminDashboard() {
     <div className="space-y-8 animate-in fade-in duration-500">
       <PageHeader 
         title="Super Admin" 
-        description="Controle global da plataforma Laugh One."
+          description="Gerencie todas as empresas, planos e a saúde global do Laugh One."
       />
+
+      <div className="flex items-center gap-4 mb-8">
+        <Button asChild variant="outline" className="border-gold/20 hover:bg-gold/5">
+          <Link to="/admin/empresas">
+            <Building2 className="mr-2 size-4 text-gold" />
+            Gerenciar Empresas
+          </Link>
+        </Button>
+        <Button variant="outline" className="border-gold/20 hover:bg-gold/5">
+          <CreditCard className="mr-2 size-4 text-gold" />
+          Planos e Preços
+        </Button>
+        <Button variant="outline" className="border-gold/20 hover:bg-gold/5">
+          <History className="mr-2 size-4 text-gold" />
+          Audit Logs
+        </Button>
+      </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatCard 

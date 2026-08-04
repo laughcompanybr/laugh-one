@@ -1086,6 +1086,7 @@ export type Database = {
           created_at: string
           full_name: string | null
           id: string
+          impersonated_company_id: string | null
           theme: string | null
           updated_at: string
         }
@@ -1095,6 +1096,7 @@ export type Database = {
           created_at?: string
           full_name?: string | null
           id: string
+          impersonated_company_id?: string | null
           theme?: string | null
           updated_at?: string
         }
@@ -1104,6 +1106,7 @@ export type Database = {
           created_at?: string
           full_name?: string | null
           id?: string
+          impersonated_company_id?: string | null
           theme?: string | null
           updated_at?: string
         }
@@ -1111,6 +1114,13 @@ export type Database = {
           {
             foreignKeyName: "profiles_company_id_fkey"
             columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profiles_impersonated_company_id_fkey"
+            columns: ["impersonated_company_id"]
             isOneToOne: false
             referencedRelation: "companies"
             referencedColumns: ["id"]
