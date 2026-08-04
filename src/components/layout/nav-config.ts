@@ -32,5 +32,6 @@ export const NAV_ITEMS: NavItem[] = [
   { title: "Anexos", to: "/anexos", icon: Paperclip, group: "gestão", moduleId: "attachments" },
   { title: "Relatórios", to: "/relatorios", icon: FileBarChart, group: "gestão", moduleId: "reports" },
   { title: "Módulos", to: "/modulos", icon: LayoutGrid, group: "sistema", moduleId: "settings" },
+  { title: "Cargos e Permissões", to: "/cargos", icon: Shield, group: "sistema", moduleId: "settings" },
   { title: "Configurações", to: "/configuracoes", icon: Settings, group: "sistema", moduleId: "settings" },
 ];
