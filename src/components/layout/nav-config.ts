@@ -11,8 +11,10 @@ import {
   Boxes,
   LayoutGrid,
   Shield,
+  Activity,
   type LucideIcon,
 } from "lucide-react";
+
 
 export interface NavItem {
   title: string;
@@ -34,5 +36,7 @@ export const NAV_ITEMS: NavItem[] = [
   { title: "Relatórios", to: "/relatorios", icon: FileBarChart, group: "gestão", moduleId: "reports" },
   { title: "Módulos", to: "/modulos", icon: LayoutGrid, group: "sistema", moduleId: "settings" },
   { title: "Cargos e Permissões", to: "/cargos", icon: Shield, group: "sistema", moduleId: "settings" },
+  { title: "Auditoria", to: "/auditoria", icon: Activity, group: "sistema", moduleId: "settings" },
   { title: "Configurações", to: "/configuracoes", icon: Settings, group: "sistema", moduleId: "settings" },
+
 ];
