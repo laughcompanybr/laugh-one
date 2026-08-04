@@ -7,7 +7,7 @@ export const getCompanyModules = createServerFn({ method: "GET" })
     // If we're authenticated via middleware, we can use the user's company ID
     // but we'll use the supabase admin to ensure we can list available modules even if company_modules is empty
     const { data: modules, error: mError } = await supabaseAdmin
-      .from('modules')
+      .from('modules' as any)
       .select('*')
       .order('default_order');
 
