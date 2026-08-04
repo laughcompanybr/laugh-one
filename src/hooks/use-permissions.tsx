@@ -31,18 +31,19 @@ export function PermissionsProvider({ children }: { children: ReactNode }) {
         // 1. Get user profile to find their role_id
         const { data: profile } = await supabase
           .from("profiles")
-          .select("role_id")
+          .select("*")
           .eq("id", user.id)
           .single();
 
-        if (profile?.role_id) {
-          setUserRoleId(profile.role_id);
+        const roleId = (profile as any)?.role_id;
+
+        if (roleId) {
+          setUserRoleId(roleId);
           
-          // 2. Get permissions for this role
           const { data: rolePerms } = await supabase
             .from("role_permissions" as any)
             .select("permission_id")
-            .eq("role_id", profile.role_id);
+            .eq("role_id", roleId);
 
           if (rolePerms) {
             setUserPermissions(new Set(rolePerms.map((p: any) => p.permission_id)));
