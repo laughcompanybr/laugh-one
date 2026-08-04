@@ -309,6 +309,7 @@ export const createExpense = createServerFn({ method: "POST" })
         incurred_at: data.incurred_at,
         receipt_url: receipt,
         created_by: context.userId,
+        company_id: (context as any).companyId,
       })
       .select("id")
       .single();
@@ -386,6 +387,7 @@ export const createFinancialTransaction = createServerFn({ method: "POST" })
         notes: data.notes || null,
         receipt_url: receipt,
         created_by: context.userId,
+        company_id: (context as any).companyId,
       })
       .select("id")
       .single();
@@ -483,6 +485,7 @@ export const payPayable = createServerFn({ method: "POST" })
         notes: data.notes || null,
         receipt_url: receipt,
         created_by: context.userId,
+        company_id: (context as any).companyId,
       })
       .select("id")
       .single();
