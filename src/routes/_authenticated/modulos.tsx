@@ -56,8 +56,8 @@ function ModulesPage() {
       />
 
       {categories.map((category: any) => (
-        <div key={category} className="space-y-4">
-          <h3 className="text-lg font-semibold tracking-tight">{category}</h3>
+        <div key={String(category)} className="space-y-4">
+          <h3 className="text-lg font-semibold tracking-tight">{String(category)}</h3>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {modules
               .filter((m: any) => m.category === category)
