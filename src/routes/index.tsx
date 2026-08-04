@@ -14,7 +14,7 @@ function Index() {
       <div className="relative z-10 flex max-w-2xl flex-col items-center">
         <div className="mb-10 inline-flex items-center gap-2 rounded-full border border-gold/20 bg-gold/5 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-gold shadow-gold/10">
           <Sparkles className="size-3" />
-          <span>Painel Arkano 7</span>
+          <span>Laugh One</span>
         </div>
         
         <h1 className="font-display text-balance text-4xl font-bold leading-[1.1] tracking-tight text-foreground sm:text-5xl lg:text-6xl">
