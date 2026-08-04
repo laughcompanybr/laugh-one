@@ -147,9 +147,9 @@ function DashboardPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Visão geral"
-        title="Bom trabalho, hoje."
-        description="Painel executivo com o pulso da operação Arkano em tempo real."
+        eyebrow="Painel Executivo"
+        title="O tempo é seu maior ativo."
+        description="Gestão operacional Arkano com sofisticação e precisão em tempo real."
       />
       <Suspense fallback={<DashboardSkeleton />}>
         <DashboardContent />
@@ -166,9 +166,9 @@ function DashboardContent() {
     data.revenueMonth > 0 ? (data.profitMonth / data.revenueMonth) * 100 : 0;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-8 pb-10">
       {/* HERO KPIs — dense bento row */}
-      <section className="grid grid-cols-2 gap-3 md:grid-cols-4">
+      <section className="grid grid-cols-2 gap-4 md:grid-cols-4">
         <KpiTile
           eyebrow="Receita · mês"
           value={formatBRL(data.revenueMonth)}
@@ -203,7 +203,7 @@ function DashboardContent() {
       {/* Detalhamento do mês — auditoria rápida do cálculo do lucro líquido */}
       <section
         data-testid="profit-breakdown"
-        className="rounded-xl border border-border bg-card/40 p-4"
+        className="rounded-2xl border border-border bg-card/40 p-6 shadow-sm backdrop-blur-sm"
       >
         <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
           <h2 className="text-sm font-medium">Detalhamento do lucro · mês</h2>
@@ -245,7 +245,7 @@ function DashboardContent() {
 
 
       {/* Financeiro consolidado */}
-      <section className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
+      <section className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
         <MiniKpi label="A receber" value={formatBRL(data.receivable)} icon={Wallet} />
         <MiniKpi label="Comissão · mês" value={formatBRL(data.commissionMonth)} icon={CircleDollarSign} />
         <MiniKpi label="Taxas cartão · mês" value={formatBRL(data.cardFeesMonth)} icon={ReceiptText} />
@@ -257,9 +257,9 @@ function DashboardContent() {
 
 
       {/* Row 2: main chart + secondary KPIs */}
-      <section className="grid grid-cols-1 gap-3 lg:grid-cols-6">
+      <section className="grid grid-cols-1 gap-6 lg:grid-cols-6">
         <RevenueChart data={data.monthly} className="lg:col-span-4" />
-        <div className="grid grid-cols-2 gap-3 lg:col-span-2 lg:grid-cols-1">
+        <div className="grid grid-cols-2 gap-4 lg:col-span-2 lg:grid-cols-1">
           <MiniKpi label="Clientes" value={formatNumber(data.clientsTotal)} icon={Users} />
           <MiniKpi label="Pedidos · mês" value={formatNumber(data.ordersMonth)} icon={Package} />
           <MiniKpi label="Relógios · mês" value={formatNumber(data.watchesSoldMonth)} icon={Package} />
@@ -270,7 +270,7 @@ function DashboardContent() {
       </section>
 
       {/* Controle mensal: comparativo + top produtos */}
-      <section className="grid grid-cols-1 gap-3 lg:grid-cols-3">
+      <section className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <MonthlyComparison
           revenueMonth={data.revenueMonth}
           profitMonth={data.profitMonth}
@@ -283,7 +283,7 @@ function DashboardContent() {
       </section>
 
       {/* Row 3: orders chart + pipeline */}
-      <section className="grid grid-cols-1 gap-3 lg:grid-cols-3">
+      <section className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <OrdersChart data={data.monthly} className="lg:col-span-2" />
         <PipelineStack pipeline={data.pipeline} />
       </section>
@@ -326,7 +326,7 @@ function MonthlyComparison({
     </li>
   );
   return (
-    <div className="bento-tile p-5">
+    <div className="bento-tile p-6">
       <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">Comparação mensal</p>
       <h3 className="font-display text-lg">Mês atual vs anterior</h3>
       <ul className="mt-4 space-y-2.5">
@@ -339,7 +339,7 @@ function MonthlyComparison({
 
 function TopProducts({ items, className }: { items: DashboardStats["topProducts"]; className?: string }) {
   return (
-    <div className={cn("bento-tile p-5", className)}>
+    <div className={cn("bento-tile p-6", className)}>
       <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">Ranking</p>
       <h3 className="font-display text-lg">Produtos mais vendidos · mês</h3>
       {items.length === 0 ? (
@@ -476,7 +476,7 @@ function PipelineStack({ pipeline }: { pipeline: DashboardStats["pipeline"] }) {
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="bento-tile p-5"
+      className="bento-tile p-6"
     >
       <div className="mb-4 flex items-center justify-between">
         <div>
