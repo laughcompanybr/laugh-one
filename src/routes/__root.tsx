@@ -121,7 +121,7 @@ function RootShell({ children }: { children: ReactNode }) {
   // suppressHydrationWarning is needed. Users on the `light` theme see a
   // brief dark flash on first paint; dark users see nothing.
   return (
-    <html lang="pt-BR" className="dark" style={{ colorScheme: "dark" }}>
+    <html lang="pt-BR">
       <head>
         <HeadContent />
       </head>
