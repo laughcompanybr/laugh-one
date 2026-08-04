@@ -268,6 +268,93 @@ export type Database = {
         }
         Relationships: []
       }
+      financial_transactions: {
+        Row: {
+          amount: number
+          category: string | null
+          created_at: string
+          created_by: string | null
+          description: string
+          direction: Database["public"]["Enums"]["payment_direction"]
+          due_date: string | null
+          id: string
+          method: string | null
+          notes: string | null
+          paid_at: string | null
+          receipt_url: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          amount?: number
+          category?: string | null
+          created_at?: string
+          created_by?: string | null
+          description: string
+          direction: Database["public"]["Enums"]["payment_direction"]
+          due_date?: string | null
+          id?: string
+          method?: string | null
+          notes?: string | null
+          paid_at?: string | null
+          receipt_url?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          category?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          direction?: Database["public"]["Enums"]["payment_direction"]
+          due_date?: string | null
+          id?: string
+          method?: string | null
+          notes?: string | null
+          paid_at?: string | null
+          receipt_url?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      goals: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          month: string
+          notes: string | null
+          orders_target: number
+          profit_target: number
+          sales_target: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          month: string
+          notes?: string | null
+          orders_target?: number
+          profit_target?: number
+          sales_target?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          month?: string
+          notes?: string | null
+          orders_target?: number
+          profit_target?: number
+          sales_target?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       order_attachments: {
         Row: {
           created_at: string
@@ -355,6 +442,7 @@ export type Database = {
           amount_received: number
           brand: string | null
           client_id: string | null
+          commission: number | null
           cost_price: number
           created_at: string
           created_by: string | null
@@ -381,6 +469,7 @@ export type Database = {
           amount_received?: number
           brand?: string | null
           client_id?: string | null
+          commission?: number | null
           cost_price?: number
           created_at?: string
           created_by?: string | null
@@ -407,6 +496,7 @@ export type Database = {
           amount_received?: number
           brand?: string | null
           client_id?: string | null
+          commission?: number | null
           cost_price?: number
           created_at?: string
           created_by?: string | null
@@ -465,6 +555,7 @@ export type Database = {
           notes: string | null
           order_id: string | null
           paid_at: string
+          receipt_url: string | null
         }
         Insert: {
           amount: number
@@ -477,6 +568,7 @@ export type Database = {
           notes?: string | null
           order_id?: string | null
           paid_at?: string
+          receipt_url?: string | null
         }
         Update: {
           amount?: number
@@ -489,6 +581,7 @@ export type Database = {
           notes?: string | null
           order_id?: string | null
           paid_at?: string
+          receipt_url?: string | null
         }
         Relationships: [
           {
