@@ -17,6 +17,7 @@ import { ThemeProvider } from "@/hooks/use-theme";
 import { CompanyProvider } from "@/hooks/use-company";
 import { ImpersonationBanner } from "@/components/admin/ImpersonationBanner";
 import { ModulesProvider } from "@/hooks/use-modules";
+import { PermissionsProvider } from "@/hooks/use-permissions";
 
 function NotFoundComponent() {
   return (
@@ -155,9 +156,11 @@ function RootComponent() {
       <ThemeProvider>
         <CompanyProvider>
           <ModulesProvider>
-            <ImpersonationBanner />
-            <Outlet />
-            <Toaster richColors position="top-right" />
+            <PermissionsProvider>
+              <ImpersonationBanner />
+              <Outlet />
+              <Toaster richColors position="top-right" />
+            </PermissionsProvider>
           </ModulesProvider>
         </CompanyProvider>
       </ThemeProvider>
