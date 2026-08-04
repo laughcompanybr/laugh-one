@@ -12,8 +12,10 @@ import {
   LayoutGrid,
   Shield,
   Activity,
+  Zap,
   type LucideIcon,
 } from "lucide-react";
+
 
 
 export interface NavItem {
