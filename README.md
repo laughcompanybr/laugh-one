@@ -1,29 +1,44 @@
-# Welcome to your Lovable project
+# Arkano Club
 
-This project was built with [Lovable](https://lovable.dev).
+Painel executivo proprietário — gestão de pedidos, clientes, financeiro e operações.
 
-## Build with Lovable
+**Developed by Laugh Company**
 
-Open your project in the [Lovable editor](https://lovable.dev) and keep building.
+## Stack
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: connect the project to GitHub and every change made in Lovable is committed straight to your repository.
-- **Full ownership**: this code is yours. Push to your repository and your changes sync back into Lovable, ready for your next prompt.
+- TanStack Start (React 19, Vite 7)
+- Tailwind CSS v4
+- Supabase (auth, database, storage)
+- TanStack Query
+- Framer Motion, Recharts
 
-## Development
+## Scripts
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
-
-```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
-npm run dev
+```bash
+bun install
+bun run dev        # dev server
+bun run build      # production build
+bun run preview    # serve build
+bun run lint
 ```
 
-## Built with
+## Estrutura
 
-- TanStack Start
-- TypeScript
-- React
-- Tailwind CSS
+- `src/routes/` — rotas file-based (TanStack Router)
+- `src/components/` — componentes de UI reutilizáveis
+- `src/features/` — módulos por domínio (auth, pedidos, etc.)
+- `src/lib/` — utilitários e server functions
+- `src/integrations/supabase/` — client do backend
+
+## Deploy
+
+Guia completo em [`DEPLOYMENT.md`](./DEPLOYMENT.md) — cobre Vercel (alvo
+principal), Netlify, Node/VPS e Docker, além da migração de banco Supabase
+próprio a partir das migrações em `supabase/migrations/`.
+
+Variáveis de ambiente necessárias estão documentadas em
+[`.env.example`](./.env.example).
+
+---
+
+© Laugh. Todos os direitos reservados.
