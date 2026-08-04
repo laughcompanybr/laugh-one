@@ -335,6 +335,54 @@ export type Database = {
           },
         ]
       }
+      company_modules: {
+        Row: {
+          activated_at: string | null
+          company_id: string
+          custom_order: number | null
+          id: string
+          is_enabled: boolean | null
+          module_id: string
+          settings: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          activated_at?: string | null
+          company_id: string
+          custom_order?: number | null
+          id?: string
+          is_enabled?: boolean | null
+          module_id: string
+          settings?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          activated_at?: string | null
+          company_id?: string
+          custom_order?: number | null
+          id?: string
+          is_enabled?: boolean | null
+          module_id?: string
+          settings?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_modules_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "company_modules_module_id_fkey"
+            columns: ["module_id"]
+            isOneToOne: false
+            referencedRelation: "modules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       coupons: {
         Row: {
           active: boolean | null
@@ -631,6 +679,51 @@ export type Database = {
           id?: string
           used_at?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      modules: {
+        Row: {
+          category: string
+          created_at: string | null
+          default_order: number | null
+          dependencies: string[] | null
+          description: string | null
+          icon: string | null
+          id: string
+          is_core: boolean | null
+          main_route: string
+          name: string
+          status: string | null
+          version: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          default_order?: number | null
+          dependencies?: string[] | null
+          description?: string | null
+          icon?: string | null
+          id: string
+          is_core?: boolean | null
+          main_route: string
+          name: string
+          status?: string | null
+          version?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          default_order?: number | null
+          dependencies?: string[] | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_core?: boolean | null
+          main_route?: string
+          name?: string
+          status?: string | null
+          version?: string | null
         }
         Relationships: []
       }
