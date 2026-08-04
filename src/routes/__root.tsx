@@ -14,6 +14,7 @@ import { reportError } from "../lib/error-reporting";
 import { Toaster } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { ThemeProvider } from "@/hooks/use-theme";
+import { CompanyProvider } from "@/hooks/use-company";
 
 function NotFoundComponent() {
   return (
@@ -150,8 +151,10 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
-        <Outlet />
-        <Toaster richColors position="top-right" />
+        <CompanyProvider>
+          <Outlet />
+          <Toaster richColors position="top-right" />
+        </CompanyProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );

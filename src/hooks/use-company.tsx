@@ -8,14 +8,14 @@ interface Company {
   slug: string;
   logo_url?: string | null;
   favicon_url?: string | null;
-  primary_color: string;
-  secondary_color: string;
-  accent_color: string;
-  font_family: string;
-  theme_mode: 'light' | 'dark' | 'system';
-  language: string;
-  currency: string;
-  timezone: string;
+  primary_color: string | null;
+  secondary_color: string | null;
+  accent_color: string | null;
+  font_family: string | null;
+  theme_mode: string | null;
+  language: string | null;
+  currency: string | null;
+  timezone: string | null;
 }
 
 interface CompanyContextValue {
