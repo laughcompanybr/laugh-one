@@ -1,8 +1,11 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
-import { Loader2 } from "lucide-react";
+import { Loader2, UserPlus, LogOut } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/layout/AppShell";
 import { LaughLogo } from "@/components/brand/LaughLogo";
+import { Button } from "@/components/ui/button";
+import { useQuery } from "@tanstack/react-query";
+import { getProfile } from "@/domains/auth/services/AuthService";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
@@ -43,6 +46,48 @@ function AuthPending() {
 
 
 function LayoutComponent() {
+  const { data: profile, isLoading } = useQuery({
+    queryKey: ["user-profile"],
+    queryFn: () => getProfile(),
+  });
+
+  if (isLoading) return <AuthPending />;
+
+  // Se o usuário está logado mas não tem perfil (não vinculado a empresa/cargo)
+  if (!profile) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center gap-6 bg-background p-4 text-center">
+        <LaughLogo size={48} showWordmark />
+        <div className="max-w-md space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
+          <div className="inline-flex size-16 items-center justify-center rounded-full bg-gold/10 text-gold">
+            <UserPlus className="size-8" />
+          </div>
+          <h1 className="text-2xl font-bold">Quase lá!</h1>
+          <p className="text-muted-foreground">
+            Sua conta foi criada, mas você ainda não foi vinculado a uma empresa ou cargo no sistema. 
+            Entre em contato com o administrador para liberar seu acesso.
+          </p>
+          <div className="flex flex-col gap-3 pt-4">
+            <Button 
+              variant="outline" 
+              className="w-full gap-2"
+              onClick={() => window.location.reload()}
+            >
+              Já fui liberado, atualizar
+            </Button>
+            <Button 
+              variant="ghost" 
+              className="w-full gap-2 text-muted-foreground"
+              onClick={() => supabase.auth.signOut().then(() => window.location.href = "/auth")}
+            >
+              <LogOut className="size-4" /> Sair do sistema
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <AppShell>
       <Outlet />
