@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Sparkles } from "lucide-react";
+import logoAsset from "@/assets/laughone.png.asset.json";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -18,7 +19,7 @@ function Index() {
         </div>
         
         <img 
-          src={(await import("@/assets/laughone.png.asset.json")).default.url} 
+          src={logoAsset.url} 
           alt="Laugh One Logo" 
           className="mb-8 size-32 object-contain drop-shadow-2xl"
         />
