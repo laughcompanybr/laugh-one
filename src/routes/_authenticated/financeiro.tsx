@@ -1009,7 +1009,7 @@ function MovementsTab({ from, to }: { from: string; to: string }) {
                   <TableCell className="font-medium">{t.description}</TableCell>
                   <TableCell>{t.category ? <Badge variant="secondary">{t.category}</Badge> : <span className="text-muted-foreground">—</span>}</TableCell>
                   <TableCell className="text-muted-foreground">{t.method ? txMethodLabel(t.method) : "—"}</TableCell>
-                  <TableCell><StatusBadge status={t.status} /></TableCell>
+                  <TableCell><StatusBadge status={t.status as any} /></TableCell>
                   <TableCell
                     className={cn(
                       "text-right font-semibold",
