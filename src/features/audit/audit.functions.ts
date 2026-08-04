@@ -16,7 +16,6 @@ export const logEvent = createServerFn({ method: "POST" })
   }).parse(data))
   .handler(async ({ data, context }) => {
     // In a real environment, we'd get company_id and user_id from context
-    // This function can be called manually for events that triggers can't catch (login, etc)
     return { success: true };
   });
 
@@ -28,7 +27,7 @@ export const getAuditLogs = createServerFn({ method: "GET" })
   }).parse(data))
   .handler(async ({ data }) => {
     const { data: logs, error } = await supabaseAdmin
-      .from('audit_logs')
+      .from('audit_logs' as any)
       .select('*')
       .eq('company_id', data.companyId)
       .order('created_at', { ascending: false })
@@ -37,3 +36,4 @@ export const getAuditLogs = createServerFn({ method: "GET" })
     if (error) throw new Error(error.message);
     return logs;
   });
+EOF
