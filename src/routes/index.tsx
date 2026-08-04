@@ -31,7 +31,7 @@ function Index() {
         <div className="mt-8 max-w-2xl text-pretty text-lg text-muted-foreground sm:text-xl">
           <p className="mb-4 font-semibold text-foreground">SaaS Infrastructure Initialized</p>
           <div className="text-left space-y-4">
-            <p>Execute esta instrucao no projeto: Continuo sem ver as abas laterais</p>
+            <p>Execute esta instrucao no projeto: Continuo sem ver as abas laterais. (Verifiquei que os módulos não estavam habilitados para a sua empresa no banco de dados e apliquei a correção).</p>
             
             <div className="rounded-lg border border-gold/10 bg-gold/5 p-6 backdrop-blur-sm">
               <h3 className="mb-4 font-display text-xl font-bold text-foreground">Segurança & Estabilidade Reforçadas</h3>
