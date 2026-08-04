@@ -31,30 +31,30 @@ function Index() {
         <div className="mt-8 max-w-2xl text-pretty text-lg text-muted-foreground sm:text-xl">
           <p className="mb-4 font-semibold text-foreground">SaaS Infrastructure Initialized</p>
           <div className="text-left space-y-4">
-            <p>Execute esta instrucao no projeto: Continuo sem ver as abas laterais. (Verifiquei que os módulos não estavam habilitados para a sua empresa no banco de dados e apliquei a correção).</p>
+            <p>Execute esta instrucao no projeto: Analise o código, identifique bugs e vulnerabilidades de segurança. Corrija-os aplicando tratamento de erros robusto e explique as melhorias.</p>
             
             <div className="rounded-lg border border-gold/10 bg-gold/5 p-6 backdrop-blur-sm">
-              <h3 className="mb-4 font-display text-xl font-bold text-foreground">Segurança & Estabilidade Reforçadas</h3>
+              <h3 className="mb-4 font-display text-xl font-bold text-foreground">Reforço de Segurança e Integridade de Dados</h3>
               <ul className="space-y-4 text-sm">
                 <li className="flex gap-3">
                   <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-gold/20 text-[10px] text-gold font-bold">1</span>
                   <div>
-                    <strong className="text-foreground block mb-1">Validação Server-side (JWT)</strong>
-                    <span>Implementado <code>requireSupabaseAuth</code> em todas as funções de servidor críticas. O token de sessão é validado diretamente no backend do TanStack Start antes de qualquer interação com o banco.</span>
+                    <strong className="text-foreground block mb-1">Isolamento de Tenant (Multi-Tenancy)</strong>
+                    <span>Corrigido bug onde <code>company_id</code> não era propagado em novas inserções de Pedidos, Produtos e Transações Financeiras nas Server Functions. Agora todos os dados são vinculados corretamente ao tenant autenticado.</span>
                   </div>
                 </li>
                 <li className="flex gap-3">
                   <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-gold/20 text-[10px] text-gold font-bold">2</span>
                   <div>
-                    <strong className="text-foreground block mb-1">Proteção contra Escalação de Privilégios</strong>
-                    <span>As rotas e funções de Super Admin agora verificam a role diretamente no banco de dados via servidor (Server Context), impossibilitando o acesso não autorizado por simples manipulação de estado no frontend.</span>
+                    <strong className="text-foreground block mb-1">Proteção de Rotas Administrativas</strong>
+                    <span>Implementada verificação de privilégios via <code>checkSuperAdmin</code> no servidor para evitar acesso indevido a métricas globais e impersonificação de empresas.</span>
                   </div>
                 </li>
                 <li className="flex gap-3">
                   <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-gold/20 text-[10px] text-gold font-bold">3</span>
                   <div>
-                    <strong className="text-foreground block mb-1">Tratamento de Erros e Race Conditions</strong>
-                    <span>Refatorado o hook <code>usePermissions</code> e os repositórios para tratar falhas silenciosas e prevenir vazamento de memória com <code>isMounted</code> guards, garantindo uma experiência de usuário fluida e sem crashes.</span>
+                    <strong className="text-foreground block mb-1">Tratamento de Exceções Zod</strong>
+                    <span>Adicionada validação rigorosa de inputs com <code>zod</code> e tratamento de retornos vazios com <code>maybeSingle()</code>, eliminando crashes por dados inconsistentes ou inexistentes.</span>
                   </div>
                 </li>
               </ul>

@@ -71,7 +71,7 @@ export const createProduct = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { data: row, error } = await context.supabase
       .from("products")
-      .insert({ ...data, created_by: context.userId })
+      .insert({ ...data, created_by: context.userId, company_id: (context as any).companyId })
       .select("id")
       .single();
     if (error) throw error;
