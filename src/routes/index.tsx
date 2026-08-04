@@ -12,7 +12,7 @@ function Index() {
     >
       <div className="max-w-md">
         <h1 className="text-xl font-semibold text-neutral-800">
-          Execute esta instrucao no projeto: Analise os anexos enviados.
+          Execute esta instrucao no projeto: Melhore a estética da interface usando princípios modernos de design (espaçamento, cores harmônicas e tipografia) para um visual de software premium.
         </h1>
         <p className="mt-4 text-neutral-600">
           Estou pronto para processar os arquivos do Painel Arkano 7.
