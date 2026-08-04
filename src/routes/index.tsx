@@ -22,8 +22,8 @@ function Index() {
         </h1>
         
         <div className="mt-8 max-w-2xl text-pretty text-lg text-muted-foreground sm:text-xl">
-          <p className="mb-4 font-semibold text-foreground">Transformação Completa do CRM para Laugh One – Plataforma SaaS Multi-Tenant White Label</p>
-          <p>Estou iniciando a migração da arquitetura para suporte a múltiplas empresas, isolamento total de dados via RLS e personalização White Label completa.</p>
+          <p className="mb-4 font-semibold text-foreground">Implementação do Painel Super Admin Laugh One</p>
+          <p>Iniciando a criação do centro de comando exclusivo para a Laugh Company gerenciar planos, empresas e a saúde global da plataforma.</p>
         </div>
         
         <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
