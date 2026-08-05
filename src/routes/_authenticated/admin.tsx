@@ -21,6 +21,7 @@ import {
 import { PageHeader } from "@/components/common/PageHeader";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getPlatformStats } from "@/features/admin/admin.functions";
 import { useState } from "react";
@@ -170,7 +171,7 @@ function UserProvisioningWizard() {
 
   const mutation = useMutation({
     mutationFn: (vars: { userId: string, companyId: string, roleId: string }) => 
-      provisionUser(vars),
+      provisionUser({ data: vars }),
     onSuccess: () => {
       toast.success("Usuário vinculado com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["unlinked-users"] });
