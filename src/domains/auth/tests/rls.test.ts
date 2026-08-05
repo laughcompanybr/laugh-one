@@ -43,6 +43,6 @@ describe('Multi-Tenant RLS & Integration Tests', () => {
     expect(error).toBeNull();
     expect(Array.isArray(modules)).toBe(true);
     // Core modules should usually be present
-    expect(modules.length).toBeGreaterThan(0);
+    expect(modules?.length).toBeGreaterThan(0);
   });
 });
