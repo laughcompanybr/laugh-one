@@ -475,8 +475,8 @@ export const getGoalStats = createServerFn({ method: "POST" })
 
     const [goalsRes, paymentsRes, ordersRes] = await Promise.all([
       (supabase as any).from("goals").select("*").order("month", { ascending: false }),
-      (supabase as any).from("payments").select("amount, paid_at, direction").eq("direction", "in"),
-      (supabase as any).from("orders").select("id, order_number, sale_price, cost_price, commission, card_fee, shipping, other_costs, created_at, clients(name)").is("deleted_at", null),
+      (supabase as any).from("payments").select("amount, paid_at, direction, company_id").eq("direction", "in"),
+      (supabase as any).from("orders").select("id, order_number, sale_price, cost_price, commission, card_fee, shipping, other_costs, created_at, company_id, clients(name)").is("deleted_at", null),
     ]);
 
     const goals = goalsRes.data ?? [];

@@ -52,6 +52,7 @@ function SettingsPage() {
       state: formData.get("state") as string,
       country: formData.get("country") as string,
       employee_count: parseInt(formData.get("employee_count") as string) || 0,
+      operating_segment: formData.get("operating_segment") as string,
       // Logic for arrays and jsonb would go here if needed, keeping it simple for text fields
     };
     mutation.mutate(data);
