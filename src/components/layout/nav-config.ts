@@ -47,5 +47,8 @@ export const NAV_ITEMS: NavItem[] = [
   { title: "Módulos", to: "/modulos", icon: LayoutGrid, group: "sistema", moduleId: "settings" },
   { title: "Cargos e Permissões", to: "/cargos", icon: Shield, group: "sistema", moduleId: "settings" },
   { title: "Auditoria", to: "/auditoria", icon: Activity, group: "sistema", moduleId: "settings" },
+  { title: "Auditoria", to: "/auditoria", icon: Activity, group: "sistema", moduleId: "settings" },
+  { title: "Cargos e Permissões", to: "/cargos", icon: Shield, group: "sistema", moduleId: "settings" },
   { title: "Configurações", to: "/configuracoes", icon: Settings, group: "sistema", moduleId: "settings" },
 ];
+
