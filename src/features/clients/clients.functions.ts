@@ -99,7 +99,7 @@ export const createClient = createServerFn({ method: "POST" })
     const { supabase, userId } = context;
     const { data: row, error } = await supabase
       .from("clients")
-      .insert({ ...data, created_by: userId })
+      .insert({ ...data, created_by: userId, company_id: (context as any).companyId })
       .select("id")
       .single();
     if (error) throw error;
@@ -155,7 +155,7 @@ export const addClientAttachment = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { data: row, error } = await context.supabase
       .from("client_attachments")
-      .insert({ ...data, uploaded_by: context.userId })
+      .insert({ ...data, uploaded_by: context.userId, company_id: (context as any).companyId })
       .select("id")
       .single();
     if (error) throw error;
