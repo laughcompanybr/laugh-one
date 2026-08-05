@@ -1,4 +1,4 @@
-# Deploy — Arkano Club
+# Deploy — Laugh One
 
 Guia de deploy do projeto em ambiente próprio (Vercel), incluindo migração
 do banco Supabase.

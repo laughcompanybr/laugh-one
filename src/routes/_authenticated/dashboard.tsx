@@ -149,7 +149,7 @@ function DashboardPage() {
     <>
       <PageHeader
         eyebrow="Painel Executivo"
-        title="O tempo é seu maior ativo."
+        title="Tecnologia criada para negócios que evoluem.."
         description="Painel SaaS com o controle total da sua operação Laugh One."
       />
       <Suspense fallback={<DashboardSkeleton />}>
