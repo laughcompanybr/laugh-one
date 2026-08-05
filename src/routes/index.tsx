@@ -34,11 +34,11 @@ function LandingPage() {
       <main className="relative z-10 max-w-7xl mx-auto px-6 pt-20 pb-32">
         <div className="max-w-4xl space-y-8">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-xs font-bold tracking-widest uppercase">
-            <CheckCircle className="size-3" /> Sistema de Permissões (RBAC) Restaurado
+            <CheckCircle className="size-3" /> Novo Módulo: Relatórios Mensais Consolidados
           </div>
           
           <h1 className="text-5xl md:text-7xl font-bold tracking-tight leading-[1.1]">
-            Erro de Sintaxe UUID <span className="text-gold italic">Corrigido</span> e Provisionamento Blindado.
+            Organização <span className="text-gold italic">Mensal</span> e Fechamento Operacional Blindado.
           </h1>
           
           <div className="mt-8 p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl">
