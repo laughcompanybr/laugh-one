@@ -317,8 +317,6 @@ export type Database = {
           onboarding_status: string | null
           operating_segment: string | null
           phone: string | null
-          plan_id: string | null
-          plan_tier: string | null
           primary_color: string | null
           primary_font: string | null
           secondary_color: string | null
@@ -370,8 +368,6 @@ export type Database = {
           onboarding_status?: string | null
           operating_segment?: string | null
           phone?: string | null
-          plan_id?: string | null
-          plan_tier?: string | null
           primary_color?: string | null
           primary_font?: string | null
           secondary_color?: string | null
@@ -423,8 +419,6 @@ export type Database = {
           onboarding_status?: string | null
           operating_segment?: string | null
           phone?: string | null
-          plan_id?: string | null
-          plan_tier?: string | null
           primary_color?: string | null
           primary_font?: string | null
           secondary_color?: string | null
@@ -444,15 +438,7 @@ export type Database = {
           website?: string | null
           whatsapp?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "companies_plan_id_fkey"
-            columns: ["plan_id"]
-            isOneToOne: false
-            referencedRelation: "plans"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       company_activity_logs: {
         Row: {
@@ -668,7 +654,6 @@ export type Database = {
           discount_percent: number | null
           id: string
           max_uses: number | null
-          plan_id: string | null
           uses_count: number | null
           valid_until: string | null
         }
@@ -681,7 +666,6 @@ export type Database = {
           discount_percent?: number | null
           id?: string
           max_uses?: number | null
-          plan_id?: string | null
           uses_count?: number | null
           valid_until?: string | null
         }
@@ -694,7 +678,6 @@ export type Database = {
           discount_percent?: number | null
           id?: string
           max_uses?: number | null
-          plan_id?: string | null
           uses_count?: number | null
           valid_until?: string | null
         }
@@ -704,13 +687,6 @@ export type Database = {
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "coupons_plan_id_fkey"
-            columns: ["plan_id"]
-            isOneToOne: false
-            referencedRelation: "plans"
             referencedColumns: ["id"]
           },
         ]
@@ -1479,90 +1455,6 @@ export type Database = {
         }
         Relationships: []
       }
-      plans: {
-        Row: {
-          active: boolean | null
-          billing_cycle: string | null
-          created_at: string | null
-          description: string | null
-          feature_list: string[] | null
-          features: Json | null
-          highlight_text: string | null
-          id: string
-          integrations: Json | null
-          max_clients: number | null
-          max_products: number | null
-          max_uploads: number | null
-          max_users: number | null
-          modules: Json | null
-          name: string
-          price: number | null
-          price_monthly: number | null
-          price_quarterly: number | null
-          price_semiannual: number | null
-          price_yearly: number | null
-          status: string | null
-          storage_gb: number | null
-          support_tier: string | null
-          trial_days: number | null
-          updated_at: string | null
-        }
-        Insert: {
-          active?: boolean | null
-          billing_cycle?: string | null
-          created_at?: string | null
-          description?: string | null
-          feature_list?: string[] | null
-          features?: Json | null
-          highlight_text?: string | null
-          id?: string
-          integrations?: Json | null
-          max_clients?: number | null
-          max_products?: number | null
-          max_uploads?: number | null
-          max_users?: number | null
-          modules?: Json | null
-          name: string
-          price?: number | null
-          price_monthly?: number | null
-          price_quarterly?: number | null
-          price_semiannual?: number | null
-          price_yearly?: number | null
-          status?: string | null
-          storage_gb?: number | null
-          support_tier?: string | null
-          trial_days?: number | null
-          updated_at?: string | null
-        }
-        Update: {
-          active?: boolean | null
-          billing_cycle?: string | null
-          created_at?: string | null
-          description?: string | null
-          feature_list?: string[] | null
-          features?: Json | null
-          highlight_text?: string | null
-          id?: string
-          integrations?: Json | null
-          max_clients?: number | null
-          max_products?: number | null
-          max_uploads?: number | null
-          max_users?: number | null
-          modules?: Json | null
-          name?: string
-          price?: number | null
-          price_monthly?: number | null
-          price_quarterly?: number | null
-          price_semiannual?: number | null
-          price_yearly?: number | null
-          status?: string | null
-          storage_gb?: number | null
-          support_tier?: string | null
-          trial_days?: number | null
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
       platform_logs: {
         Row: {
           action: string
@@ -1838,7 +1730,6 @@ export type Database = {
           id: string
           notes: string | null
           payment_date: string | null
-          plan_id: string | null
           receipt_url: string | null
           status: string
           subscription_id: string | null
@@ -1853,7 +1744,6 @@ export type Database = {
           id?: string
           notes?: string | null
           payment_date?: string | null
-          plan_id?: string | null
           receipt_url?: string | null
           status: string
           subscription_id?: string | null
@@ -1868,7 +1758,6 @@ export type Database = {
           id?: string
           notes?: string | null
           payment_date?: string | null
-          plan_id?: string | null
           receipt_url?: string | null
           status?: string
           subscription_id?: string | null
@@ -1882,13 +1771,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "subscription_payments_plan_id_fkey"
-            columns: ["plan_id"]
-            isOneToOne: false
-            referencedRelation: "plans"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "subscription_payments_subscription_id_fkey"
             columns: ["subscription_id"]
             isOneToOne: false
@@ -1897,80 +1779,100 @@ export type Database = {
           },
         ]
       }
+      subscription_pricing: {
+        Row: {
+          created_at: string
+          days: number
+          label: string
+          months: number
+          period: Database["public"]["Enums"]["billing_period"]
+          price: number
+          savings_percent: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          days: number
+          label: string
+          months: number
+          period: Database["public"]["Enums"]["billing_period"]
+          price: number
+          savings_percent?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          days?: number
+          label?: string
+          months?: number
+          period?: Database["public"]["Enums"]["billing_period"]
+          price?: number
+          savings_percent?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       subscriptions: {
         Row: {
           amount: number
-          billing_cycle: string | null
+          billing_period: Database["public"]["Enums"]["billing_period"]
           canceled_at: string | null
           company_id: string
-          created_at: string | null
+          created_at: string
           currency: string
-          expiry_date: string | null
-          frequency: string
+          expires_at: string
           gateway: string | null
           gateway_subscription_id: string | null
           id: string
-          is_trial: boolean | null
-          next_payment: string | null
-          plan_id: string
-          renewal_date: string
+          notes: string | null
+          plan_name: string
           start_date: string
           status: string
-          updated_at: string | null
+          updated_at: string
+          user_id: string | null
         }
         Insert: {
-          amount: number
-          billing_cycle?: string | null
+          amount?: number
+          billing_period?: Database["public"]["Enums"]["billing_period"]
           canceled_at?: string | null
           company_id: string
-          created_at?: string | null
+          created_at?: string
           currency?: string
-          expiry_date?: string | null
-          frequency?: string
+          expires_at: string
           gateway?: string | null
           gateway_subscription_id?: string | null
           id?: string
-          is_trial?: boolean | null
-          next_payment?: string | null
-          plan_id: string
-          renewal_date: string
+          notes?: string | null
+          plan_name?: string
           start_date?: string
           status?: string
-          updated_at?: string | null
+          updated_at?: string
+          user_id?: string | null
         }
         Update: {
           amount?: number
-          billing_cycle?: string | null
+          billing_period?: Database["public"]["Enums"]["billing_period"]
           canceled_at?: string | null
           company_id?: string
-          created_at?: string | null
+          created_at?: string
           currency?: string
-          expiry_date?: string | null
-          frequency?: string
+          expires_at?: string
           gateway?: string | null
           gateway_subscription_id?: string | null
           id?: string
-          is_trial?: boolean | null
-          next_payment?: string | null
-          plan_id?: string
-          renewal_date?: string
+          notes?: string | null
+          plan_name?: string
           start_date?: string
           status?: string
-          updated_at?: string | null
+          updated_at?: string
+          user_id?: string | null
         }
         Relationships: [
           {
             foreignKeyName: "subscriptions_company_id_fkey"
             columns: ["company_id"]
-            isOneToOne: true
-            referencedRelation: "companies"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "subscriptions_plan_id_fkey"
-            columns: ["plan_id"]
             isOneToOne: false
-            referencedRelation: "plans"
+            referencedRelation: "companies"
             referencedColumns: ["id"]
           },
         ]
@@ -2161,17 +2063,7 @@ export type Database = {
       }
     }
     Views: {
-      vw_available_plans: {
-        Row: {
-          active: boolean | null
-          billing_cycle: string | null
-          features: string[] | null
-          id: string | null
-          name: string | null
-          price: number | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
       adjust_product_stock: {
@@ -2185,6 +2077,8 @@ export type Database = {
       }
       apply_order_stock_out: { Args: { _order_id: string }; Returns: undefined }
       check_profiles_recursion: { Args: never; Returns: boolean }
+      current_user_has_active_subscription: { Args: never; Returns: boolean }
+      expire_due_subscriptions: { Args: never; Returns: number }
       get_module_access_indicators: {
         Args: { _user_id: string }
         Returns: {
@@ -2193,6 +2087,10 @@ export type Database = {
         }[]
       }
       get_user_company_id: { Args: never; Returns: string }
+      has_active_subscription: {
+        Args: { _company_id: string }
+        Returns: boolean
+      }
       has_role:
         | {
             Args: {
@@ -2244,6 +2142,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "staff" | "super_admin"
+      billing_period: "monthly" | "quarterly" | "semiannual" | "yearly"
       order_status:
         | "new"
         | "awaiting_deposit"
@@ -2386,6 +2285,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "staff", "super_admin"],
+      billing_period: ["monthly", "quarterly", "semiannual", "yearly"],
       order_status: [
         "new",
         "awaiting_deposit",

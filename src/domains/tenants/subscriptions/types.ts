@@ -1,81 +1,88 @@
 /**
- * Laugh One SaaS Subscription Management
- * 
- * This file defines the core architecture for the SaaS multi-tenant subscription system.
- * It provides interfaces for payment providers and centralizes the logic for
- * subscription lifecycle (trial, active, overdue, suspended, etc.).
+ * Laugh One — Plano único + período de assinatura.
+ *
+ * Existe apenas UM plano ("Plano Completo") com acesso total à plataforma.
+ * A única variação é o período de validade da assinatura.
  */
 
-export type SubscriptionStatus = 
-  | 'trial'
-  | 'active'
-  | 'pending'
-  | 'overdue'
-  | 'suspended'
-  | 'canceled'
-  | 'expired';
+export const PLAN_NAME = "Plano Completo" as const;
 
-export type BillingFrequency = 'monthly' | 'yearly';
+export type BillingPeriod = "monthly" | "quarterly" | "semiannual" | "yearly";
 
-export interface Plan {
-  id: string;
-  name: string;
-  description: string | null;
-  price_monthly: number;
-  price_yearly: number;
-  trial_days: number;
-  max_users: number;
-  max_clients: number;
-  max_products: number;
-  storage_gb: number;
-  max_uploads: number;
-  modules: string[];
-  integrations: string[];
-  support_tier: 'standard' | 'priority' | '24/7';
-  active: boolean;
+export type SubscriptionStatus = "active" | "expired" | "canceled" | "suspended";
+
+export const BILLING_PERIODS: BillingPeriod[] = [
+  "monthly",
+  "quarterly",
+  "semiannual",
+  "yearly",
+];
+
+export const PERIOD_LABELS: Record<BillingPeriod, string> = {
+  monthly: "Mensal",
+  quarterly: "Trimestral",
+  semiannual: "Semestral",
+  yearly: "Anual",
+};
+
+/** Duração de cada período, em dias. */
+export const PERIOD_DAYS: Record<BillingPeriod, number> = {
+  monthly: 30,
+  quarterly: 90,
+  semiannual: 180,
+  yearly: 365,
+};
+
+export const PERIOD_MONTHS: Record<BillingPeriod, number> = {
+  monthly: 1,
+  quarterly: 3,
+  semiannual: 6,
+  yearly: 12,
+};
+
+export interface SubscriptionPricing {
+  period: BillingPeriod;
+  label: string;
+  months: number;
+  days: number;
+  price: number;
+  savings_percent: number;
 }
 
 export interface Subscription {
   id: string;
   company_id: string;
-  plan_id: string;
-  status: SubscriptionStatus;
+  user_id: string | null;
+  plan_name: string;
+  billing_period: BillingPeriod;
   start_date: string;
-  renewal_date: string;
-  expiry_date: string | null;
-  canceled_at: string | null;
-  is_trial: boolean;
-  gateway: string | null;
+  expires_at: string;
+  status: SubscriptionStatus;
   amount: number;
   currency: string;
-  frequency: BillingFrequency;
+  gateway: string | null;
+  canceled_at: string | null;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
-/**
- * Payment Provider Interface
- * New gateways (Stripe, Mercado Pago, Asaas, etc.) must implement this interface.
- */
-export interface PaymentProvider {
-  name: string;
-  createSubscription(params: {
-    companyId: string;
-    planId: string;
-    frequency: BillingFrequency;
-    couponCode?: string;
-  }): Promise<{ gatewayId: string; checkoutUrl: string }>;
-  
-  cancelSubscription(gatewayId: string): Promise<void>;
-  
-  handleWebhook(payload: any): Promise<void>;
+/** Calcula a data de expiração a partir do início e do período contratado. */
+export function calculateExpiry(startDate: Date, period: BillingPeriod): Date {
+  const expires = new Date(startDate);
+  expires.setDate(expires.getDate() + PERIOD_DAYS[period]);
+  return expires;
 }
 
-/**
- * Usage Limits Interface
- */
-export interface CompanyUsage {
-  users_count: number;
-  clients_count: number;
-  products_count: number;
-  storage_bytes: number;
-  uploads_count: number;
+/** Único critério de acesso: assinatura ativa e dentro da validade. */
+export function isSubscriptionActive(
+  subscription: Pick<Subscription, "status" | "expires_at"> | null | undefined,
+): boolean {
+  if (!subscription) return false;
+  if (subscription.status !== "active") return false;
+  return new Date(subscription.expires_at).getTime() > Date.now();
+}
+
+export function formatPrice(value: number): string {
+  return value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }

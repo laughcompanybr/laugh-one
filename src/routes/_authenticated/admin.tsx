@@ -24,6 +24,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getPlatformStats } from "@/features/admin/admin.functions";
+import { formatPrice } from "@/domains/tenants/subscriptions/types";
 import { useState } from "react";
 import { 
   getUnlinkedUsers, 
@@ -86,6 +87,12 @@ function AdminDashboard() {
           </Link>
         </Button>
         <Button asChild variant="outline" className="border-gold/20 hover:bg-gold/5">
+          <Link to="/admin/assinaturas">
+            <CreditCard className="mr-2 size-4 text-gold" />
+            Assinaturas
+          </Link>
+        </Button>
+        <Button asChild variant="outline" className="border-gold/20 hover:bg-gold/5">
           <Link to="/auditoria">
             <History className="mr-2 size-4 text-gold" />
             Audit Logs
@@ -98,11 +105,10 @@ function AdminDashboard() {
           title="Total de Empresas" 
           value={stats?.totalCompanies} 
           icon={<Building2 className="size-5" />} 
-          trend="+12%"
         />
         <StatCard 
-          title="Empresas Ativas" 
-          value={stats?.activeCompanies} 
+          title="Assinaturas Ativas" 
+          value={stats?.activeSubscriptions} 
           icon={<Activity className="size-5" />} 
           color="text-emerald-500"
         />
@@ -113,7 +119,7 @@ function AdminDashboard() {
         />
         <StatCard 
           title="Recorrência Mensal (MRR)" 
-          value="R$ 45.200" 
+          value={stats ? formatPrice(stats.mrr) : undefined} 
           icon={<TrendingUp className="size-5" />} 
           color="text-gold"
         />

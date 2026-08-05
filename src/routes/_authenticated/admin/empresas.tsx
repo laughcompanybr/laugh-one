@@ -25,6 +25,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { PERIOD_LABELS, type BillingPeriod } from "@/domains/tenants/subscriptions/types";
 
 export const Route = createFileRoute("/_authenticated/admin/empresas")({
   component: AdminCompanies,
@@ -78,7 +79,7 @@ function AdminCompanies() {
             <thead>
               <tr className="border-b border-gold/10 bg-muted/30 text-muted-foreground font-medium">
                 <th className="px-6 py-4 text-left">Empresa</th>
-                <th className="px-6 py-4 text-left">Plano</th>
+                <th className="px-6 py-4 text-left">Assinatura</th>
                 <th className="px-6 py-4 text-left">Status</th>
                 <th className="px-6 py-4 text-left">Data de Criação</th>
                 <th className="px-6 py-4 text-right">Ações</th>
@@ -99,9 +100,28 @@ function AdminCompanies() {
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <Badge variant="outline" className="border-gold/30 text-gold bg-gold/5">
-                      {company.plans?.name || "Trial"}
-                    </Badge>
+                    {(() => {
+                      const sub = company.subscriptions?.find((s) => s.status === "active")
+                        ?? company.subscriptions?.[0];
+                      if (!sub) {
+                        return (
+                          <Badge variant="outline" className="border-muted text-muted-foreground">
+                            Sem assinatura
+                          </Badge>
+                        );
+                      }
+                      return (
+                        <div className="space-y-1">
+                          <Badge variant="outline" className="border-gold/30 text-gold bg-gold/5">
+                            {sub.plan_name} · {PERIOD_LABELS[sub.billing_period as BillingPeriod]}
+                          </Badge>
+                          <p className="text-xs text-muted-foreground">
+                            {sub.status === "active" ? "Válida até " : "Expirou em "}
+                            {new Date(sub.expires_at).toLocaleDateString("pt-BR")}
+                          </p>
+                        </div>
+                      );
+                    })()}
                   </td>
                   <td className="px-6 py-4">
                     <StatusBadge status={company.status || "active"} />
