@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { LaughLogo } from "@/components/brand/LaughLogo";
 import { Button } from "@/components/ui/button";
 import { Link } from "@tanstack/react-router";
-import { ShieldCheck, UserCheck, Database, Zap, Lock, AlertTriangle, CheckCircle, RefreshCcw, UserPlus, FileText, Activity } from "lucide-react";
+import { ShieldCheck, UserCheck, Database, Zap, Lock, AlertTriangle, CheckCircle, RefreshCcw, UserPlus, FileText, Activity, Calendar, TrendingUp } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   component: LandingPage,
