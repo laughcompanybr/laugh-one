@@ -34,13 +34,13 @@ function AuthPage() {
 
   return (
     <AuthHero
-      eyebrow="Painel restrito"
-      title={mode === "forgot" ? "Recupere seu" : "O tempo é seu"}
-      highlight={mode === "forgot" ? "acesso." : "maior ativo."}
+      eyebrow="Plataforma de Gestão"
+      title={mode === "forgot" ? "Recupere seu" : "Tecnologia para"}
+      highlight={mode === "forgot" ? "acesso." : "evoluir."}
       tagline={
         mode === "forgot"
           ? "Enviaremos um link seguro para seu e-mail para redefinir sua senha em segundos."
-          : "Bem-vindo de volta ao Laugh One. Sua operação, com total autonomia e controle."
+          : "Bem-vindo ao Laugh One. Tecnologia criada para negócios que evoluem."
       }
     >
       <div className="bento-tile p-7 sm:p-8">
