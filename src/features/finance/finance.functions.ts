@@ -149,8 +149,8 @@ export const listReceivables = createServerFn({ method: "GET" })
         ...o,
         balance: Number(o.sale_price ?? 0) - Number(o.amount_received ?? 0),
       }))
-      .filter((r) => r.balance > 0.009);
-    const total = rows.reduce((a, b) => a + b.balance, 0);
+      .filter((r: any) => r.balance > 0.009);
+    const total = rows.reduce((a: number, b: any) => a + b.balance, 0);
     return { rows, total };
   });
 
@@ -182,13 +182,13 @@ export const listPayables = createServerFn({ method: "POST" })
         const paid = paidByOrder.get(o.id) ?? 0;
         return { ...o, paid, balance: Number(o.cost_price ?? 0) - paid };
       })
-      .filter((r) => r.balance > 0.009)
-      .filter((r) => {
+      .filter((r: any) => r.balance > 0.009)
+      .filter((r: any) => {
         if (!search) return true;
         const hay = `${r.suppliers?.name ?? ""} #${r.order_number}`.toLowerCase();
         return hay.includes(search);
       })
-      .filter((r) => {
+      .filter((r: any) => {
         const due = r.expected_delivery ?? r.purchase_date ?? null;
         if (data.from && due && due < data.from) return false;
         if (data.to && due && due > data.to) return false;
@@ -202,8 +202,8 @@ export const listPayables = createServerFn({ method: "POST" })
         if (data.statusFilter === "no_date") return !due;
         return true;
       })
-      .sort((a, b) => (a.expected_delivery ?? "9999").localeCompare(b.expected_delivery ?? "9999"));
-    const total = rows.reduce((a, b) => a + b.balance, 0);
+      .sort((a: any, b: any) => (a.expected_delivery ?? "9999").localeCompare(b.expected_delivery ?? "9999"));
+    const total = rows.reduce((a: number, b: any) => a + b.balance, 0);
     return { rows, total };
   });
 
@@ -367,17 +367,15 @@ export const markTransactionPaid = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
-const payPayableSchema = z.object({
-  order_id: z.string().uuid(),
-  amount: z.number().positive(),
-  method: z.string().trim().max(40).optional().nullable(),
-  paid_at: z.string().optional().nullable(),
-  notes: z.string().trim().max(500).optional().nullable(),
-});
-
 export const payPayable = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((v) => payPayableSchema.parse(v))
+  .inputValidator((v: any) => z.object({
+    order_id: z.string().uuid(),
+    amount: z.number().positive(),
+    method: z.string().trim().max(40).optional().nullable(),
+    paid_at: z.string().optional().nullable(),
+    notes: z.string().trim().max(500).optional().nullable(),
+  }).parse(v))
   .handler(async ({ data, context }) => {
     const paidAt = data.paid_at
       ? new Date(data.paid_at).toISOString()
@@ -430,4 +428,65 @@ export const bulkPayPayables = createServerFn({ method: "POST" })
     const { error } = await (context.supabase as any).from("payments").insert(rows);
     if (error) throw error;
     return { ok: true };
+  });
+
+export const listGoals = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data, error } = await (context.supabase as any)
+      .from("goals")
+      .select("*")
+      .order("created_at", { ascending: false });
+    if (error) throw error;
+    return data ?? [];
+  });
+
+export const upsertGoal = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((v) => goalSchema.parse(v))
+  .handler(async ({ data, context }) => {
+    const { data: row, error } = await (context.supabase as any)
+      .from("goals")
+      .upsert({ ...data, company_id: (context as any).companyId })
+      .select("id")
+      .single();
+    if (error) throw error;
+    return { ok: true, id: row.id };
+  });
+
+export const deleteGoal = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((v) => idInput.parse(v))
+  .handler(async ({ data, context }) => {
+    const { error } = await (context.supabase as any).from("goals").delete().eq("id", data.id);
+    if (error) throw error;
+    return { ok: true };
+  });
+
+export const getGoalStats = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((v) => z.object({ from: z.string(), to: z.string() }).parse(v))
+  .handler(async ({ data, context }) => {
+    const fromISO = toISO(data.from);
+    const toEndISO = toISO(data.to, true);
+
+    const [inflowRes, salesCountRes] = await Promise.all([
+      (context.supabase as any)
+        .from("payments")
+        .select("amount")
+        .eq("direction", "in")
+        .gte("paid_at", fromISO)
+        .lte("paid_at", toEndISO),
+      (context.supabase as any)
+        .from("orders")
+        .select("id", { count: "exact", head: true })
+        .is("deleted_at", null)
+        .gte("created_at", fromISO)
+        .lte("created_at", toEndISO),
+    ]);
+
+    const inflow = (inflowRes.data ?? []).reduce((a: number, b: any) => a + Number(b.amount), 0);
+    const salesCount = salesCountRes.count ?? 0;
+
+    return { inflow, salesCount };
   });
