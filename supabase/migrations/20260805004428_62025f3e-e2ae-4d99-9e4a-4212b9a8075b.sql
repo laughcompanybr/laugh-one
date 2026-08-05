@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS tenant_isolation ON public.profiles;
