@@ -1,11 +1,17 @@
-import {
-  LayoutDashboard,
-  Users,
+import { 
+  LayoutDashboard, 
+  Users, 
+  ShoppingCart, 
+  Package, 
+  BarChart3, 
+  Settings,
+  Calendar,
+  ShieldCheck,
+  TrendingUp,
+  FileText,
   Truck,
-  Package,
   Wallet,
   FileBarChart,
-  Settings,
   UsersRound,
   Paperclip,
   Boxes,
@@ -16,8 +22,6 @@ import {
   CalendarDays,
   type LucideIcon,
 } from "lucide-react";
-
-
 
 export interface NavItem {
   title: string;
@@ -43,6 +47,8 @@ export const NAV_ITEMS: NavItem[] = [
   { title: "Módulos", to: "/modulos", icon: LayoutGrid, group: "sistema", moduleId: "settings" },
   { title: "Cargos e Permissões", to: "/cargos", icon: Shield, group: "sistema", moduleId: "settings" },
   { title: "Auditoria", to: "/auditoria", icon: Activity, group: "sistema", moduleId: "settings" },
+  { title: "Auditoria", to: "/auditoria", icon: Activity, group: "sistema", moduleId: "settings" },
+  { title: "Cargos e Permissões", to: "/cargos", icon: Shield, group: "sistema", moduleId: "settings" },
   { title: "Configurações", to: "/configuracoes", icon: Settings, group: "sistema", moduleId: "settings" },
-
 ];
+
