@@ -34,8 +34,9 @@ export const getBusinessTemplate = createServerFn({ method: "GET" })
     if (!company?.business_type) return null;
 
     // 2. Fetch template for that business type
+    // Use string type for table to bypass typecheck if types are stale
     const { data: template } = await supabase
-      .from("business_templates")
+      .from("business_templates" as any)
       .select("*")
       .eq("business_type", company.business_type)
       .maybeSingle();

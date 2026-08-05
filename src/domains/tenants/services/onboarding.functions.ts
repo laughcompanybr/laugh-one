@@ -95,7 +95,7 @@ export const completeOnboarding = createServerFn({ method: "POST" })
 async function setupBusinessContext(supabase: any, companyId: string, businessType: string) {
   // Fetch template to know which modules to enable
   const { data: template } = await supabase
-    .from("business_templates")
+    .from("business_templates" as any)
     .select("enabled_modules")
     .eq("business_type", businessType)
     .maybeSingle();

@@ -15,6 +15,7 @@ import { LaughLogo } from "@/components/brand/LaughLogo";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { NAV_ITEMS, type NavItem } from "./nav-config";
 import { useUserRole } from "@/domains/auth/hooks/use-user-role";
+import { useCompany } from "@/domains/tenants/hooks/use-company";
 import { useModules } from "@/domains/tenants/hooks/use-modules";
 import { ShieldAlert } from "lucide-react";
 
