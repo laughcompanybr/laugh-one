@@ -266,7 +266,7 @@ function PedidosPage() {
                         </p>
                       </TableCell>
                       <TableCell>
-                        <Badge className={STATUS_TONE[o.status]}>{STATUS_LABEL[o.status]}</Badge>
+                        <Badge className={(STATUS_TONE as any)[o.status]}>{(STATUS_LABEL as any)[o.status]}</Badge>
                         {o.deleted_at ? <Badge variant="outline" className="ml-1 text-[10px]">removido</Badge> : null}
                       </TableCell>
                       <TableCell className="text-right text-sm">
