@@ -401,115 +401,164 @@ Faça uma migração real da arquitetura de planos para o novo modelo SaaS de pl
           </div>
         </section>
 
-        {/* Pricing Section */}
+        {/* Pricing Section — plano único, apenas períodos */}
         <section id="pricing" className="space-y-16 py-12">
           <div className="text-center space-y-4">
-            <h2 className="text-4xl md:text-5xl font-display font-medium tracking-tight">Escolha o plano ideal para o crescimento da sua empresa.</h2>
-            <p className="text-white/50 text-lg max-w-2xl mx-auto">Comece pequeno. Evolua conforme sua empresa cresce.</p>
+            <Badge className="bg-gold/10 text-gold border border-gold/30">Plano único</Badge>
+            <h2 className="text-4xl md:text-5xl font-display font-medium tracking-tight">
+              Um plano. Acesso completo. Sem limites.
+            </h2>
+            <p className="text-white/50 text-lg max-w-2xl mx-auto">
+              Não existem níveis de acesso no Laugh One. Você escolhe apenas por quanto tempo quer
+              assinar.
+            </p>
           </div>
 
           <div className="flex justify-center">
-            <Tabs 
-              value={billingCycle} 
-              onValueChange={(v) => setBillingCycle(v as any)}
+            <Tabs
+              value={billingCycle}
+              onValueChange={(v) => setBillingCycle(v as BillingPeriod)}
               className="bg-white/5 p-1 rounded-full border border-white/10"
             >
               <TabsList className="bg-transparent h-10 gap-2">
-                <TabsTrigger value="monthly" className="rounded-full data-[state=active]:bg-gold data-[state=active]:text-black transition-all">Mensal</TabsTrigger>
-                <TabsTrigger value="quarterly" className="rounded-full data-[state=active]:bg-gold data-[state=active]:text-black transition-all">Trimestral</TabsTrigger>
-                <TabsTrigger value="semiannual" className="rounded-full data-[state=active]:bg-gold data-[state=active]:text-black transition-all">Semestral</TabsTrigger>
-                <TabsTrigger value="yearly" className="rounded-full data-[state=active]:bg-gold data-[state=active]:text-black transition-all">Anual</TabsTrigger>
+                {BILLING_PERIODS.map((p) => (
+                  <TabsTrigger
+                    key={p}
+                    value={p}
+                    className="rounded-full data-[state=active]:bg-gold data-[state=active]:text-black transition-all"
+                  >
+                    {PERIOD_LABELS[p]}
+                  </TabsTrigger>
+                ))}
               </TabsList>
             </Tabs>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {plans.map((plan) => (
-              <div 
-                key={plan.name}
-                className={cn(
-                  "relative p-8 rounded-3xl border transition-all duration-500 hover:scale-[1.02]",
-                  plan.highlight 
-                    ? "bg-gradient-to-b from-gold/10 to-transparent border-gold/30 shadow-[0_0_50px_rgba(212,175,55,0.1)]" 
-                    : "bg-white/5 border-white/10 hover:border-white/20"
-                )}
-              >
-                {plan.highlight && (
-                  <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gold text-black font-bold px-4 py-1">
-                    {plan.highlightText}
-                  </Badge>
-                )}
-                
-                <div className="space-y-6">
-                  <div>
-                    <h3 className="text-2xl font-display font-bold">{plan.name}</h3>
-                    <p className="text-sm text-white/50 mt-2 min-h-[40px]">{plan.tagline}</p>
-                  </div>
+          <div className="max-w-xl mx-auto">
+            <div className="relative p-10 rounded-3xl border border-gold/30 bg-gradient-to-b from-gold/10 to-transparent shadow-[0_0_60px_rgba(212,175,55,0.12)]">
+              <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gold text-black font-bold px-4 py-1">
+                Acesso total
+              </Badge>
 
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-4xl font-bold text-gold">R$ {plan.price[billingCycle].toFixed(2)}</span>
-                    <span className="text-sm text-white/40">/{billingCycle === 'monthly' ? 'mês' : billingCycle === 'yearly' ? 'ano' : cycleLabels[billingCycle]}</span>
-                  </div>
-
-                  {plan.savings[billingCycle] > 0 && (
-                    <p className="text-xs text-emerald-400 font-medium">Economia de {plan.savings[billingCycle]}% garantida</p>
-                  )}
-
-                  <div className="space-y-4 pt-4 border-t border-white/5">
-                    {plan.features.map((feature) => (
-                      <div key={feature} className="flex items-start gap-3 text-sm text-white/70">
-                        <Check className="size-4 text-gold mt-0.5 shrink-0" />
-                        <span>{feature}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  <Link to="/auth" className="block pt-4">
-                    <Button 
-                      className={cn(
-                        "w-full h-12 font-bold",
-                        plan.highlight ? "bg-gold hover:bg-gold/90 text-black" : "bg-white/10 hover:bg-white/20 text-white"
-                      )}
-                    >
-                      {plan.name === 'Starter' ? 'Teste o Laugh One' : 'Escolher este plano'}
-                    </Button>
-                  </Link>
+              <div className="space-y-8">
+                <div className="text-center space-y-2">
+                  <h3 className="text-3xl font-display font-bold">{PLAN_NAME}</h3>
+                  <p className="text-sm text-white/50">
+                    Todos os módulos, todos os recursos, todas as futuras funcionalidades.
+                  </p>
                 </div>
+
+                <div className="text-center space-y-2">
+                  {pricingError ? (
+                    <div className="space-y-3">
+                      <p className="text-sm text-white/50">
+                        Não foi possível carregar os valores agora.
+                      </p>
+                      <Button
+                        variant="outline"
+                        className="border-gold/30 text-gold hover:bg-gold/10"
+                        onClick={() => refetchPricing()}
+                      >
+                        Tentar novamente
+                      </Button>
+                    </div>
+                  ) : currentPricing ? (
+                    <>
+                      <div className="flex items-baseline justify-center gap-1">
+                        <span className="text-5xl font-bold text-gold">
+                          {formatPrice(Number(currentPricing.price))}
+                        </span>
+                        <span className="text-sm text-white/40">
+                          /{PERIOD_LABELS[billingCycle].toLowerCase()}
+                        </span>
+                      </div>
+                      <p className="text-xs text-white/40">
+                        Validade de {currentPricing.days} dias por assinatura
+                      </p>
+                      {Number(currentPricing.savings_percent) > 0 && (
+                        <p className="text-xs text-emerald-400 font-medium">
+                          Economia de {Number(currentPricing.savings_percent)}% em relação ao mensal
+                        </p>
+                      )}
+                    </>
+                  ) : (
+                    <p className="text-white/40">Carregando valores...</p>
+                  )}
+                </div>
+
+                <div className="grid sm:grid-cols-2 gap-4 pt-6 border-t border-white/10">
+                  {includedFeatures.map((feature) => (
+                    <div key={feature} className="flex items-start gap-3 text-sm text-white/70">
+                      <Check className="size-4 text-gold mt-0.5 shrink-0" />
+                      <span>{feature}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <Link to="/auth" className="block">
+                  <Button className="w-full h-14 font-bold bg-gold hover:bg-gold/90 text-black text-lg">
+                    Assinar o {PLAN_NAME}
+                  </Button>
+                </Link>
+                <p className="text-center text-xs text-white/30">
+                  Mesmos recursos em qualquer período. Períodos maiores custam menos por mês.
+                </p>
               </div>
-            ))}
+            </div>
           </div>
         </section>
 
-        {/* Comparison Table */}
+        {/* Períodos disponíveis */}
         <section className="space-y-12">
           <div className="text-center space-y-4">
-            <h2 className="text-3xl font-display font-medium">Comparação de Planos</h2>
-            <p className="text-white/50">Veja em detalhes o que cada nível de assinatura oferece.</p>
+            <h2 className="text-3xl font-display font-medium">Períodos de assinatura</h2>
+            <p className="text-white/50">
+              A única diferença entre as opções é a duração — o acesso é sempre completo.
+            </p>
           </div>
 
           <div className="rounded-3xl border border-white/5 bg-white/5 overflow-hidden">
             <Table>
               <TableHeader className="bg-white/5">
                 <TableRow className="border-white/5 hover:bg-transparent">
-                  <TableHead className="w-[300px] text-white font-bold py-6">Recurso</TableHead>
-                  <TableHead className="text-center text-white font-bold">Starter</TableHead>
-                  <TableHead className="text-center text-gold font-bold">Professional</TableHead>
-                  <TableHead className="text-center text-white font-bold">Business</TableHead>
+                  <TableHead className="text-white font-bold py-6">Período</TableHead>
+                  <TableHead className="text-center text-white font-bold">Duração</TableHead>
+                  <TableHead className="text-center text-gold font-bold">Valor</TableHead>
+                  <TableHead className="text-center text-white font-bold">Economia</TableHead>
+                  <TableHead className="text-center text-white font-bold">Recursos</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {comparison.map((row) => (
-                  <TableRow key={row.feature} className="border-white/5 hover:bg-white/5 transition-colors">
-                    <TableCell className="font-medium text-white/70 py-4">{row.feature}</TableCell>
-                    <TableCell className="text-center text-white/50">{row.starter}</TableCell>
-                    <TableCell className="text-center text-gold font-medium">{row.professional}</TableCell>
-                    <TableCell className="text-center text-white/50">{row.business}</TableCell>
+                {(pricing ?? []).map((row) => (
+                  <TableRow
+                    key={row.period}
+                    className="border-white/5 hover:bg-white/5 transition-colors"
+                  >
+                    <TableCell className="font-medium text-white/80 py-4">
+                      {PERIOD_LABELS[row.period as BillingPeriod]}
+                    </TableCell>
+                    <TableCell className="text-center text-white/50">{row.days} dias</TableCell>
+                    <TableCell className="text-center text-gold font-medium">
+                      {formatPrice(Number(row.price))}
+                    </TableCell>
+                    <TableCell className="text-center text-emerald-400">
+                      {Number(row.savings_percent) > 0 ? `${Number(row.savings_percent)}%` : "—"}
+                    </TableCell>
+                    <TableCell className="text-center text-white/50">Acesso completo</TableCell>
                   </TableRow>
                 ))}
+                {(!pricing || pricing.length === 0) && (
+                  <TableRow className="border-white/5">
+                    <TableCell colSpan={5} className="text-center text-white/40 py-8">
+                      Valores indisponíveis no momento.
+                    </TableCell>
+                  </TableRow>
+                )}
               </TableBody>
             </Table>
           </div>
         </section>
+
 
         {/* Final CTA */}
         <section className="relative overflow-hidden rounded-[3rem] border border-gold/20 bg-gold/5 p-12 md:p-24 text-center space-y-10 group">
