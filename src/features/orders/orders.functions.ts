@@ -261,20 +261,26 @@ export const addMixedPayments = createServerFn({ method: "POST" })
 
     const hasIn = (inserted ?? []).some((p: any) => p.direction === "in");
     if (hasIn) {
-      const { data: sums } = await (supabase as any)
+      const { data: sums, error: sumsError } = await (supabase as any)
         .from("payments")
         .select("amount")
         .eq("order_id", data.order_id)
         .eq("direction", "in");
+      if (sumsError) throw sumsError;
       const total = (sums ?? []).reduce((a: number, b: any) => a + Number(b.amount), 0);
-      await (supabase as any).from("orders").update({ amount_received: total }).eq("id", data.order_id);
+      const { error: updateError } = await (supabase as any)
+        .from("orders")
+        .update({ amount_received: total })
+        .eq("id", data.order_id);
+      if (updateError) throw updateError;
     }
 
     const summary = (inserted ?? [])
       .map((p: any) => `${p.method ?? "—"}: R$ ${Number(p.amount).toFixed(2)}${p.card_fee_percent ? ` (taxa ${p.card_fee_percent}% = R$ ${Number(p.card_fee ?? 0).toFixed(2)})` : ""}`)
       .join(" · ");
 
-    await (supabase as any).from("order_events").insert({
+    // Timeline logging must never break the payment itself.
+    const { error: eventError } = await (supabase as any).from("order_events").insert({
       order_id: data.order_id,
       type: "payment",
       message: `Pagamento misto registrado (${inserted?.length ?? 0} entradas): ${summary}`,
@@ -285,6 +291,7 @@ export const addMixedPayments = createServerFn({ method: "POST" })
       },
       actor: userId,
     });
+    if (eventError) console.error("[orders] falha ao registrar evento de pagamento misto:", eventError.message);
 
     return { ok: true, count: inserted?.length ?? 0, sum };
   });
