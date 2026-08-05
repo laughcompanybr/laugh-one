@@ -13,14 +13,12 @@ export const listOrders = createServerFn({ method: "POST" })
     const from = (data.page - 1) * data.pageSize;
     const to = from + data.pageSize - 1;
 
-    let q = supabase
+    let q = (supabase as any)
       .from("orders")
       .select(
-        "id, order_number, status, brand, model, reference, photo_path, quantity, sale_price, cost_price, commission, card_fee, shipping, other_costs, amount_received, profit, purchase_date, expected_delivery, tracking_code, notes, payment_method, created_at, updated_at, deleted_at, client_id, supplier_id, employee_id, clients(id,name,whatsapp), suppliers(id,name), employees(id,full_name)",
+        "id, order_number, status, brand, model, reference, quantity, sale_price, cost_price, commission, card_fee, shipping, other_costs, amount_received, profit, purchase_date, expected_delivery, tracking_code, notes, payment_method, created_at, updated_at, deleted_at, client_id, supplier_id, employee_id, clients(id,name,whatsapp), suppliers(id,name), employees(id,full_name)",
         { count: "exact" },
       );
-
-
 
     if (!data.includeDeleted) q = q.is("deleted_at", null);
     if (data.status) q = q.eq("status", data.status);
@@ -52,26 +50,21 @@ export const getOrder = createServerFn({ method: "POST" })
   .inputValidator((v) => idInput.parse(v))
   .handler(async ({ data, context }) => {
     const { supabase } = context;
-    const [orderRes, paymentsRes, eventsRes, attachmentsRes] = await Promise.all([
-      supabase
+    
+    const [orderRes, paymentsRes, eventsRes] = await Promise.all([
+      (supabase as any)
         .from("orders")
         .select("*, clients(id,name,whatsapp,phone,instagram), suppliers(id,name,company,whatsapp), employees(id,full_name,role)")
         .eq("id", data.id)
         .maybeSingle(),
-
-      supabase
+      (supabase as any)
         .from("payments")
         .select("id, direction, amount, method, installments, card_fee, card_fee_percent, paid_at, notes, created_at")
         .eq("order_id", data.id)
         .order("paid_at", { ascending: false }),
-      supabase
+      (supabase as any)
         .from("order_events")
         .select("id, type, message, meta, actor, created_at")
-        .eq("order_id", data.id)
-        .order("created_at", { ascending: false }),
-      supabase
-        .from("order_attachments")
-        .select("id, filename, mime, size, kind, storage_path, created_at")
         .eq("order_id", data.id)
         .order("created_at", { ascending: false }),
     ]);
@@ -80,9 +73,9 @@ export const getOrder = createServerFn({ method: "POST" })
     if (!orderRes.data) throw new Error("Pedido não encontrado");
 
     const payments = paymentsRes.data ?? [];
-    const totalIn = payments.filter((p) => p.direction === "in").reduce((a, b) => a + Number(b.amount), 0);
-    const totalOut = payments.filter((p) => p.direction === "out").reduce((a, b) => a + Number(b.amount), 0);
-    const o = orderRes.data as Record<string, unknown>;
+    const totalIn = payments.filter((p: any) => p.direction === "in").reduce((a: number, b: any) => a + Number(b.amount), 0);
+    const totalOut = payments.filter((p: any) => p.direction === "out").reduce((a: number, b: any) => a + Number(b.amount), 0);
+    const o = orderRes.data as Record<string, any>;
     const qty = Number(o.quantity ?? 1);
     const totalSale = Number(o.sale_price ?? 0) * qty;
     const totalCost = Number(o.cost_price ?? 0) * qty;
@@ -93,20 +86,11 @@ export const getOrder = createServerFn({ method: "POST" })
       Number(o.card_fee ?? 0) -
       Number(o.shipping ?? 0) -
       Number(o.other_costs ?? 0);
-    let photoUrl: string | null = null;
-    if (o.photo_path) {
-      const { data: signed } = await supabase.storage
-        .from("order-files")
-        .createSignedUrl(o.photo_path as string, 60 * 60);
-      photoUrl = signed?.signedUrl ?? null;
-    }
 
     return {
       order: orderRes.data,
       payments,
       events: eventsRes.data ?? [],
-      attachments: attachmentsRes.data ?? [],
-      photoUrl,
       totals: {
         totalIn,
         totalOut,
@@ -118,14 +102,13 @@ export const getOrder = createServerFn({ method: "POST" })
         profit: Number(o.profit ?? grossProfit),
       },
     };
-
   });
 
 export const createOrder = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((v) => orderSchema.parse(v))
   .handler(async ({ data, context }) => {
-    const { data: row, error } = await context.supabase
+    const { data: row, error } = await (context.supabase as any)
       .from("orders")
       .insert({ ...data, created_by: context.userId, company_id: (context as any).companyId })
       .select("id, order_number")
@@ -139,7 +122,7 @@ export const updateOrder = createServerFn({ method: "POST" })
   .inputValidator((v) => orderSchema.extend({ id: z.string().uuid() }).parse(v))
   .handler(async ({ data, context }) => {
     const { id, ...rest } = data;
-    const { error } = await context.supabase.from("orders").update(rest).eq("id", id);
+    const { error } = await (context.supabase as any).from("orders").update(rest).eq("id", id);
     if (error) throw error;
     return { ok: true };
   });
@@ -148,7 +131,7 @@ export const changeOrderStatus = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((v) => z.object({ id: z.string().uuid(), status: z.enum(ORDER_STATUS) }).parse(v))
   .handler(async ({ data, context }) => {
-    const { error } = await context.supabase.from("orders").update({ status: data.status }).eq("id", data.id);
+    const { error } = await (context.supabase as any).from("orders").update({ status: data.status }).eq("id", data.id);
     if (error) throw error;
     return { ok: true };
   });
@@ -157,7 +140,7 @@ export const softDeleteOrder = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((v) => idInput.parse(v))
   .handler(async ({ data, context }) => {
-    const { error } = await context.supabase
+    const { error } = await (context.supabase as any)
       .from("orders")
       .update({ deleted_at: new Date().toISOString() })
       .eq("id", data.id);
@@ -169,7 +152,7 @@ export const restoreOrder = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((v) => idInput.parse(v))
   .handler(async ({ data, context }) => {
-    const { error } = await context.supabase
+    const { error } = await (context.supabase as any)
       .from("orders")
       .update({ deleted_at: null })
       .eq("id", data.id);
@@ -177,12 +160,11 @@ export const restoreOrder = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
-// ---------------- payments ----------------
 export const addPayment = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((v) => paymentSchema.extend({ order_id: z.string().uuid() }).parse(v))
   .handler(async ({ data, context }) => {
-    const { data: row, error } = await context.supabase
+    const { data: row, error } = await (context.supabase as any)
       .from("payments")
       .insert({ ...data, created_by: context.userId, company_id: (context as any).companyId })
       .select("id, direction, amount")
@@ -190,17 +172,16 @@ export const addPayment = createServerFn({ method: "POST" })
     if (error) throw error;
 
     if (data.direction === "in") {
-      // Recalculate amount_received on the order
-      const { data: sums } = await context.supabase
+      const { data: sums } = await (context.supabase as any)
         .from("payments")
         .select("amount")
         .eq("order_id", data.order_id)
         .eq("direction", "in");
-      const total = (sums ?? []).reduce((a, b) => a + Number(b.amount), 0);
-      await context.supabase.from("orders").update({ amount_received: total }).eq("id", data.order_id);
+      const total = (sums ?? []).reduce((a: number, b: any) => a + Number(b.amount), 0);
+      await (context.supabase as any).from("orders").update({ amount_received: total }).eq("id", data.order_id);
     }
 
-    await context.supabase.from("order_events").insert({
+    await (context.supabase as any).from("order_events").insert({
       order_id: data.order_id,
       type: "payment",
       message:
@@ -218,34 +199,33 @@ export const deletePayment = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((v) => z.object({ id: z.string().uuid() }).parse(v))
   .handler(async ({ data, context }) => {
-    const { data: row } = await context.supabase
+    const { data: row } = await (context.supabase as any)
       .from("payments")
       .select("order_id, direction")
       .eq("id", data.id)
       .maybeSingle();
-    const { error } = await context.supabase.from("payments").delete().eq("id", data.id);
+    const { error } = await (context.supabase as any).from("payments").delete().eq("id", data.id);
     if (error) throw error;
 
     if (row?.order_id && row.direction === "in") {
-      const { data: sums } = await context.supabase
+      const { data: sums } = await (context.supabase as any)
         .from("payments")
         .select("amount")
         .eq("order_id", row.order_id)
         .eq("direction", "in");
-      const total = (sums ?? []).reduce((a, b) => a + Number(b.amount), 0);
-      await context.supabase.from("orders").update({ amount_received: total }).eq("id", row.order_id);
+      const total = (sums ?? []).reduce((a: number, b: any) => a + Number(b.amount), 0);
+      await (context.supabase as any).from("orders").update({ amount_received: total }).eq("id", row.order_id);
     }
     return { ok: true };
   });
 
-// ---------------- mixed payments ----------------
 export const addMixedPayments = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((v) => mixedPaymentsSchema.parse(v))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
 
-    const sum = data.entries.reduce((a, b) => a + Number(b.amount), 0);
+    const sum = data.entries.reduce((a: number, b: any) => a + Number(b.amount), 0);
     if (data.expected_total > 0 && Math.abs(sum - data.expected_total) > 0.01) {
       throw new Error(
         `A soma dos pagamentos (R$ ${sum.toFixed(2)}) não confere com o total esperado (R$ ${data.expected_total.toFixed(2)}).`,
@@ -263,31 +243,31 @@ export const addMixedPayments = createServerFn({ method: "POST" })
       paid_at: e.paid_at,
       notes: e.notes ?? null,
       created_by: userId,
+      company_id: (context as any).companyId
     }));
 
-    const { data: inserted, error } = await supabase
+    const { data: inserted, error } = await (supabase as any)
       .from("payments")
-      .insert(rows.map(r => ({ ...r, company_id: (context as any).companyId })) as never)
+      .insert(rows)
       .select("id, direction, amount, method, card_fee, card_fee_percent");
     if (error) throw error;
 
-    // Recompute amount_received
-    const hasIn = (inserted ?? []).some((p) => p.direction === "in");
+    const hasIn = (inserted ?? []).some((p: any) => p.direction === "in");
     if (hasIn) {
-      const { data: sums } = await supabase
+      const { data: sums } = await (supabase as any)
         .from("payments")
         .select("amount")
         .eq("order_id", data.order_id)
         .eq("direction", "in");
-      const total = (sums ?? []).reduce((a, b) => a + Number(b.amount), 0);
-      await supabase.from("orders").update({ amount_received: total }).eq("id", data.order_id);
+      const total = (sums ?? []).reduce((a: number, b: any) => a + Number(b.amount), 0);
+      await (supabase as any).from("orders").update({ amount_received: total }).eq("id", data.order_id);
     }
 
     const summary = (inserted ?? [])
-      .map((p) => `${p.method ?? "—"}: R$ ${Number(p.amount).toFixed(2)}${p.card_fee_percent ? ` (taxa ${p.card_fee_percent}% = R$ ${Number(p.card_fee ?? 0).toFixed(2)})` : ""}`)
+      .map((p: any) => `${p.method ?? "—"}: R$ ${Number(p.amount).toFixed(2)}${p.card_fee_percent ? ` (taxa ${p.card_fee_percent}% = R$ ${Number(p.card_fee ?? 0).toFixed(2)})` : ""}`)
       .join(" · ");
 
-    await supabase.from("order_events").insert({
+    await (supabase as any).from("order_events").insert({
       order_id: data.order_id,
       type: "payment",
       message: `Pagamento misto registrado (${inserted?.length ?? 0} entradas): ${summary}`,
@@ -302,61 +282,10 @@ export const addMixedPayments = createServerFn({ method: "POST" })
     return { ok: true, count: inserted?.length ?? 0, sum };
   });
 
-// ---------------- attachments ----------------
-const attachmentInput = z.object({
-  order_id: z.string().uuid(),
-  storage_path: z.string().min(1).max(500),
-  filename: z.string().max(200).nullable().optional(),
-  mime: z.string().max(120).nullable().optional(),
-  size: z.number().int().nonnegative().nullable().optional(),
-  kind: z.string().max(60).nullable().optional(),
-});
-
-export const addOrderAttachment = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((v) => attachmentInput.parse(v))
-  .handler(async ({ data, context }) => {
-    const { data: row, error } = await context.supabase
-      .from("order_attachments")
-      .insert({ ...data, uploaded_by: context.userId, company_id: (context as any).companyId } as any)
-      .select("id")
-      .single();
-    if (error) throw error;
-    await context.supabase.from("order_events").insert({
-      order_id: data.order_id,
-      type: "attachment",
-      message: `Anexo adicionado: ${data.filename ?? "arquivo"}`,
-      actor: context.userId,
-    });
-    return { id: row.id };
-  });
-
-export const deleteOrderAttachment = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((v) => z.object({ id: z.string().uuid(), storage_path: z.string() }).parse(v))
-  .handler(async ({ data, context }) => {
-    await context.supabase.storage.from("order-files").remove([data.storage_path]);
-    const { error } = await context.supabase.from("order_attachments").delete().eq("id", data.id);
-    if (error) throw error;
-    return { ok: true };
-  });
-
-export const signOrderAttachment = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((v) => z.object({ storage_path: z.string() }).parse(v))
-  .handler(async ({ data, context }) => {
-    const { data: signed, error } = await context.supabase.storage
-      .from("order-files")
-      .createSignedUrl(data.storage_path, 60 * 10);
-    if (error) throw error;
-    return { url: signed.signedUrl };
-  });
-
-// ---------------- lookups ----------------
 export const listClientOptions = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { data, error } = await context.supabase
+    const { data, error } = await (context.supabase as any)
       .from("clients")
       .select("id, name, zip, street, number, complement, district, reference, city, state")
       .is("deleted_at", null)
@@ -369,7 +298,7 @@ export const listClientOptions = createServerFn({ method: "GET" })
 export const listSupplierOptions = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { data, error } = await context.supabase
+    const { data, error } = await (context.supabase as any)
       .from("suppliers")
       .select("id, name")
       .is("deleted_at", null)

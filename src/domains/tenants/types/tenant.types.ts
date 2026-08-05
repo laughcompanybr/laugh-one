@@ -3,10 +3,6 @@ export interface Company {
   name: string;
   display_name: string | null;
   slug: string;
-  logo_url: string | null;
-  logo_reduced_url: string | null;
-  favicon_url: string | null;
-  mobile_icon_url: string | null;
   primary_color: string | null;
   secondary_color: string | null;
   accent_color: string | null;
@@ -23,11 +19,29 @@ export interface Company {
   border_radius: string | null;
   business_type: string | null;
   onboarding_status: string | null;
-  login_background_url: string | null;
   login_welcome_message: string | null;
   login_title: string | null;
   login_subtitle: string | null;
   login_footer: string | null;
+  
+  // New operational and contact fields
+  phone: string | null;
+  whatsapp: string | null;
+  commercial_email: string | null;
+  address: string | null;
+  city: string | null;
+  state: string | null;
+  country: string | null;
+  website: string | null;
+  social_media: any;
+  employee_count: number | null;
+  services_offered: string[] | null;
+  categories: string[] | null;
+  business_description: string | null;
+  operating_segment: string | null;
+  system_preferences: any;
+  functional_customizations: any;
+  
   created_at: string | null;
   updated_at: string | null;
 }

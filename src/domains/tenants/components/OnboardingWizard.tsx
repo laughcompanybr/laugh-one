@@ -23,7 +23,7 @@ const onboardingSchema = z.object({
   state: z.string().min(2, "Estado é obrigatório"),
   employeeCount: z.string().min(1, "Selecione a quantidade de funcionários"),
   mainObjective: z.string().min(1, "Selecione o objetivo"),
-  logoUrl: z.string().optional(),
+  
 });
 
 type OnboardingFormValues = z.infer<typeof onboardingSchema>;

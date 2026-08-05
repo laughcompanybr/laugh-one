@@ -19,6 +19,7 @@ import { Route as AuthenticatedRelatoriosRouteImport } from './routes/_authentic
 import { Route as AuthenticatedProdutosRouteImport } from './routes/_authenticated/produtos'
 import { Route as AuthenticatedPedidosRouteImport } from './routes/_authenticated/pedidos'
 import { Route as AuthenticatedModulosRouteImport } from './routes/_authenticated/modulos'
+import { Route as AuthenticatedHistoricoRouteImport } from './routes/_authenticated/historico'
 import { Route as AuthenticatedFuncionariosRouteImport } from './routes/_authenticated/funcionarios'
 import { Route as AuthenticatedFornecedoresRouteImport } from './routes/_authenticated/fornecedores'
 import { Route as AuthenticatedFinanceiroRouteImport } from './routes/_authenticated/financeiro'
@@ -29,7 +30,6 @@ import { Route as AuthenticatedClientesRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedCargosRouteImport } from './routes/_authenticated/cargos'
 import { Route as AuthenticatedAutomacoesRouteImport } from './routes/_authenticated/automacoes'
 import { Route as AuthenticatedAuditoriaRouteImport } from './routes/_authenticated/auditoria'
-import { Route as AuthenticatedAnexosRouteImport } from './routes/_authenticated/anexos'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedMensaisIndexRouteImport } from './routes/_authenticated/mensais/index'
 import { Route as AuthenticatedMensaisMonthRouteImport } from './routes/_authenticated/mensais/$month'
@@ -82,6 +82,11 @@ const AuthenticatedPedidosRoute = AuthenticatedPedidosRouteImport.update({
 const AuthenticatedModulosRoute = AuthenticatedModulosRouteImport.update({
   id: '/modulos',
   path: '/modulos',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedHistoricoRoute = AuthenticatedHistoricoRouteImport.update({
+  id: '/historico',
+  path: '/historico',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedFuncionariosRoute =
@@ -138,11 +143,6 @@ const AuthenticatedAuditoriaRoute = AuthenticatedAuditoriaRouteImport.update({
   path: '/auditoria',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedAnexosRoute = AuthenticatedAnexosRouteImport.update({
-  id: '/anexos',
-  path: '/anexos',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -174,7 +174,6 @@ export interface FileRoutesByFullPath {
   '/mfa-verify': typeof MfaVerifyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
-  '/anexos': typeof AuthenticatedAnexosRoute
   '/auditoria': typeof AuthenticatedAuditoriaRoute
   '/automacoes': typeof AuthenticatedAutomacoesRoute
   '/cargos': typeof AuthenticatedCargosRoute
@@ -185,6 +184,7 @@ export interface FileRoutesByFullPath {
   '/financeiro': typeof AuthenticatedFinanceiroRoute
   '/fornecedores': typeof AuthenticatedFornecedoresRoute
   '/funcionarios': typeof AuthenticatedFuncionariosRoute
+  '/historico': typeof AuthenticatedHistoricoRoute
   '/modulos': typeof AuthenticatedModulosRoute
   '/pedidos': typeof AuthenticatedPedidosRoute
   '/produtos': typeof AuthenticatedProdutosRoute
@@ -200,7 +200,6 @@ export interface FileRoutesByTo {
   '/mfa-verify': typeof MfaVerifyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
-  '/anexos': typeof AuthenticatedAnexosRoute
   '/auditoria': typeof AuthenticatedAuditoriaRoute
   '/automacoes': typeof AuthenticatedAutomacoesRoute
   '/cargos': typeof AuthenticatedCargosRoute
@@ -211,6 +210,7 @@ export interface FileRoutesByTo {
   '/financeiro': typeof AuthenticatedFinanceiroRoute
   '/fornecedores': typeof AuthenticatedFornecedoresRoute
   '/funcionarios': typeof AuthenticatedFuncionariosRoute
+  '/historico': typeof AuthenticatedHistoricoRoute
   '/modulos': typeof AuthenticatedModulosRoute
   '/pedidos': typeof AuthenticatedPedidosRoute
   '/produtos': typeof AuthenticatedProdutosRoute
@@ -228,7 +228,6 @@ export interface FileRoutesById {
   '/mfa-verify': typeof MfaVerifyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
-  '/_authenticated/anexos': typeof AuthenticatedAnexosRoute
   '/_authenticated/auditoria': typeof AuthenticatedAuditoriaRoute
   '/_authenticated/automacoes': typeof AuthenticatedAutomacoesRoute
   '/_authenticated/cargos': typeof AuthenticatedCargosRoute
@@ -239,6 +238,7 @@ export interface FileRoutesById {
   '/_authenticated/financeiro': typeof AuthenticatedFinanceiroRoute
   '/_authenticated/fornecedores': typeof AuthenticatedFornecedoresRoute
   '/_authenticated/funcionarios': typeof AuthenticatedFuncionariosRoute
+  '/_authenticated/historico': typeof AuthenticatedHistoricoRoute
   '/_authenticated/modulos': typeof AuthenticatedModulosRoute
   '/_authenticated/pedidos': typeof AuthenticatedPedidosRoute
   '/_authenticated/produtos': typeof AuthenticatedProdutosRoute
@@ -256,7 +256,6 @@ export interface FileRouteTypes {
     | '/mfa-verify'
     | '/reset-password'
     | '/admin'
-    | '/anexos'
     | '/auditoria'
     | '/automacoes'
     | '/cargos'
@@ -267,6 +266,7 @@ export interface FileRouteTypes {
     | '/financeiro'
     | '/fornecedores'
     | '/funcionarios'
+    | '/historico'
     | '/modulos'
     | '/pedidos'
     | '/produtos'
@@ -282,7 +282,6 @@ export interface FileRouteTypes {
     | '/mfa-verify'
     | '/reset-password'
     | '/admin'
-    | '/anexos'
     | '/auditoria'
     | '/automacoes'
     | '/cargos'
@@ -293,6 +292,7 @@ export interface FileRouteTypes {
     | '/financeiro'
     | '/fornecedores'
     | '/funcionarios'
+    | '/historico'
     | '/modulos'
     | '/pedidos'
     | '/produtos'
@@ -309,7 +309,6 @@ export interface FileRouteTypes {
     | '/mfa-verify'
     | '/reset-password'
     | '/_authenticated/admin'
-    | '/_authenticated/anexos'
     | '/_authenticated/auditoria'
     | '/_authenticated/automacoes'
     | '/_authenticated/cargos'
@@ -320,6 +319,7 @@ export interface FileRouteTypes {
     | '/_authenticated/financeiro'
     | '/_authenticated/fornecedores'
     | '/_authenticated/funcionarios'
+    | '/_authenticated/historico'
     | '/_authenticated/modulos'
     | '/_authenticated/pedidos'
     | '/_authenticated/produtos'
@@ -410,6 +410,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedModulosRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/historico': {
+      id: '/_authenticated/historico'
+      path: '/historico'
+      fullPath: '/historico'
+      preLoaderRoute: typeof AuthenticatedHistoricoRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/funcionarios': {
       id: '/_authenticated/funcionarios'
       path: '/funcionarios'
@@ -480,13 +487,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAuditoriaRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/anexos': {
-      id: '/_authenticated/anexos'
-      path: '/anexos'
-      fullPath: '/anexos'
-      preLoaderRoute: typeof AuthenticatedAnexosRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/admin': {
       id: '/_authenticated/admin'
       path: '/admin'
@@ -531,7 +531,6 @@ const AuthenticatedAdminRouteWithChildren =
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
-  AuthenticatedAnexosRoute: typeof AuthenticatedAnexosRoute
   AuthenticatedAuditoriaRoute: typeof AuthenticatedAuditoriaRoute
   AuthenticatedAutomacoesRoute: typeof AuthenticatedAutomacoesRoute
   AuthenticatedCargosRoute: typeof AuthenticatedCargosRoute
@@ -542,6 +541,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedFinanceiroRoute: typeof AuthenticatedFinanceiroRoute
   AuthenticatedFornecedoresRoute: typeof AuthenticatedFornecedoresRoute
   AuthenticatedFuncionariosRoute: typeof AuthenticatedFuncionariosRoute
+  AuthenticatedHistoricoRoute: typeof AuthenticatedHistoricoRoute
   AuthenticatedModulosRoute: typeof AuthenticatedModulosRoute
   AuthenticatedPedidosRoute: typeof AuthenticatedPedidosRoute
   AuthenticatedProdutosRoute: typeof AuthenticatedProdutosRoute
@@ -552,7 +552,6 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
-  AuthenticatedAnexosRoute: AuthenticatedAnexosRoute,
   AuthenticatedAuditoriaRoute: AuthenticatedAuditoriaRoute,
   AuthenticatedAutomacoesRoute: AuthenticatedAutomacoesRoute,
   AuthenticatedCargosRoute: AuthenticatedCargosRoute,
@@ -563,6 +562,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedFinanceiroRoute: AuthenticatedFinanceiroRoute,
   AuthenticatedFornecedoresRoute: AuthenticatedFornecedoresRoute,
   AuthenticatedFuncionariosRoute: AuthenticatedFuncionariosRoute,
+  AuthenticatedHistoricoRoute: AuthenticatedHistoricoRoute,
   AuthenticatedModulosRoute: AuthenticatedModulosRoute,
   AuthenticatedPedidosRoute: AuthenticatedPedidosRoute,
   AuthenticatedProdutosRoute: AuthenticatedProdutosRoute,

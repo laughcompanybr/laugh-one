@@ -248,7 +248,7 @@ function PedidosPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {rows.map((o) => {
+                {(rows as any[]).map((o: any) => {
                   const client = o.clients as { name?: string; whatsapp?: string | null } | null;
                   const balance = Number(o.sale_price ?? 0) - Number(o.amount_received ?? 0);
                   return (
@@ -266,7 +266,7 @@ function PedidosPage() {
                         </p>
                       </TableCell>
                       <TableCell>
-                        <Badge className={STATUS_TONE[o.status]}>{STATUS_LABEL[o.status]}</Badge>
+                        <Badge className={(STATUS_TONE as any)[o.status]}>{(STATUS_LABEL as any)[o.status]}</Badge>
                         {o.deleted_at ? <Badge variant="outline" className="ml-1 text-[10px]">removido</Badge> : null}
                       </TableCell>
                       <TableCell className="text-right text-sm">

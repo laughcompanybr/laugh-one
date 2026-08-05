@@ -90,11 +90,7 @@ function AdminCompanies() {
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <div className="size-10 rounded-xl bg-gold/10 flex items-center justify-center text-gold border border-gold/20 font-bold group-hover:scale-110 transition-transform">
-                        {company.logo_url ? (
-                          <img src={company.logo_url} alt="" className="size-full object-contain rounded-xl" />
-                        ) : (
-                          company.name.charAt(0)
-                        )}
+                        {company.name.charAt(0)}
                       </div>
                       <div>
                         <p className="font-bold">{company.name}</p>

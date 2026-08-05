@@ -12,7 +12,7 @@ const onboardingSchema = z.object({
   state: z.string().min(2, "Estado é obrigatório"),
   employeeCount: z.string().min(1, "Selecione a quantidade de funcionários"),
   mainObjective: z.string().min(1, "Selecione o objetivo"),
-  logoUrl: z.string().optional(),
+  
 });
 
 export const getOnboardingStatus = createServerFn({ method: "GET" })
@@ -59,7 +59,6 @@ export const completeOnboarding = createServerFn({ method: "POST" })
       .from("companies")
       .update({ 
         name: data.companyName,
-        logo_url: data.logoUrl || null,
         business_type: data.businessType,
         onboarding_status: 'completed',
         theme: 'dark', // Default theme

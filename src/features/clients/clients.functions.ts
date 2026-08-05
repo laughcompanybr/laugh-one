@@ -13,13 +13,12 @@ export const listClients = createServerFn({ method: "POST" })
     const from = (data.page - 1) * data.pageSize;
     const to = from + data.pageSize - 1;
 
-    let q = supabase
+    let q = (supabase as any)
       .from("clients")
       .select(
         "id, name, cpf, phone, whatsapp, instagram, zip, street, number, complement, district, reference, city, state, notes, created_at, updated_at, deleted_at",
         { count: "exact" },
       );
-
 
     if (!data.includeDeleted) q = q.is("deleted_at", null);
     if (data.search) {
@@ -42,62 +41,41 @@ export const getClient = createServerFn({ method: "POST" })
   .inputValidator((v) => idInput.parse(v))
   .handler(async ({ data, context }) => {
     const { supabase } = context;
-    const [clientRes, attachmentsRes, historyRes, ordersRes] = await Promise.all([
-      supabase.from("clients").select("*").eq("id", data.id).maybeSingle(),
-      supabase
-        .from("client_attachments")
-        .select("id, filename, mime, size, kind, storage_path, created_at")
-        .eq("client_id", data.id)
-        .order("created_at", { ascending: false }),
-      supabase
-        .from("audit_log")
-        .select("id, operation, actor, changed_at, old_data, new_data")
-        .eq("table_name", "clients")
-        .eq("record_id", data.id)
-        .order("changed_at", { ascending: false })
+    
+    const [clientRes, historyRes, ordersRes] = await Promise.all([
+      (supabase as any).from("clients").select("*").eq("id", data.id).maybeSingle(),
+      (supabase as any)
+        .from("company_activity_logs")
+        .select("*")
+        .eq("module", "clients")
+        .eq("company_id", (context as any).companyId)
+        .order("created_at", { ascending: false })
         .limit(50),
-      supabase
+      (supabase as any)
         .from("orders")
-        .select("id, order_number, status, brand, model, photo_path, sale_price, quantity, created_at")
+        .select("id, order_number, status, brand, model, sale_price, quantity, created_at")
         .eq("client_id", data.id)
         .is("deleted_at", null)
         .order("created_at", { ascending: false })
         .limit(50),
-
     ]);
 
     if (clientRes.error) throw clientRes.error;
     if (!clientRes.data) throw new Error("Cliente não encontrado");
 
-    const orders = ordersRes.data ?? [];
-    const orderPhotos: Record<string, string> = {};
-    await Promise.all(
-      orders
-        .filter((o) => o.photo_path)
-        .map(async (o) => {
-          const { data: signed } = await supabase.storage
-            .from("order-files")
-            .createSignedUrl(o.photo_path as string, 60 * 60);
-          if (signed?.signedUrl) orderPhotos[o.id] = signed.signedUrl;
-        }),
-    );
-
     return {
       client: clientRes.data,
-      attachments: attachmentsRes.data ?? [],
       history: historyRes.data ?? [],
-      orders,
-      orderPhotos,
+      orders: ordersRes.data ?? [],
     };
   });
-
 
 export const createClient = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((v) => clientSchema.parse(v))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-    const { data: row, error } = await supabase
+    const { data: row, error } = await (supabase as any)
       .from("clients")
       .insert({ ...data, created_by: userId, company_id: (context as any).companyId })
       .select("id")
@@ -111,7 +89,7 @@ export const updateClient = createServerFn({ method: "POST" })
   .inputValidator((v) => clientSchema.extend({ id: z.string().uuid() }).parse(v))
   .handler(async ({ data, context }) => {
     const { id, ...rest } = data;
-    const { error } = await context.supabase.from("clients").update(rest).eq("id", id);
+    const { error } = await (context.supabase as any).from("clients").update(rest).eq("id", id);
     if (error) throw error;
     return { ok: true };
   });
@@ -120,7 +98,7 @@ export const softDeleteClient = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((v) => idInput.parse(v))
   .handler(async ({ data, context }) => {
-    const { error } = await context.supabase
+    const { error } = await (context.supabase as any)
       .from("clients")
       .update({ deleted_at: new Date().toISOString() })
       .eq("id", data.id);
@@ -132,53 +110,10 @@ export const restoreClient = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((v) => idInput.parse(v))
   .handler(async ({ data, context }) => {
-    const { error } = await context.supabase
+    const { error } = await (context.supabase as any)
       .from("clients")
       .update({ deleted_at: null })
       .eq("id", data.id);
     if (error) throw error;
     return { ok: true };
-  });
-
-const attachmentInput = z.object({
-  client_id: z.string().uuid(),
-  storage_path: z.string().min(1).max(500),
-  filename: z.string().max(200).nullable().optional(),
-  mime: z.string().max(120).nullable().optional(),
-  size: z.number().int().nonnegative().nullable().optional(),
-  kind: z.string().max(60).nullable().optional(),
-});
-
-export const addClientAttachment = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((v) => attachmentInput.parse(v))
-  .handler(async ({ data, context }) => {
-    const { data: row, error } = await context.supabase
-      .from("client_attachments")
-      .insert({ ...data, uploaded_by: context.userId, company_id: (context as any).companyId } as any)
-      .select("id")
-      .single();
-    if (error) throw error;
-    return { id: row.id };
-  });
-
-export const deleteClientAttachment = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((v) => z.object({ id: z.string().uuid(), storage_path: z.string() }).parse(v))
-  .handler(async ({ data, context }) => {
-    await context.supabase.storage.from("client-files").remove([data.storage_path]);
-    const { error } = await context.supabase.from("client_attachments").delete().eq("id", data.id);
-    if (error) throw error;
-    return { ok: true };
-  });
-
-export const signAttachmentUrl = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((v) => z.object({ storage_path: z.string() }).parse(v))
-  .handler(async ({ data, context }) => {
-    const { data: signed, error } = await context.supabase.storage
-      .from("client-files")
-      .createSignedUrl(data.storage_path, 60 * 10);
-    if (error) throw error;
-    return { url: signed.signedUrl };
   });

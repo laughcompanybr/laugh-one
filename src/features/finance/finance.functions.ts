@@ -10,54 +10,10 @@ import {
   goalSchema,
   payablesFilterSchema,
 } from "./schemas";
-import { sanitizeReceiptPath, validateReceiptMetadata } from "./receipt-validation";
-
-const RECEIPT_BUCKET = "finance-receipts";
-
-/* eslint-disable @typescript-eslint/no-explicit-any */
-type SupabaseCtx = any;
-
-async function validateReceiptPath(
-  supabase: SupabaseCtx,
-  path: string | null | undefined,
-): Promise<string | null> {
-  const clean = sanitizeReceiptPath(path);
-  if (!clean) return null;
-  const parts = clean.split("/");
-  const folder = parts.slice(0, -1).join("/") || "";
-  const file = parts[parts.length - 1];
-  const { data, error } = await supabase.storage
-    .from(RECEIPT_BUCKET)
-    .list(folder, { limit: 1, search: file });
-  if (error) throw new Error(`Falha ao validar comprovante: ${error.message}`);
-  const found = (data ?? []).find((f: { name: string }) => f.name === file);
-  if (!found) throw new Error("Comprovante não encontrado no storage");
-  validateReceiptMetadata(file, {
-    size: found.metadata?.size,
-    mime: found.metadata?.mimetype,
-  });
-  return clean;
-}
-
-
-async function auditReceipt(
-  supabase: SupabaseCtx,
-  opts: { actor: string; table: string; recordId: string; route: string; receipt_url: string },
-) {
-  await supabase.from("audit_log").insert({
-    table_name: opts.table,
-    record_id: opts.recordId,
-    operation: "RECEIPT_ATTACHED",
-    actor: opts.actor,
-    new_data: { route: opts.route, receipt_url: opts.receipt_url },
-  });
-}
-
 
 const idInput = z.object({ id: z.string().uuid() });
 
 function toISO(d: string, endOfDay = false) {
-  // date is YYYY-MM-DD
   return endOfDay ? `${d}T23:59:59.999Z` : `${d}T00:00:00.000Z`;
 }
 
@@ -70,19 +26,19 @@ export const getCashFlow = createServerFn({ method: "POST" })
     const toEndISO = toISO(data.to, true);
 
     const [paymentsRes, expensesRes, txRes] = await Promise.all([
-      supabase
+      (supabase as any)
         .from("payments")
         .select("id, direction, amount, method, paid_at, notes, order_id, orders(order_number, brand, model, clients(name), suppliers(name))")
         .gte("paid_at", fromISO)
         .lte("paid_at", toEndISO)
         .order("paid_at", { ascending: false }),
-      supabase
+      (supabase as any)
         .from("expenses")
         .select("id, description, amount, category, incurred_at")
         .gte("incurred_at", data.from)
         .lte("incurred_at", data.to)
         .order("incurred_at", { ascending: false }),
-      supabase
+      (supabase as any)
         .from("financial_transactions")
         .select("id, direction, amount, method, paid_at, description, category, status")
         .eq("status", "paid")
@@ -100,22 +56,21 @@ export const getCashFlow = createServerFn({ method: "POST" })
     const manualTx = txRes.data ?? [];
 
     const totalInPayments = payments
-      .filter((p) => p.direction === "in")
-      .reduce((a, b) => a + Number(b.amount), 0);
+      .filter((p: any) => p.direction === "in")
+      .reduce((a: number, b: any) => a + Number(b.amount), 0);
     const totalOutPayments = payments
-      .filter((p) => p.direction === "out")
-      .reduce((a, b) => a + Number(b.amount), 0);
+      .filter((p: any) => p.direction === "out")
+      .reduce((a: number, b: any) => a + Number(b.amount), 0);
     const totalInManual = manualTx
-      .filter((t) => t.direction === "in")
-      .reduce((a, b) => a + Number(b.amount), 0);
+      .filter((t: any) => t.direction === "in")
+      .reduce((a: number, b: any) => a + Number(b.amount), 0);
     const totalOutManual = manualTx
-      .filter((t) => t.direction === "out")
-      .reduce((a, b) => a + Number(b.amount), 0);
-    const totalExpenses = expenses.reduce((a, b) => a + Number(b.amount), 0);
+      .filter((t: any) => t.direction === "out")
+      .reduce((a: number, b: any) => a + Number(b.amount), 0);
+    const totalExpenses = expenses.reduce((a: number, b: any) => a + Number(b.amount), 0);
     const totalIn = totalInPayments + totalInManual;
     const totalOut = totalOutPayments + totalOutManual + totalExpenses;
 
-    // Series by day or month
     const bucket = (iso: string) => {
       const d = new Date(iso);
       if (data.granularity === "month") {
@@ -147,7 +102,6 @@ export const getCashFlow = createServerFn({ method: "POST" })
       .sort((a, b) => a.key.localeCompare(b.key))
       .map((r) => ({ ...r, net: r.inflow - r.outflow }));
 
-    // By category (expenses + manual out)
     const byCategory = new Map<string, number>();
     for (const e of expenses) {
       const k = e.category ?? "Outros";
@@ -183,7 +137,7 @@ export const getCashFlow = createServerFn({ method: "POST" })
 export const listReceivables = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { data, error } = await context.supabase
+    const { data, error } = await (context.supabase as any)
       .from("orders")
       .select("id, order_number, status, sale_price, amount_received, expected_delivery, created_at, clients(id,name)")
       .is("deleted_at", null)
@@ -191,12 +145,12 @@ export const listReceivables = createServerFn({ method: "GET" })
       .order("expected_delivery", { ascending: true, nullsFirst: false });
     if (error) throw error;
     const rows = (data ?? [])
-      .map((o) => ({
+      .map((o: any) => ({
         ...o,
         balance: Number(o.sale_price ?? 0) - Number(o.amount_received ?? 0),
       }))
-      .filter((r) => r.balance > 0.009);
-    const total = rows.reduce((a, b) => a + b.balance, 0);
+      .filter((r: any) => r.balance > 0.009);
+    const total = rows.reduce((a: number, b: any) => a + b.balance, 0);
     return { rows, total };
   });
 
@@ -206,35 +160,35 @@ export const listPayables = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { supabase } = context;
     const [ordersRes, paymentsRes] = await Promise.all([
-      supabase
+      (supabase as any)
         .from("orders")
         .select("id, order_number, status, cost_price, expected_delivery, purchase_date, created_at, suppliers(id,name)")
         .is("deleted_at", null)
         .neq("status", "cancelled")
         .gt("cost_price", 0),
-      supabase.from("payments").select("order_id, amount, direction").eq("direction", "out"),
+      (supabase as any).from("payments").select("order_id, amount, direction").eq("direction", "out"),
     ]);
     if (ordersRes.error) throw ordersRes.error;
     if (paymentsRes.error) throw paymentsRes.error;
     const paidByOrder = new Map<string, number>();
-    for (const p of paymentsRes.data ?? []) {
+    for (const p of (paymentsRes.data ?? [])) {
       if (!p.order_id) continue;
       paidByOrder.set(p.order_id, (paidByOrder.get(p.order_id) ?? 0) + Number(p.amount));
     }
     const today = new Date().toISOString().slice(0, 10);
     const search = (data.search ?? "").toLowerCase().trim();
     const rows = (ordersRes.data ?? [])
-      .map((o) => {
+      .map((o: any) => {
         const paid = paidByOrder.get(o.id) ?? 0;
         return { ...o, paid, balance: Number(o.cost_price ?? 0) - paid };
       })
-      .filter((r) => r.balance > 0.009)
-      .filter((r) => {
+      .filter((r: any) => r.balance > 0.009)
+      .filter((r: any) => {
         if (!search) return true;
         const hay = `${r.suppliers?.name ?? ""} #${r.order_number}`.toLowerCase();
         return hay.includes(search);
       })
-      .filter((r) => {
+      .filter((r: any) => {
         const due = r.expected_delivery ?? r.purchase_date ?? null;
         if (data.from && due && due < data.from) return false;
         if (data.to && due && due > data.to) return false;
@@ -248,8 +202,8 @@ export const listPayables = createServerFn({ method: "POST" })
         if (data.statusFilter === "no_date") return !due;
         return true;
       })
-      .sort((a, b) => (a.expected_delivery ?? "9999").localeCompare(b.expected_delivery ?? "9999"));
-    const total = rows.reduce((a, b) => a + b.balance, 0);
+      .sort((a: any, b: any) => (a.expected_delivery ?? "9999").localeCompare(b.expected_delivery ?? "9999"));
+    const total = rows.reduce((a: number, b: any) => a + b.balance, 0);
     return { rows, total };
   });
 
@@ -267,9 +221,9 @@ export const getPayableHistory = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const from = (data.page - 1) * data.pageSize;
     const to = from + data.pageSize - 1;
-    const { data: rows, error, count } = await context.supabase
+    const { data: rows, error, count } = await (context.supabase as any)
       .from("payments")
-      .select("id, amount, method, paid_at, notes, receipt_url, direction", { count: "exact" })
+      .select("id, amount, method, paid_at, notes, direction", { count: "exact" })
       .eq("order_id", data.order_id)
       .eq("direction", "out")
       .order("paid_at", { ascending: false })
@@ -278,14 +232,13 @@ export const getPayableHistory = createServerFn({ method: "POST" })
     return { rows: rows ?? [], total: count ?? 0, page: data.page, pageSize: data.pageSize };
   });
 
-
 export const listExpenses = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((v) => expenseFilterSchema.parse(v))
   .handler(async ({ data, context }) => {
-    let q = context.supabase
+    let q = (context.supabase as any)
       .from("expenses")
-      .select("id, description, amount, category, incurred_at, receipt_url, created_at")
+      .select("id, description, amount, category, incurred_at, created_at")
       .gte("incurred_at", data.from)
       .lte("incurred_at", data.to)
       .order("incurred_at", { ascending: false });
@@ -299,44 +252,30 @@ export const createExpense = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((v) => expenseSchema.parse(v))
   .handler(async ({ data, context }) => {
-    const receipt = await validateReceiptPath(context.supabase, data.receipt_url);
-    const { data: inserted, error } = await context.supabase
+    const { data: inserted, error } = await (context.supabase as any)
       .from("expenses")
       .insert({
         description: data.description,
         amount: data.amount,
         category: data.category,
         incurred_at: data.incurred_at,
-        receipt_url: receipt,
         created_by: context.userId,
         company_id: (context as any).companyId,
       })
       .select("id")
       .single();
     if (error) throw error;
-    if (receipt && inserted?.id) {
-      await auditReceipt(context.supabase, {
-        actor: context.userId,
-        table: "expenses",
-        recordId: inserted.id,
-        route: "/financeiro:createExpense",
-        receipt_url: receipt,
-      });
-    }
     return { ok: true };
   });
-
 
 export const deleteExpense = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((v) => idInput.parse(v))
   .handler(async ({ data, context }) => {
-    const { error } = await context.supabase.from("expenses").delete().eq("id", data.id);
+    const { error } = await (context.supabase as any).from("expenses").delete().eq("id", data.id);
     if (error) throw error;
     return { ok: true };
   });
-
-/* -------- Manual financial transactions -------- */
 
 export const listFinancialTransactions = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -344,9 +283,9 @@ export const listFinancialTransactions = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const fromISO = `${data.from}T00:00:00.000Z`;
     const toISO = `${data.to}T23:59:59.999Z`;
-    let q = context.supabase
+    let q = (context.supabase as any)
       .from("financial_transactions")
-      .select("id, direction, status, description, category, amount, method, due_date, paid_at, notes, receipt_url, created_at")
+      .select("id, direction, status, description, category, amount, method, due_date, paid_at, notes, created_at")
       .or(
         `and(paid_at.gte.${fromISO},paid_at.lte.${toISO}),and(due_date.gte.${data.from},due_date.lte.${data.to})`,
       )
@@ -366,14 +305,13 @@ export const createFinancialTransaction = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((v) => financialTxSchema.parse(v))
   .handler(async ({ data, context }) => {
-    const receipt = await validateReceiptPath(context.supabase, data.receipt_url);
     const paid_at =
       data.status === "paid"
         ? data.paid_at
           ? new Date(data.paid_at).toISOString()
           : new Date().toISOString()
         : null;
-    const { data: inserted, error } = await context.supabase
+    const { data: inserted, error } = await (context.supabase as any)
       .from("financial_transactions")
       .insert({
         direction: data.direction,
@@ -385,22 +323,12 @@ export const createFinancialTransaction = createServerFn({ method: "POST" })
         due_date: data.due_date || null,
         paid_at,
         notes: data.notes || null,
-        receipt_url: receipt,
         created_by: context.userId,
         company_id: (context as any).companyId,
       })
       .select("id")
       .single();
     if (error) throw error;
-    if (receipt && inserted?.id) {
-      await auditReceipt(context.supabase, {
-        actor: context.userId,
-        table: "financial_transactions",
-        recordId: inserted.id,
-        route: "/financeiro:createFinancialTransaction",
-        receipt_url: receipt,
-      });
-    }
     return { ok: true };
   });
 
@@ -408,7 +336,7 @@ export const deleteFinancialTransaction = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((v) => idInput.parse(v))
   .handler(async ({ data, context }) => {
-    const { error } = await context.supabase
+    const { error } = await (context.supabase as any)
       .from("financial_transactions")
       .delete()
       .eq("id", data.id);
@@ -420,61 +348,39 @@ const markTxPaidSchema = z.object({
   id: z.string().uuid(),
   paid_at: z.string().optional().nullable(),
   method: z.string().trim().max(40).optional().nullable(),
-  receipt_url: z.string().trim().max(500).optional().nullable(),
 });
 
 export const markTransactionPaid = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((v) => markTxPaidSchema.parse(v))
   .handler(async ({ data, context }) => {
-    const receipt = await validateReceiptPath(context.supabase, data.receipt_url);
-    const patch: {
-      status: "paid";
-      paid_at: string;
-      method?: string;
-      receipt_url?: string;
-    } = {
+    const patch: any = {
       status: "paid",
       paid_at: data.paid_at ? new Date(data.paid_at).toISOString() : new Date().toISOString(),
     };
     if (data.method) patch.method = data.method;
-    if (receipt) patch.receipt_url = receipt;
-    const { error } = await context.supabase
+    const { error } = await (context.supabase as any)
       .from("financial_transactions")
       .update(patch)
       .eq("id", data.id);
     if (error) throw error;
-    if (receipt) {
-      await auditReceipt(context.supabase, {
-        actor: context.userId,
-        table: "financial_transactions",
-        recordId: data.id,
-        route: "/financeiro:markTransactionPaid",
-        receipt_url: receipt,
-      });
-    }
     return { ok: true };
   });
 
-/* -------- Pay supplier payable (order cost) -------- */
-const payPayableSchema = z.object({
-  order_id: z.string().uuid(),
-  amount: z.number().positive(),
-  method: z.string().trim().max(40).optional().nullable(),
-  paid_at: z.string().optional().nullable(),
-  notes: z.string().trim().max(500).optional().nullable(),
-  receipt_url: z.string().trim().max(500).optional().nullable(),
-});
-
 export const payPayable = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((v) => payPayableSchema.parse(v))
+  .inputValidator((v: any) => z.object({
+    order_id: z.string().uuid(),
+    amount: z.number().positive(),
+    method: z.string().trim().max(40).optional().nullable(),
+    paid_at: z.string().optional().nullable(),
+    notes: z.string().trim().max(500).optional().nullable(),
+  }).parse(v))
   .handler(async ({ data, context }) => {
-    const receipt = await validateReceiptPath(context.supabase, data.receipt_url);
     const paidAt = data.paid_at
       ? new Date(data.paid_at).toISOString()
       : new Date().toISOString();
-    const { data: inserted, error } = await context.supabase
+    const { data: inserted, error } = await (context.supabase as any)
       .from("payments")
       .insert({
         order_id: data.order_id,
@@ -483,81 +389,54 @@ export const payPayable = createServerFn({ method: "POST" })
         method: data.method || null,
         paid_at: paidAt,
         notes: data.notes || null,
-        receipt_url: receipt,
-        created_by: context.userId,
+        company_id: (context as any).companyId,
       })
       .select("id")
       .single();
     if (error) throw error;
-    if (receipt && inserted?.id) {
-      await auditReceipt(context.supabase, {
-        actor: context.userId,
-        table: "payments",
-        recordId: inserted.id,
-        route: "/financeiro:payPayable",
-        receipt_url: receipt,
-      });
-    }
     return { ok: true };
   });
 
-const bulkPayPayableSchema = z.object({
-  paid_at: z.string().optional().nullable(),
-  method: z.string().trim().max(40).optional().nullable(),
-  receipt_url: z.string().trim().max(500).optional().nullable(),
-  notes: z.string().trim().max(500).optional().nullable(),
-  items: z
-    .array(z.object({ order_id: z.string().uuid(), amount: z.number().positive() }))
-    .min(1)
-    .max(200),
-});
-
 export const bulkPayPayables = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((v) => bulkPayPayableSchema.parse(v))
+  .inputValidator((v) =>
+    z
+      .object({
+        items: z.array(
+          z.object({
+            order_id: z.string().uuid(),
+            amount: z.number().positive(),
+          }),
+        ),
+        method: z.string().trim().max(40),
+        paid_at: z.string().optional().nullable(),
+      })
+      .parse(v),
+  )
   .handler(async ({ data, context }) => {
-    const receipt = await validateReceiptPath(context.supabase, data.receipt_url);
     const paidAt = data.paid_at
       ? new Date(data.paid_at).toISOString()
       : new Date().toISOString();
-    const rows = data.items.map((it) => ({
-      order_id: it.order_id,
-      direction: "out" as const,
-      amount: it.amount,
-      method: data.method || null,
+    const rows = data.items.map((i) => ({
+      order_id: i.order_id,
+      direction: "out",
+      amount: i.amount,
+      method: data.method,
       paid_at: paidAt,
-      notes: data.notes || null,
-      receipt_url: receipt,
-      created_by: context.userId,
+      company_id: (context as any).companyId,
     }));
-    const { data: inserted, error } = await context.supabase
-      .from("payments")
-      .insert(rows)
-      .select("id");
+    const { error } = await (context.supabase as any).from("payments").insert(rows);
     if (error) throw error;
-    if (receipt && inserted?.length) {
-      const auditRows = inserted.map((r: { id: string }) => ({
-        table_name: "payments",
-        record_id: r.id,
-        operation: "RECEIPT_ATTACHED",
-        actor: context.userId,
-        new_data: { route: "/financeiro:bulkPayPayables", receipt_url: receipt },
-      }));
-      await context.supabase.from("audit_log").insert(auditRows);
-    }
-    return { ok: true, count: rows.length };
+    return { ok: true };
   });
-
-/* -------- Goals -------- */
 
 export const listGoals = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { data, error } = await context.supabase
+    const { data, error } = await (context.supabase as any)
       .from("goals")
-      .select("id, month, sales_target, orders_target, profit_target, notes, created_at, updated_at")
-      .order("month", { ascending: false })
-      .limit(36);
+      .select("*")
+      .order("created_at", { ascending: false });
     if (error) throw error;
     return data ?? [];
   });
@@ -566,112 +445,108 @@ export const upsertGoal = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((v) => goalSchema.parse(v))
   .handler(async ({ data, context }) => {
-    const payload = {
-      month: data.month,
-      sales_target: data.sales_target,
-      orders_target: data.orders_target,
-      profit_target: data.profit_target,
-      notes: data.notes || null,
-      created_by: context.userId,
-    };
-    const { error } = await context.supabase
+    const { data: row, error } = await (context.supabase as any)
       .from("goals")
-      .upsert(payload, { onConflict: "month" });
+      .upsert({ ...data, company_id: (context as any).companyId })
+      .select("id")
+      .single();
     if (error) throw error;
-    return { ok: true };
+    return { ok: true, id: row.id };
   });
 
 export const deleteGoal = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((v) => idInput.parse(v))
   .handler(async ({ data, context }) => {
-    const { error } = await context.supabase.from("goals").delete().eq("id", data.id);
+    const { error } = await (context.supabase as any).from("goals").delete().eq("id", data.id);
     if (error) throw error;
     return { ok: true };
   });
 
-export const getGoalStats = createServerFn({ method: "GET" })
+export const getGoalStats = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
+  .inputValidator((v) => z.object({ from: z.string().optional(), to: z.string().optional() }).optional().parse(v))
+  .handler(async ({ data, context }) => {
+    const { supabase } = context;
     const now = new Date();
-    const yearStart = new Date(now.getFullYear(), 0, 1).toISOString();
-    const [ordersRes, goalsRes] = await Promise.all([
-      context.supabase
-        .from("orders")
-        .select("id, sale_price, profit, status, created_at, order_number, brand, model, clients(name)")
-        .is("deleted_at", null)
-        .neq("status", "cancelled")
-        .gte("created_at", yearStart)
-        .order("sale_price", { ascending: false }),
-      context.supabase
-        .from("goals")
-        .select("month, sales_target, orders_target, profit_target")
-        .order("month", { ascending: false })
-        .limit(24),
+    const currentMonthKey = `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, "0")}`;
+    const startOfCurrentMonth = new Date(now.getUTCFullYear(), now.getUTCMonth(), 1).toISOString();
+    const endOfCurrentMonth = new Date(now.getUTCFullYear(), now.getUTCMonth() + 1, 0, 23, 59, 59, 999).toISOString();
+
+    const [goalsRes, paymentsRes, ordersRes] = await Promise.all([
+      (supabase as any).from("goals").select("*").order("month", { ascending: false }),
+      (supabase as any).from("payments").select("amount, paid_at, direction").eq("direction", "in"),
+      (supabase as any).from("orders").select("id, order_number, sale_price, cost_price, commission, card_fee, shipping, other_costs, created_at, clients(name)").is("deleted_at", null),
     ]);
-    if (ordersRes.error) throw ordersRes.error;
-    if (goalsRes.error) throw goalsRes.error;
 
-    const orders = ordersRes.data ?? [];
     const goals = goalsRes.data ?? [];
+    const allPayments = paymentsRes.data ?? [];
+    const allOrders = ordersRes.data ?? [];
 
-    // monthly aggregation
-    const monthly = new Map<string, { sales: number; orders: number; profit: number }>();
-    for (const o of orders) {
-      const k = String(o.created_at).slice(0, 7);
-      const cur = monthly.get(k) ?? { sales: 0, orders: 0, profit: 0 };
-      cur.sales += Number(o.sale_price ?? 0);
-      cur.orders += 1;
-      cur.profit += Number(o.profit ?? 0);
-      monthly.set(k, cur);
+    const monthlyStats = new Map<string, { sales: number; orders: number; profit: number }>();
+    const getBucket = (iso: string) => iso.slice(0, 7);
+
+    for (const o of allOrders) {
+      const bucket = getBucket(o.created_at);
+      const stat = monthlyStats.get(bucket) ?? { sales: 0, orders: 0, profit: 0 };
+      const sale = Number(o.sale_price ?? 0);
+      const cost = Number(o.cost_price ?? 0);
+      const expense = Number(o.commission ?? 0) + Number(o.card_fee ?? 0) + Number(o.shipping ?? 0) + Number(o.other_costs ?? 0);
+      
+      stat.sales += sale;
+      stat.orders += 1;
+      stat.profit += (sale - cost - expense);
+      monthlyStats.set(bucket, stat);
     }
 
-    const monthKey = now.toISOString().slice(0, 7);
-    const current = monthly.get(monthKey) ?? { sales: 0, orders: 0, profit: 0 };
-    const currentGoal =
-      goals.find((g) => String(g.month).slice(0, 7) === monthKey) ?? null;
+    const currentTarget = goals.find((g: any) => g.month.startsWith(currentMonthKey));
+    const currentActual = monthlyStats.get(currentMonthKey) ?? { sales: 0, orders: 0, profit: 0 };
 
-    // records
-    const biggestSale = orders[0]
-      ? {
-          id: orders[0].id,
-          order_number: orders[0].order_number,
-          amount: Number(orders[0].sale_price ?? 0),
-          brand: orders[0].brand,
-          model: orders[0].model,
-          client: (orders[0].clients as { name?: string } | null)?.name ?? null,
-        }
-      : null;
+    const goalsHit = goals.map((g: any) => {
+      const monthKey = g.month.slice(0, 7);
+      const actual = monthlyStats.get(monthKey) ?? { sales: 0, orders: 0, profit: 0 };
+      const salesPct = g.sales_target ? actual.sales / g.sales_target : 0;
+      const ordersPct = g.orders_target ? actual.orders / g.orders_target : 0;
+      const profitPct = g.profit_target ? actual.profit / g.profit_target : 0;
+      return {
+        month: monthKey,
+        actual,
+        salesPct,
+        ordersPct,
+        profitPct,
+        hit: salesPct >= 1 || ordersPct >= 1 || profitPct >= 1
+      };
+    });
 
-    const salesRecord = Array.from(monthly.entries()).sort((a, b) => b[1].sales - a[1].sales)[0];
-    const profitRecord = Array.from(monthly.entries()).sort((a, b) => b[1].profit - a[1].profit)[0];
+    const totalHit = goalsHit.filter((h: any) => h.hit).length;
 
-    // goals hit
-    const goalsHit = goals
-      .map((g) => {
-        const k = String(g.month).slice(0, 7);
-        const m = monthly.get(k) ?? { sales: 0, orders: 0, profit: 0 };
-        const salesPct = g.sales_target ? m.sales / Number(g.sales_target) : 0;
-        const ordersPct = g.orders_target ? m.orders / Number(g.orders_target) : 0;
-        const profitPct = g.profit_target ? m.profit / Number(g.profit_target) : 0;
-        const hit =
-          (!g.sales_target || salesPct >= 1) &&
-          (!g.orders_target || ordersPct >= 1) &&
-          (!g.profit_target || profitPct >= 1);
-        return { month: k, salesPct, ordersPct, profitPct, hit, actual: m };
-      })
-      .sort((a, b) => b.month.localeCompare(a.month));
+    let salesRecord = { month: "", sales: 0, orders: 0 };
+    let profitRecord = { month: "", profit: 0 };
+    for (const [month, stat] of monthlyStats.entries()) {
+      if (stat.sales > salesRecord.sales) salesRecord = { month, sales: stat.sales, orders: stat.orders };
+      if (stat.profit > profitRecord.profit) profitRecord = { month, profit: stat.profit };
+    }
+
+    let biggestSale = { amount: 0, order_number: "", brand: "", model: "", client: "" };
+    for (const o of allOrders) {
+      const amt = Number(o.sale_price ?? 0);
+      if (amt > biggestSale.amount) {
+        biggestSale = {
+          amount: amt,
+          order_number: o.order_number,
+          brand: o.brand,
+          model: o.model,
+          client: (o.clients as any)?.name ?? ""
+        };
+      }
+    }
 
     return {
-      current: {
-        month: monthKey,
-        actual: current,
-        target: currentGoal,
-      },
-      biggestSale,
-      salesRecord: salesRecord ? { month: salesRecord[0], ...salesRecord[1] } : null,
-      profitRecord: profitRecord ? { month: profitRecord[0], ...profitRecord[1] } : null,
+      current: { target: currentTarget, actual: currentActual },
       goalsHit,
-      totalHit: goalsHit.filter((g) => g.hit).length,
+      totalHit,
+      salesRecord,
+      profitRecord,
+      biggestSale
     };
   });
