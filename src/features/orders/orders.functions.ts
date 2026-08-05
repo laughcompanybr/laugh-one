@@ -184,7 +184,7 @@ export const addPayment = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { data: row, error } = await context.supabase
       .from("payments")
-      .insert({ ...data, created_by: context.userId })
+      .insert({ ...data, created_by: context.userId, company_id: (context as any).companyId })
       .select("id, direction, amount")
       .single();
     if (error) throw error;
@@ -267,7 +267,7 @@ export const addMixedPayments = createServerFn({ method: "POST" })
 
     const { data: inserted, error } = await supabase
       .from("payments")
-      .insert(rows as never)
+      .insert(rows.map(r => ({ ...r, company_id: (context as any).companyId })) as never)
       .select("id, direction, amount, method, card_fee, card_fee_percent");
     if (error) throw error;
 
@@ -318,7 +318,7 @@ export const addOrderAttachment = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { data: row, error } = await context.supabase
       .from("order_attachments")
-      .insert({ ...data, uploaded_by: context.userId })
+      .insert({ ...data, uploaded_by: context.userId, company_id: (context as any).companyId } as any)
       .select("id")
       .single();
     if (error) throw error;
