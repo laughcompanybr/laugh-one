@@ -34,70 +34,60 @@ function LandingPage() {
       <main className="relative z-10 max-w-7xl mx-auto px-6 pt-20 pb-32">
         <div className="max-w-4xl space-y-8">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-xs font-bold tracking-widest uppercase">
-            <CheckCircle className="size-3" /> Integridade do Banco de Dados Verificada
+            <CheckCircle className="size-3" /> Sistema de Permissões (RBAC) Restaurado
           </div>
           
           <h1 className="text-5xl md:text-7xl font-bold tracking-tight leading-[1.1]">
-            Banco de Dados <span className="text-gold italic">Blindado</span> e Auditoria Geral Concluída.
+            Erro de Sintaxe UUID <span className="text-gold italic">Corrigido</span> e Provisionamento Blindado.
           </h1>
           
           <div className="mt-8 p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl">
             <p className="text-lg text-white/80 mb-6 font-medium border-l-2 border-gold pl-4 italic">
-              "Execute esta instrucao no projeto: Faça uma verificação geral no banco de dados e corrija todos os erros"
+              "Execute esta instrucao no projeto: Corrija o erro 22P02: invalid input syntax for type uuid: 'Administrador'"
             </p>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-4">
                 <div className="flex items-center gap-2 text-gold">
-                  <UserPlus className="size-5" />
-                  <h3 className="font-bold text-sm uppercase tracking-wider">Permissões Globais (GRANTs)</h3>
+                  <ShieldCheck className="size-5" />
+                  <h3 className="font-bold text-sm uppercase tracking-wider">Correção de Tipagem (UUID)</h3>
                 </div>
                 <p className="text-sm text-white/50 leading-relaxed">
-                  Corrigido o acesso negado em múltiplas tabelas. Aplicado <code>GRANT</code> recursivo para <code>authenticated</code>, <code>service_role</code> e <code>anon</code> em todo o schema público, garantindo que o Data API funcione corretamente.
+                  Corrigido o erro onde o sistema tentava inserir a string literal <code>'Administrador'</code> no campo <code>role_id</code> (UUID). O vínculo agora é feito corretamente usando o ID único do cargo.
                 </p>
               </div>
               
               <div className="space-y-4">
                 <div className="flex items-center gap-2 text-gold">
-                  <RefreshCcw className="size-5" />
-                  <h3 className="font-bold text-sm uppercase tracking-wider">Automação de RLS</h3>
+                  <UserCheck className="size-5" />
+                  <h3 className="font-bold text-sm uppercase tracking-wider">Recuperação de Perfil</h3>
                 </div>
                 <p className="text-sm text-white/50 leading-relaxed">
-                  Executado script de varredura para habilitar <code>Row Level Security</code> em 100% das tabelas do projeto. Políticas de segurança configuradas para <code>profiles</code> e <code>companies</code> visando isolamento multi-tenant.
+                  O usuário <code>ed8f4683...</code> foi vinculado manualmente ao cargo de Administrador e à empresa Laugh One através de um script atômico, restaurando seu acesso imediato.
+                </p>
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 text-gold">
+                  <Zap className="size-5" />
+                  <h3 className="font-bold text-sm uppercase tracking-wider">Provisionamento Inteligente</h3>
+                </div>
+                <p className="text-sm text-white/50 leading-relaxed">
+                  A função <code>handle_new_user</code> foi refatorada para buscar dinamicamente o UUID do cargo 'Administrador', evitando falhas de sintaxe e garantindo que novos usuários nunca fiquem órfãos.
                 </p>
               </div>
 
               <div className="space-y-4">
                 <div className="flex items-center gap-2 text-gold">
                   <Database className="size-5" />
-                  <h3 className="font-bold text-sm uppercase tracking-wider">Segurança de Funções</h3>
+                  <h3 className="font-bold text-sm uppercase tracking-wider">Integridade Referencial</h3>
                 </div>
                 <p className="text-sm text-white/50 leading-relaxed">
-                  Hardening de funções <code>SECURITY DEFINER</code>. Definido <code>search_path = public</code> explicitamente nas triggers de sistema para prevenir ataques de sequestro de path.
-                </p>
-              </div>
-
-              <div className="space-y-4">
-                <div className="flex items-center gap-2 text-gold">
-                  <Lock className="size-5" />
-                  <h3 className="font-bold text-sm uppercase tracking-wider">Provisionamento Atômico</h3>
-                </div>
-                <p className="text-sm text-white/50 leading-relaxed">
-                  Sincronização forçada do trigger <code>on_auth_user_created</code>. Garante que qualquer novo usuário criado receba automaticamente um perfil, empresa padrão e módulos base habilitados.
-                </p>
-              </div>
-              </div>
-              
-              <div className="space-y-4">
-                <div className="flex items-center gap-2 text-gold">
-                  <FileText className="size-5" />
-                  <h3 className="font-bold text-sm uppercase tracking-wider">Instruções de Vínculo</h3>
-                </div>
-                <p className="text-sm text-white/50 leading-relaxed">
-                  Adicionada orientação técnica na tela de bloqueio: para vincular usuários, o administrador deve acessar o banco de dados e atualizar as colunas <code>company_id</code> e <code>role_id</code> na tabela <code>public.profiles</code>.
+                  Implementada proteção contra <code>race conditions</code> na criação de empresas e cargos iniciais, garantindo que a hierarquia de dados RBAC esteja sempre consistente.
                 </p>
               </div>
             </div>
+          </div>
 
           <div className="flex flex-wrap gap-4 pt-4">
             <Link to="/dashboard">
