@@ -172,12 +172,16 @@ export const updateSubscription = createServerFn({ method: "POST" })
     const { supabase, userId } = context;
     await checkSuperAdmin(supabase, userId);
 
-    const patch: Record<string, unknown> = {};
+    const patch: {
+      status?: "active" | "expired" | "canceled" | "suspended";
+      canceled_at?: string;
+      expires_at?: string;
+    } = {};
     if (data.status) {
-      patch["status"] = data.status;
-      if (data.status === "canceled") patch["canceled_at"] = new Date().toISOString();
+      patch.status = data.status;
+      if (data.status === "canceled") patch.canceled_at = new Date().toISOString();
     }
-    if (data.expiresAt) patch["expires_at"] = data.expiresAt;
+    if (data.expiresAt) patch.expires_at = data.expiresAt;
 
     const { error } = await supabase.from("subscriptions").update(patch).eq("id", data.id);
     if (error) throw error;
