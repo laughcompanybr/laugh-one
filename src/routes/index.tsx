@@ -38,8 +38,12 @@ function LandingPage() {
           </div>
           
           <h1 className="text-6xl md:text-8xl font-bold tracking-tight leading-[1.05]">
-            Tecnologia criada para negócios que <span className="text-gold italic underline decoration-gold/30 underline-offset-8">evoluem.</span>
+            Laugh One
           </h1>
+          <p className="text-2xl text-gold font-medium mb-4 italic">
+            "Tecnologia criada para negócios que evoluem."
+          </p>
+
           
           <p className="text-xl text-white/60 max-w-2xl leading-relaxed">
             Uma plataforma inteligente de gestão empresarial adaptável, desenvolvida pela <span className="text-white font-semibold">Laugh Company</span> para escalar sua operação com eficiência e precisão.

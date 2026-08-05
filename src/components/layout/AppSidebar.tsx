@@ -1,4 +1,8 @@
 import { Link, useRouterState } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { getBusinessTemplate } from "@/domains/tenants/services/business-template.functions";
+
 import {
   Sidebar,
   SidebarContent,
@@ -32,6 +36,14 @@ export function AppSidebar() {
   const { isSuperAdmin } = useUserRole();
   const { company } = useCompany();
   const { isModuleEnabled } = useModules();
+  
+  const fetchTemplate = useServerFn(getBusinessTemplate);
+  const { data: template } = useQuery({
+    queryKey: ["business-template"],
+    queryFn: () => fetchTemplate({}),
+    staleTime: 1000 * 60 * 5,
+  });
+
 
   const groups = (["operação", "gestão", "sistema"] as const).map((group) => ({
     group,
@@ -43,10 +55,14 @@ export function AppSidebar() {
       let title = item.title;
       const businessType = company?.business_type;
       
-      // Simple dynamic terminology logic for now
-      if (businessType === 'Restaurante' && item.moduleId === 'products') title = "Cardápio";
-      if (businessType === 'Restaurante' && item.moduleId === 'orders') title = "Mesas";
-      if (businessType === 'Barbearia' && item.moduleId === 'clients') title = "Fregueses";
+      // Business template dynamic terminology
+      if (template?.terminology) {
+        const termKey = item.moduleId;
+        if (template.terminology[termKey]) {
+          title = template.terminology[termKey];
+        }
+      }
+
       
       return { ...item, title };
     }),
