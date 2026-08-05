@@ -339,7 +339,7 @@ export function OrderForm({ defaultValues, submitLabel = "Salvar", onSubmit, onC
           </div>
         </div>
 
-        <div className={`grid gap-4 sm:grid-cols-2 ${!customShip && clientHasAddress ? "opacity-50 grayscale pointer-events-none" : ""}`}>
+        <div className={`grid gap-4 sm:grid-cols-2 ${!customShip && !!(selectedClient && (selectedClient.zip || selectedClient.street || selectedClient.city)) ? "opacity-50 grayscale pointer-events-none" : ""}`}>
           <div className="space-y-1.5">
             <Label htmlFor="ship_zip">CEP</Label>
             <div className="flex gap-2">
