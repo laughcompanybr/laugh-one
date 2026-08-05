@@ -74,6 +74,48 @@ export type Database = {
         }
         Relationships: []
       }
+      business_templates: {
+        Row: {
+          business_type: string
+          created_at: string | null
+          custom_fields: Json | null
+          dashboard_widgets: Json | null
+          description: string | null
+          display_name: string
+          enabled_modules: Json | null
+          id: string
+          terminology: Json | null
+          updated_at: string | null
+          workflows: Json | null
+        }
+        Insert: {
+          business_type: string
+          created_at?: string | null
+          custom_fields?: Json | null
+          dashboard_widgets?: Json | null
+          description?: string | null
+          display_name: string
+          enabled_modules?: Json | null
+          id?: string
+          terminology?: Json | null
+          updated_at?: string | null
+          workflows?: Json | null
+        }
+        Update: {
+          business_type?: string
+          created_at?: string | null
+          custom_fields?: Json | null
+          dashboard_widgets?: Json | null
+          description?: string | null
+          display_name?: string
+          enabled_modules?: Json | null
+          id?: string
+          terminology?: Json | null
+          updated_at?: string | null
+          workflows?: Json | null
+        }
+        Relationships: []
+      }
       client_attachments: {
         Row: {
           client_id: string
