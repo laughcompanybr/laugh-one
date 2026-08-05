@@ -172,16 +172,22 @@ export const addPayment = createServerFn({ method: "POST" })
     if (error) throw error;
 
     if (data.direction === "in") {
-      const { data: sums } = await (context.supabase as any)
+      const { data: sums, error: sumsError } = await (context.supabase as any)
         .from("payments")
         .select("amount")
         .eq("order_id", data.order_id)
         .eq("direction", "in");
+      if (sumsError) throw sumsError;
       const total = (sums ?? []).reduce((a: number, b: any) => a + Number(b.amount), 0);
-      await (context.supabase as any).from("orders").update({ amount_received: total }).eq("id", data.order_id);
+      const { error: updateError } = await (context.supabase as any)
+        .from("orders")
+        .update({ amount_received: total })
+        .eq("id", data.order_id);
+      if (updateError) throw updateError;
     }
 
-    await (context.supabase as any).from("order_events").insert({
+    // Timeline logging must never break the payment itself.
+    const { error: eventError } = await (context.supabase as any).from("order_events").insert({
       order_id: data.order_id,
       type: "payment",
       message:
@@ -191,6 +197,7 @@ export const addPayment = createServerFn({ method: "POST" })
       meta: { payment_id: row.id, direction: row.direction, amount: row.amount },
       actor: context.userId,
     });
+    if (eventError) console.error("[orders] falha ao registrar evento de pagamento:", eventError.message);
 
     return { id: row.id };
   });
