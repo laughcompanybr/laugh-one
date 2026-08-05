@@ -3,11 +3,16 @@ import { getImpersonationStatus, stopImpersonation } from "@/features/admin/impe
 import { ShieldAlert, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { useHasSession } from "@/hooks/use-session";
 
 export function ImpersonationBanner() {
+  const { hasSession } = useHasSession();
+
   const { data: status, isLoading } = useQuery({
     queryKey: ["impersonation-status"],
     queryFn: () => getImpersonationStatus(),
+    enabled: hasSession,
+    retry: false,
   });
 
   const stopMutation = useMutation({
@@ -18,7 +23,7 @@ export function ImpersonationBanner() {
     }
   });
 
-  if (isLoading || !status) return null;
+  if (!hasSession || isLoading || !status) return null;
 
   return (
     <div className="bg-gold text-gold-foreground px-4 py-2 flex items-center justify-between shadow-lg animate-in slide-in-from-top duration-300 sticky top-0 z-[60]">

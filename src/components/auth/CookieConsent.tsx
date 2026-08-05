@@ -1,17 +1,20 @@
-import { useState, useEffect } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { getConsent, saveConsent } from "@/domains/auth/services/consent.functions";
 import { Button } from "@/components/ui/button";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useHasSession } from "@/hooks/use-session";
 
 export function CookieConsent() {
   const queryClient = useQueryClient();
   const getConsentFn = useServerFn(getConsent);
   const saveConsentFn = useServerFn(saveConsent);
+  const { hasSession } = useHasSession();
 
   const { data: consent, isLoading } = useQuery({
     queryKey: ["user-consent"],
     queryFn: () => getConsentFn({}), // Pass empty object if no input is expected but middleware exists
+    enabled: hasSession,
+    retry: false,
   });
 
   const mutation = useMutation({
@@ -19,7 +22,7 @@ export function CookieConsent() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["user-consent"] }),
   });
 
-  if (isLoading || consent) return null;
+  if (!hasSession || isLoading || consent) return null;
 
   return (
     <div className="fixed bottom-6 left-6 right-6 z-50 animate-in fade-in slide-in-from-bottom-8 duration-500">

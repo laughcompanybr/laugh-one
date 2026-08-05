@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, type ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getCurrentCompany } from "../services/TenantService";
 import type { Company } from "../types/tenant.types";
+import { useHasSession } from "@/hooks/use-session";
 
 interface CompanyContextValue {
   company: Company | null;
@@ -11,10 +12,13 @@ interface CompanyContextValue {
 const CompanyContext = createContext<CompanyContextValue | null>(null);
 
 export function CompanyProvider({ children }: { children: ReactNode }) {
+  const { hasSession } = useHasSession();
   const { data: company, isLoading } = useQuery({
     queryKey: ["current-company"],
     queryFn: () => getCurrentCompany(),
     staleTime: 1000 * 60 * 10,
+    enabled: hasSession,
+    retry: false,
   });
 
   useEffect(() => {
