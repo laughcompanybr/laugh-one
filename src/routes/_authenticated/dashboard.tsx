@@ -149,8 +149,8 @@ function DashboardPage() {
     <>
       <PageHeader
         eyebrow="Painel Executivo"
-        title="Tecnologia criada para negócios que evoluem.."
-        description="Painel SaaS com o controle total da sua operação Laugh One."
+        title="Tecnologia criada para negócios que evoluem."
+        description="Bem-vindo ao Laugh One, sua plataforma inteligente de gestão empresarial."
       />
       <Suspense fallback={<DashboardSkeleton />}>
         <DashboardContent />
