@@ -99,9 +99,28 @@ function AdminCompanies() {
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <Badge variant="outline" className="border-gold/30 text-gold bg-gold/5">
-                      {company.plans?.name || "Trial"}
-                    </Badge>
+                    {(() => {
+                      const sub = company.subscriptions?.find((s) => s.status === "active")
+                        ?? company.subscriptions?.[0];
+                      if (!sub) {
+                        return (
+                          <Badge variant="outline" className="border-muted text-muted-foreground">
+                            Sem assinatura
+                          </Badge>
+                        );
+                      }
+                      return (
+                        <div className="space-y-1">
+                          <Badge variant="outline" className="border-gold/30 text-gold bg-gold/5">
+                            {sub.plan_name} · {PERIOD_LABELS[sub.billing_period as BillingPeriod]}
+                          </Badge>
+                          <p className="text-xs text-muted-foreground">
+                            {sub.status === "active" ? "Válida até " : "Expirou em "}
+                            {new Date(sub.expires_at).toLocaleDateString("pt-BR")}
+                          </p>
+                        </div>
+                      );
+                    })()}
                   </td>
                   <td className="px-6 py-4">
                     <StatusBadge status={company.status || "active"} />
