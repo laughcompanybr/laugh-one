@@ -25,113 +25,33 @@ function LandingPage() {
     "Pet Shops", "Escolas", "Agências", "Construtoras"
   ];
 
-  const plans = [
-    {
-      name: "Starter",
-      tagline: "Pequenos negócios iniciando sua organização.",
-      price: {
-        monthly: 49.90,
-        quarterly: 134.70,
-        semiannual: 239.40,
-        yearly: 419.00
-      },
-      savings: {
-        monthly: 0,
-        quarterly: 10,
-        semiannual: 20,
-        yearly: 30
-      },
-      features: [
-        "Cadastro de clientes",
-        "Gestão básica",
-        "Dashboard inicial",
-        "Controle financeiro básico",
-        "Relatórios simples",
-        "Um segmento de negócio",
-        "Suporte padrão"
-      ],
-      highlight: false
-    },
-    {
-      name: "Professional",
-      tagline: "Empresas que precisam de mais controle e crescimento.",
-      price: {
-        monthly: 99.90,
-        quarterly: 269.70,
-        semiannual: 479.40,
-        yearly: 839.00
-      },
-      savings: {
-        monthly: 0,
-        quarterly: 10,
-        semiannual: 20,
-        yearly: 30
-      },
-      features: [
-        "Tudo do Starter +",
-        "Todos os módulos do segmento",
-        "Relatórios avançados",
-        "Controle completo financeiro",
-        "Gestão de pedidos",
-        "Agenda",
-        "Funcionários",
-        "Comissões",
-        "Relatórios mensais",
-        "Personalização da empresa",
-        "Mais usuários"
-      ],
-      highlight: true,
-      highlightText: "Mais escolhido"
-    },
-    {
-      name: "Business",
-      tagline: "Empresas maiores e operações profissionais.",
-      price: {
-        monthly: 199.90,
-        quarterly: 539.70,
-        semiannual: 959.40,
-        yearly: 1679.00
-      },
-      savings: {
-        monthly: 0,
-        quarterly: 10,
-        semiannual: 20,
-        yearly: 30
-      },
-      features: [
-        "Tudo do Professional +",
-        "Usuários ilimitados",
-        "Múltiplos funcionários",
-        "Permissões avançadas",
-        "Gestão completa da equipe",
-        "Relatórios estratégicos",
-        "Mais personalizações",
-        "Suporte prioritário",
-        "Recursos exclusivos"
-      ],
-      highlight: false
-    }
+  const {
+    data: pricing,
+    isError: pricingError,
+    refetch: refetchPricing,
+  } = useQuery({
+    queryKey: ["subscription-pricing"],
+    queryFn: () => getSubscriptionPricing(),
+    retry: 1,
+  });
+
+  const currentPricing = (pricing ?? []).find((p) => p.period === billingCycle);
+
+  const includedFeatures = [
+    "Todos os módulos liberados",
+    "Clientes e CRM completo",
+    "Financeiro completo",
+    "Pedidos e vendas",
+    "Estoque e produtos",
+    "Agenda e serviços",
+    "Funcionários e comissões",
+    "Relatórios avançados",
+    "Usuários ilimitados",
+    "Personalização total da marca",
+    "Suporte prioritário",
+    "Novas funcionalidades incluídas",
   ];
 
-  const comparison = [
-    { feature: "Clientes", starter: "Sim", professional: "Sim", business: "Sim" },
-    { feature: "Financeiro", starter: "Básico", professional: "Completo", business: "Avançado" },
-    { feature: "Pedidos", starter: "Não", professional: "Sim", business: "Ilimitado" },
-    { feature: "Agenda", starter: "Não", professional: "Sim", business: "Sim" },
-    { feature: "Estoque", starter: "Não", professional: "Sim", business: "Avançado" },
-    { feature: "Relatórios", starter: "Simples", professional: "Avançados", business: "Estratégicos" },
-    { feature: "Usuários", starter: "2", professional: "10", business: "Ilimitados" },
-    { feature: "Personalização", starter: "Básica", professional: "Completa", business: "Total" },
-    { feature: "Segmentos", starter: "1", professional: "Todos", business: "Todos + Custom" },
-    { feature: "Suporte", starter: "Padrão", professional: "Prioritário", business: "24/7 Dedicado" },
-  ];
-
-  const cycleLabels = {
-    monthly: "Mensal",
-    quarterly: "Trimestral",
-    semiannual: "Semestral",
-    yearly: "Anual"
-  };
 
   return (
     <div className="min-h-screen bg-[#020202] text-white selection:bg-gold/30 antialiased font-sans">
