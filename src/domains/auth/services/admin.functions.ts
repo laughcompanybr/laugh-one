@@ -1,4 +1,4 @@
-import { createServerFn } from "@tanstack/react-router";
+import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -21,13 +21,15 @@ export const getAuditLogs = createServerFn({ method: "GET" })
   });
 
 export const provisionUser = createServerFn({ method: "POST" })
-  .input(z.object({
-    userId: z.string().uuid(),
-    companyId: z.string().uuid().optional(),
-    roleId: z.string().uuid().optional(),
-  }))
+  .validator((data: { userId: string; companyId?: string; roleId?: string }) => 
+    z.object({
+      userId: z.string().uuid(),
+      companyId: z.string().uuid().optional(),
+      roleId: z.string().uuid().optional(),
+    }).parse(data)
+  )
   .handler(async ({ data: input }) => {
-    const { data, error } = await supabase.rpc("provision_user_safely", {
+    const { data, error } = await supabase.rpc("provision_user_safely" as any, {
       p_user_id: input.userId,
       p_company_id: input.companyId,
       p_role_id: input.roleId,
@@ -50,18 +52,20 @@ export const getRolesAndPermissions = createServerFn({ method: "GET" })
     if (rolePermsRes.error) throw new Error(rolePermsRes.error.message);
 
     return {
-      roles: rolesRes.data,
-      permissions: permissionsRes.data,
-      rolePermissions: rolePermsRes.data,
+      roles: rolesRes.data || [],
+      permissions: permissionsRes.data || [],
+      rolePermissions: rolePermsRes.data || [],
     };
   });
 
 export const updateRolePermissions = createServerFn({ method: "POST" })
-  .input(z.object({
-    roleId: z.string().uuid(),
-    companyId: z.string().uuid(),
-    permissionIds: z.array(z.string()),
-  }))
+  .validator((data: { roleId: string; companyId: string; permissionIds: string[] }) => 
+    z.object({
+      roleId: z.string().uuid(),
+      companyId: z.string().uuid(),
+      permissionIds: z.array(z.string()),
+    }).parse(data)
+  )
   .handler(async ({ data: input }) => {
     // Delete existing
     const { error: delError } = await supabase
@@ -98,6 +102,17 @@ export const getUnlinkedUsers = createServerFn({ method: "GET" })
     if (error) throw new Error(error.message);
     return data;
   });
+
+export const getCompanies = createServerFn({ method: "GET" })
+  .handler(async () => {
+    const { data, error } = await supabase
+      .from("companies")
+      .select("id, name");
+
+    if (error) throw new Error(error.message);
+    return data;
+  });
+
 
 export const getCompanies = createServerFn({ method: "GET" })
   .handler(async () => {
