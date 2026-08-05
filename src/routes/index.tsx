@@ -31,74 +31,70 @@ function LandingPage() {
         </div>
       </nav>
 
-      <main className="relative z-10 max-w-7xl mx-auto px-6 pt-20 pb-32">
+      <main className="relative z-10 max-w-7xl mx-auto px-6 pt-24 pb-32">
         <div className="max-w-4xl space-y-8">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-xs font-bold tracking-widest uppercase">
-            <CheckCircle className="size-3" /> Novo Módulo: Relatórios Mensais Consolidados
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold/10 border border-gold/20 text-gold text-xs font-bold tracking-widest uppercase">
+            <ShieldCheck className="size-3" /> Laugh One — SaaS Multi-Tenant Professional
           </div>
           
-          <h1 className="text-5xl md:text-7xl font-bold tracking-tight leading-[1.1]">
-            Organização <span className="text-gold italic">Mensal</span> e Fechamento Operacional Blindado.
+          <h1 className="text-6xl md:text-8xl font-bold tracking-tight leading-[1.05]">
+            Tecnologia criada para negócios que <span className="text-gold italic underline decoration-gold/30 underline-offset-8">evoluem.</span>
           </h1>
           
-          <div className="mt-8 p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl">
-            <p className="text-lg text-white/80 mb-6 font-medium border-l-2 border-gold pl-4 italic">
-              "Execute esta instrucao no projeto: Adicione uma nova aba no sistema chamada \"Mensais\".\n\nObjetivo:\nCriar um sistema de organização por meses..."
-            </p>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="space-y-4">
-                <div className="flex items-center gap-2 text-gold">
-                  <Calendar className="size-5" />
-                  <h3 className="font-bold text-sm uppercase tracking-wider">Módulo "Mensais"</h3>
-                </div>
-                <p className="text-sm text-white/50 leading-relaxed">
-                  Implementei uma nova área para organização por meses, separando relatórios, pedidos e dados financeiros para consultas e edições individuais e precisas.
-                </p>
-              </div>
-              
-              <div className="space-y-4">
-                <div className="flex items-center gap-2 text-gold">
-                  <Activity className="size-5" />
-                  <h3 className="font-bold text-sm uppercase tracking-wider">Dashboards Periódicos</h3>
-                </div>
-                <p className="text-sm text-white/50 leading-relaxed">
-                  Cada mês conta com seu próprio dashboard de resumo, totalizando vendas, recebimentos, despesas e lucro líquido de forma isolada.
-                </p>
-              </div>
-
-              <div className="space-y-4">
-                <div className="flex items-center gap-2 text-emerald-500">
-                  <TrendingUp className="size-5" />
-                  <h3 className="font-bold text-sm uppercase tracking-wider">Análise Comparativa</h3>
-                </div>
-                <p className="text-sm text-white/50 leading-relaxed">
-                  Adicionei inteligência para comparar a performance atual com o mês anterior, permitindo visualizar o crescimento de receita e evolução do lucro.
-                </p>
-              </div>
-
-              <div className="space-y-4">
-                <div className="flex items-center gap-2 text-gold">
-                  <Database className="size-5" />
-                  <h3 className="font-bold text-sm uppercase tracking-wider">Arquitetura de Dados</h3>
-                </div>
-                <p className="text-sm text-white/50 leading-relaxed">
-                  A estrutura garante que os registros permaneçam vinculados aos seus respectivos períodos, evitando misturas e facilitando o fechamento fiscal/operacional.
-                </p>
-              </div>
-
-            </div>
-          </div>
+          <p className="text-xl text-white/60 max-w-2xl leading-relaxed">
+            Uma plataforma inteligente de gestão empresarial adaptável, desenvolvida pela <span className="text-white font-semibold">Laugh Company</span> para escalar sua operação com eficiência e precisão.
+          </p>
 
           <div className="flex flex-wrap gap-4 pt-4">
-            <Link to="/dashboard">
+            <Link to="/auth">
               <Button size="lg" className="h-14 px-10 bg-gold hover:bg-gold/90 text-black font-bold text-lg shadow-[0_0_30px_rgba(212,175,55,0.3)]">
-                Validar Fluxo de Acesso
+                Acessar Plataforma
               </Button>
             </Link>
+            <Button size="lg" variant="outline" className="h-14 px-10 border-white/10 hover:bg-white/5 text-white font-medium text-lg">
+              Conhecer Soluções
+            </Button>
+          </div>
+          
+          <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8 border-t border-white/5 pt-12">
+            <div className="space-y-3">
+              <Zap className="size-6 text-gold" />
+              <h3 className="font-bold text-lg">Multi-Segmento</h3>
+              <p className="text-sm text-white/50 leading-relaxed">
+                Personalização automática para Barbearias, Lojas, Clínicas, Restaurantes e muito mais.
+              </p>
+            </div>
+            <div className="space-y-3">
+              <UserCheck className="size-6 text-gold" />
+              <h3 className="font-bold text-lg">Multi-Tenant</h3>
+              <p className="text-sm text-white/50 leading-relaxed">
+                Isolamento completo de dados e segurança RLS para cada empresa na plataforma.
+              </p>
+            </div>
+            <div className="space-y-3">
+              <Database className="size-6 text-gold" />
+              <h3 className="font-bold text-lg">White Label</h3>
+              <p className="text-sm text-white/50 leading-relaxed">
+                Sua marca, suas cores e seus módulos. Laugh One se adapta à sua identidade visual.
+              </p>
+            </div>
           </div>
         </div>
       </main>
+
+      <footer className="relative z-10 border-t border-white/5 bg-black/40 py-12 px-6 mt-20">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-sm text-white/40">
+          <div className="flex items-center gap-2">
+            <LaughLogo size={24} />
+            <span>&copy; {new Date().getFullYear()} Laugh One. Desenvolvido por <span className="text-white/60">Laugh Company</span>.</span>
+          </div>
+          <div className="flex gap-8">
+            <a href="#" className="hover:text-white transition-colors">Termos</a>
+            <a href="#" className="hover:text-white transition-colors">Privacidade</a>
+            <a href="#" className="hover:text-white transition-colors">Suporte</a>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
