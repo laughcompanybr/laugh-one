@@ -1413,6 +1413,8 @@ export type Database = {
           active: boolean | null
           created_at: string | null
           description: string | null
+          feature_list: string[] | null
+          highlight_text: string | null
           id: string
           integrations: Json | null
           max_clients: number | null
@@ -1422,6 +1424,8 @@ export type Database = {
           modules: Json | null
           name: string
           price_monthly: number | null
+          price_quarterly: number | null
+          price_semiannual: number | null
           price_yearly: number | null
           status: string | null
           storage_gb: number | null
@@ -1433,6 +1437,8 @@ export type Database = {
           active?: boolean | null
           created_at?: string | null
           description?: string | null
+          feature_list?: string[] | null
+          highlight_text?: string | null
           id?: string
           integrations?: Json | null
           max_clients?: number | null
@@ -1442,6 +1448,8 @@ export type Database = {
           modules?: Json | null
           name: string
           price_monthly?: number | null
+          price_quarterly?: number | null
+          price_semiannual?: number | null
           price_yearly?: number | null
           status?: string | null
           storage_gb?: number | null
@@ -1453,6 +1461,8 @@ export type Database = {
           active?: boolean | null
           created_at?: string | null
           description?: string | null
+          feature_list?: string[] | null
+          highlight_text?: string | null
           id?: string
           integrations?: Json | null
           max_clients?: number | null
@@ -1462,6 +1472,8 @@ export type Database = {
           modules?: Json | null
           name?: string
           price_monthly?: number | null
+          price_quarterly?: number | null
+          price_semiannual?: number | null
           price_yearly?: number | null
           status?: string | null
           storage_gb?: number | null
