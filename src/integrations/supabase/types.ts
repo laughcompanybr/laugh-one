@@ -200,6 +200,7 @@ export type Database = {
           accent_color: string | null
           block_reason: string | null
           border_radius: string | null
+          business_type: string | null
           button_color: string | null
           card_color: string | null
           created_at: string | null
@@ -222,6 +223,7 @@ export type Database = {
           mobile_icon_url: string | null
           name: string
           navbar_color: string | null
+          onboarding_status: string | null
           plan_id: string | null
           plan_tier: string | null
           primary_color: string | null
@@ -243,6 +245,7 @@ export type Database = {
           accent_color?: string | null
           block_reason?: string | null
           border_radius?: string | null
+          business_type?: string | null
           button_color?: string | null
           card_color?: string | null
           created_at?: string | null
@@ -265,6 +268,7 @@ export type Database = {
           mobile_icon_url?: string | null
           name: string
           navbar_color?: string | null
+          onboarding_status?: string | null
           plan_id?: string | null
           plan_tier?: string | null
           primary_color?: string | null
@@ -286,6 +290,7 @@ export type Database = {
           accent_color?: string | null
           block_reason?: string | null
           border_radius?: string | null
+          business_type?: string | null
           button_color?: string | null
           card_color?: string | null
           created_at?: string | null
@@ -308,6 +313,7 @@ export type Database = {
           mobile_icon_url?: string | null
           name?: string
           navbar_color?: string | null
+          onboarding_status?: string | null
           plan_id?: string | null
           plan_tier?: string | null
           primary_color?: string | null
@@ -379,6 +385,65 @@ export type Database = {
             columns: ["module_id"]
             isOneToOne: false
             referencedRelation: "modules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      company_onboarding_data: {
+        Row: {
+          business_type: string
+          city: string | null
+          commercial_email: string | null
+          company_id: string | null
+          created_at: string | null
+          employee_count: string | null
+          id: string
+          main_objective: string | null
+          onboarding_completed: boolean | null
+          phone: string | null
+          responsible_name: string | null
+          segment_data: Json | null
+          state: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          business_type: string
+          city?: string | null
+          commercial_email?: string | null
+          company_id?: string | null
+          created_at?: string | null
+          employee_count?: string | null
+          id?: string
+          main_objective?: string | null
+          onboarding_completed?: boolean | null
+          phone?: string | null
+          responsible_name?: string | null
+          segment_data?: Json | null
+          state?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          business_type?: string
+          city?: string | null
+          commercial_email?: string | null
+          company_id?: string | null
+          created_at?: string | null
+          employee_count?: string | null
+          id?: string
+          main_objective?: string | null
+          onboarding_completed?: boolean | null
+          phone?: string | null
+          responsible_name?: string | null
+          segment_data?: Json | null
+          state?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_onboarding_data_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: true
+            referencedRelation: "companies"
             referencedColumns: ["id"]
           },
         ]
