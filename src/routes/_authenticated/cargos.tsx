@@ -6,12 +6,17 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { useState } from "react";
 import { toast } from "sonner";
 import { useCompany } from "@/domains/tenants/hooks/use-company";
-import { Shield, Plus, Copy, Trash2, Search, CheckCircle2 } from "lucide-react";
+import { Shield, Plus, Copy, Trash2, Search, History, ShieldCheck } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { 
+  getRolesAndPermissions, 
+  updateRolePermissions 
+} from "@/domains/auth/services/admin.functions";
+
 
 export const Route = createFileRoute("/_authenticated/cargos")({
   component: RolesPage,
