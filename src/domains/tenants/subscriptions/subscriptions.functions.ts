@@ -1,44 +1,62 @@
-import { supabase } from "@/integrations/supabase/client";
 import { createServerFn } from "@tanstack/react-start";
-import { z } from "zod";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { createClient } from "@supabase/supabase-js";
+import type { Database } from "@/integrations/supabase/types";
+import type { SubscriptionPricing } from "./types";
 
-/**
- * Backend utility to check if a company has exceeded its plan limits.
- * This should be used in server functions before performing write operations.
- */
-export const checkPlanLimits = async (companyId: string, resource: 'users' | 'clients' | 'products' | 'storage' | 'uploads') => {
-  // Logic to fetch current usage and plan limits
-  // If exceeded, throw an error or return false
-  return true; 
-};
+/** Preços públicos por período (mesmo plano, durações diferentes). */
+export const getSubscriptionPricing = createServerFn({ method: "GET" }).handler(
+  async (): Promise<SubscriptionPricing[]> => {
+    const url = process.env["SUPABASE_URL"]!;
+    const key = process.env["SUPABASE_PUBLISHABLE_KEY"]!;
 
-/**
- * Validates the current subscription status of a company.
- * Returns true if the company is allowed to perform operations.
- */
-export const validateSubscription = async (companyId: string) => {
-  const { data: company, error } = await supabase
-    .from('companies')
-    .select('is_blocked, plan_id')
-    .eq('id', companyId)
-    .single();
+    const supabasePublic = createClient<Database>(url, key, {
+      auth: { persistSession: false, autoRefreshToken: false },
+      global: {
+        fetch: (input, init) => {
+          const headers = new Headers(init?.headers);
+          if (key.startsWith("sb_") && headers.get("Authorization") === `Bearer ${key}`) {
+            headers.delete("Authorization");
+          }
+          headers.set("apikey", key);
+          return fetch(input, { ...init, headers });
+        },
+      },
+    });
 
-  if (error || !company) return false;
-  if (company.is_blocked) return false;
-  
-  // Additional logic for subscription expiry check
-  return true;
-};
+    const { data, error } = await supabasePublic
+      .from("subscription_pricing")
+      .select("period, label, months, days, price, savings_percent")
+      .order("months", { ascending: true });
 
-export const getCompanyUsage = createServerFn({ method: "GET" })
-  .inputValidator(z.object({ companyId: z.string() }))
-  .handler(async ({ data }) => {
-    // In a real implementation, this would aggregate counts from clients, users, products tables
-    // and compare against the company's plan limits.
-    return {
-      users: { current: 3, limit: 5, percent: 60 },
-      clients: { current: 45, limit: 100, percent: 45 },
-      products: { current: 12, limit: 50, percent: 24 },
-      storage: { current: 250 * 1024 * 1024, limit: 1024 * 1024 * 1024, percent: 25 },
-    };
+    if (error) throw new Error(error.message);
+    return (data ?? []) as SubscriptionPricing[];
+  },
+);
+
+/** Assinatura da empresa do usuário autenticado. */
+export const getMySubscription = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabase, userId } = context;
+
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("company_id, impersonated_company_id")
+      .eq("id", userId)
+      .maybeSingle();
+
+    const companyId = profile?.impersonated_company_id ?? profile?.company_id;
+    if (!companyId) return null;
+
+    const { data, error } = await supabase
+      .from("subscriptions")
+      .select("*")
+      .eq("company_id", companyId)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (error) throw new Error(error.message);
+    return data;
   });
