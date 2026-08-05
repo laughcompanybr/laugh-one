@@ -303,9 +303,9 @@ export function GoalsPanel() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {goalsQ.data.map((g) => {
+                  {(goalsQ.data as any[]).map((g) => {
                     const key = String(g.month).slice(0, 7);
-                    const hit = stats?.goalsHit.find((h) => h.month === key);
+                    const hit = (stats as any)?.goalsHit.find((h: any) => h.month === key);
                     return (
                       <TableRow key={g.id}>
                         <TableCell className="font-medium">{monthLabel(key)}</TableCell>
