@@ -50,10 +50,10 @@ function AuditPage() {
   
   const [search, setSearch] = useState("");
 
-  const filteredLogs = (logs || []).filter(log => 
+  const filteredLogs = (logs || []).filter((log: any) => 
     log.table_name.toLowerCase().includes(search.toLowerCase()) ||
     log.operation.toLowerCase().includes(search.toLowerCase()) ||
-    log.profiles?.full_name?.toLowerCase().includes(search.toLowerCase())
+    (log.profiles as any)?.full_name?.toLowerCase().includes(search.toLowerCase())
   );
 
   const getOperationColor = (op: string) => {
@@ -105,14 +105,14 @@ function AuditPage() {
                 ) : filteredLogs.length === 0 ? (
                   <TableRow><TableCell colSpan={6} className="h-24 text-center">Nenhum log encontrado.</TableCell></TableRow>
                 ) : (
-                  filteredLogs.map((log) => (
+                  filteredLogs.map((log: any) => (
                     <TableRow key={log.id}>
                       <TableCell className="text-xs font-mono">
                         {format(new Date(log.changed_at), "dd/MM/yy HH:mm", { locale: ptBR })}
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          <span className="text-sm font-medium">{log.profiles?.full_name || 'Sistema'}</span>
+                          <span className="text-sm font-medium">{(log.profiles as any)?.full_name || 'Sistema'}</span>
                         </div>
                       </TableCell>
                       <TableCell className="font-mono text-xs">{log.table_name}</TableCell>
@@ -137,37 +137,4 @@ function AuditPage() {
   );
 }
 
-function AuditDetailDialog({ log }: { log: any }) {
-  return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="ghost" size="icon" className="size-8">
-          <Eye className="size-4" />
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>Detalhes da Operação: {log.operation}</DialogTitle>
-          <DialogDescription>
-            Tabela: {log.table_name} | ID: {log.record_id}
-          </DialogDescription>
-        </DialogHeader>
-        <div className="grid grid-cols-2 gap-4 mt-4">
-          <div className="space-y-2">
-            <h4 className="text-xs font-bold uppercase text-muted-foreground">Dado Anterior</h4>
-            <pre className="p-3 rounded bg-muted text-[10px] overflow-auto max-h-[400px]">
-              {JSON.stringify(log.old_data, null, 2)}
-            </pre>
-          </div>
-          <div className="space-y-2">
-            <h4 className="text-xs font-bold uppercase text-muted-foreground">Novo Dado</h4>
-            <pre className="p-3 rounded bg-muted text-[10px] overflow-auto max-h-[400px]">
-              {JSON.stringify(log.new_data, null, 2)}
-            </pre>
-          </div>
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
-}
 
