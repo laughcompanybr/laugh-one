@@ -80,13 +80,13 @@ function AdminDashboard() {
           </Link>
         </Button>
         <Button asChild variant="outline" className="border-gold/20 hover:bg-gold/5">
-          <Link to="/_authenticated/cargos">
+          <Link to="/cargos">
             <ShieldCheck className="mr-2 size-4 text-gold" />
             Cargos e Permissões
           </Link>
         </Button>
         <Button asChild variant="outline" className="border-gold/20 hover:bg-gold/5">
-          <Link to="/_authenticated/auditoria">
+          <Link to="/auditoria">
             <History className="mr-2 size-4 text-gold" />
             Audit Logs
           </Link>
