@@ -24,6 +24,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getPlatformStats } from "@/features/admin/admin.functions";
+import { formatPrice } from "@/domains/tenants/subscriptions/types";
 import { useState } from "react";
 import { 
   getUnlinkedUsers, 
