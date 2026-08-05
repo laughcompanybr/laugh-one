@@ -605,8 +605,8 @@ function MovementsTab({ from, to }: any) {
   });
 
   const rows = query.data ?? [];
-  const totalIn = rows.filter((r: any) => r.direction === "in" && r.status === "paid").reduce((a, b: any) => a + Number(b.amount), 0);
-  const totalOut = rows.filter((r: any) => r.direction === "out" && r.status === "paid").reduce((a, b: any) => a + Number(b.amount), 0);
+  const totalIn = rows.filter((r: any) => r.direction === "in" && r.status === "paid").reduce((a: number, b: any) => a + Number(b.amount), 0);
+  const totalOut = rows.filter((r: any) => r.direction === "out" && r.status === "paid").reduce((a: number, b: any) => a + Number(b.amount), 0);
 
   return (
     <Card>
