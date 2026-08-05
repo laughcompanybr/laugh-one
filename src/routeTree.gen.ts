@@ -29,7 +29,6 @@ import { Route as AuthenticatedClientesRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedCargosRouteImport } from './routes/_authenticated/cargos'
 import { Route as AuthenticatedAutomacoesRouteImport } from './routes/_authenticated/automacoes'
 import { Route as AuthenticatedAuditoriaRouteImport } from './routes/_authenticated/auditoria'
-import { Route as AuthenticatedAnexosRouteImport } from './routes/_authenticated/anexos'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedMensaisIndexRouteImport } from './routes/_authenticated/mensais/index'
 import { Route as AuthenticatedMensaisMonthRouteImport } from './routes/_authenticated/mensais/$month'
@@ -138,11 +137,6 @@ const AuthenticatedAuditoriaRoute = AuthenticatedAuditoriaRouteImport.update({
   path: '/auditoria',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedAnexosRoute = AuthenticatedAnexosRouteImport.update({
-  id: '/anexos',
-  path: '/anexos',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -174,7 +168,6 @@ export interface FileRoutesByFullPath {
   '/mfa-verify': typeof MfaVerifyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
-  '/anexos': typeof AuthenticatedAnexosRoute
   '/auditoria': typeof AuthenticatedAuditoriaRoute
   '/automacoes': typeof AuthenticatedAutomacoesRoute
   '/cargos': typeof AuthenticatedCargosRoute
@@ -200,7 +193,6 @@ export interface FileRoutesByTo {
   '/mfa-verify': typeof MfaVerifyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
-  '/anexos': typeof AuthenticatedAnexosRoute
   '/auditoria': typeof AuthenticatedAuditoriaRoute
   '/automacoes': typeof AuthenticatedAutomacoesRoute
   '/cargos': typeof AuthenticatedCargosRoute
@@ -228,7 +220,6 @@ export interface FileRoutesById {
   '/mfa-verify': typeof MfaVerifyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
-  '/_authenticated/anexos': typeof AuthenticatedAnexosRoute
   '/_authenticated/auditoria': typeof AuthenticatedAuditoriaRoute
   '/_authenticated/automacoes': typeof AuthenticatedAutomacoesRoute
   '/_authenticated/cargos': typeof AuthenticatedCargosRoute
@@ -256,7 +247,6 @@ export interface FileRouteTypes {
     | '/mfa-verify'
     | '/reset-password'
     | '/admin'
-    | '/anexos'
     | '/auditoria'
     | '/automacoes'
     | '/cargos'
@@ -282,7 +272,6 @@ export interface FileRouteTypes {
     | '/mfa-verify'
     | '/reset-password'
     | '/admin'
-    | '/anexos'
     | '/auditoria'
     | '/automacoes'
     | '/cargos'
@@ -309,7 +298,6 @@ export interface FileRouteTypes {
     | '/mfa-verify'
     | '/reset-password'
     | '/_authenticated/admin'
-    | '/_authenticated/anexos'
     | '/_authenticated/auditoria'
     | '/_authenticated/automacoes'
     | '/_authenticated/cargos'
@@ -480,13 +468,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAuditoriaRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/anexos': {
-      id: '/_authenticated/anexos'
-      path: '/anexos'
-      fullPath: '/anexos'
-      preLoaderRoute: typeof AuthenticatedAnexosRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/admin': {
       id: '/_authenticated/admin'
       path: '/admin'
@@ -531,7 +512,6 @@ const AuthenticatedAdminRouteWithChildren =
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
-  AuthenticatedAnexosRoute: typeof AuthenticatedAnexosRoute
   AuthenticatedAuditoriaRoute: typeof AuthenticatedAuditoriaRoute
   AuthenticatedAutomacoesRoute: typeof AuthenticatedAutomacoesRoute
   AuthenticatedCargosRoute: typeof AuthenticatedCargosRoute
@@ -552,7 +532,6 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
-  AuthenticatedAnexosRoute: AuthenticatedAnexosRoute,
   AuthenticatedAuditoriaRoute: AuthenticatedAuditoriaRoute,
   AuthenticatedAutomacoesRoute: AuthenticatedAutomacoesRoute,
   AuthenticatedCargosRoute: AuthenticatedCargosRoute,
