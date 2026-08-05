@@ -41,33 +41,33 @@ export function DynamicDashboard() {
     <div className="space-y-6">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {(template.dashboard_widgets ?? []).map((widget) => (
-          <Card key={widget.id} className="bg-card/50 backdrop-blur-sm border-white/5">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{widget.title}</CardTitle>
+          <Card key={widget.id} className="glass-panel group hover:border-gold/30 transition-all duration-500 overflow-hidden">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+              <CardTitle className="text-xs font-medium uppercase tracking-widest text-white/40">{widget.title}</CardTitle>
               <Activity className="h-4 w-4 text-gold" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">--</div>
-              <p className="text-xs text-muted-foreground">Dados em tempo real</p>
+              <div className="text-3xl font-display font-medium text-white group-hover:text-gold transition-colors duration-500">--</div>
+              <p className="text-[10px] text-white/30 uppercase tracking-tighter mt-1 font-medium">Dados em tempo real</p>
             </CardContent>
           </Card>
         ))}
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <Card className="col-span-full lg:col-span-4 bg-card/50 backdrop-blur-sm border-white/5">
+        <Card className="col-span-full lg:col-span-4 glass-panel">
           <CardHeader>
-            <CardTitle>Visão Geral do Segmento: {template.display_name}</CardTitle>
+            <CardTitle className="text-xl font-display font-medium text-white/90">Visão Geral: {template.display_name}</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-[200px] flex items-center justify-center text-center text-muted-foreground border-2 border-dashed border-white/5 rounded-lg px-4">
+            <div className="h-[240px] flex items-center justify-center text-center text-white/20 border border-dashed border-white/10 rounded-xl px-4 font-light italic">
               Gráfico de evolução personalizado para {template.business_type}
             </div>
           </CardContent>
         </Card>
-        <Card className="col-span-full lg:col-span-3 bg-card/50 backdrop-blur-sm border-white/5">
+        <Card className="col-span-full lg:col-span-3 glass-panel">
           <CardHeader>
-            <CardTitle>Módulos Ativos</CardTitle>
+            <CardTitle className="text-xl font-display font-medium text-white/90">Módulos Ativos</CardTitle>
           </CardHeader>
           <CardContent>
             <ul className="space-y-2">

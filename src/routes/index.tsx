@@ -10,7 +10,7 @@ export const Route = createFileRoute("/")({
 
 function LandingPage() {
   return (
-    <div className="min-h-screen bg-[#050505] text-white selection:bg-gold/30">
+    <div className="min-h-screen bg-[#020202] text-white selection:bg-gold/30 antialiased">
       {/* Aurora Background Effect */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-[30%] -left-[10%] w-[70%] h-[70%] bg-gold/10 blur-[120px] rounded-full animate-pulse" />
@@ -37,7 +37,7 @@ function LandingPage() {
             <ShieldCheck className="size-3" /> Laugh One — SaaS Multi-Tenant Professional
           </div>
           
-          <h1 className="text-6xl md:text-8xl font-bold tracking-tight leading-[1.05]">
+          <h1 className="text-6xl md:text-8xl font-display font-medium tracking-tight leading-[0.95]">
             Laugh One
           </h1>
           <p className="text-2xl text-gold font-medium mb-4 italic">
@@ -45,8 +45,8 @@ function LandingPage() {
           </p>
 
           
-          <p className="text-xl text-white/60 max-w-2xl leading-relaxed">
-            Uma plataforma inteligente de gestão empresarial adaptável, desenvolvida pela <span className="text-white font-semibold">Laugh Company</span> para escalar sua operação com eficiência e precisão.
+          <p className="text-xl text-white/70 max-w-xl leading-relaxed font-light">
+            Uma plataforma de gestão empresarial de elite, desenhada para escalar operações com precisão, inteligência e um design superior.
           </p>
 
           <div className="flex flex-wrap gap-4 pt-4">
@@ -61,25 +61,25 @@ function LandingPage() {
           </div>
           
           <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8 border-t border-white/5 pt-12">
-            <div className="space-y-3">
-              <Zap className="size-6 text-gold" />
-              <h3 className="font-bold text-lg">Multi-Segmento</h3>
+            <div className="group space-y-4 p-6 rounded-2xl bg-white/5 border border-white/5 hover:border-gold/20 transition-all duration-300">
+              <Zap className="size-8 text-gold" />
+              <h3 className="font-display font-semibold text-lg">Performance Premium</h3>
               <p className="text-sm text-white/50 leading-relaxed">
-                Personalização automática para Barbearias, Lojas, Clínicas, Restaurantes e muito mais.
+                Arquitetura SaaS otimizada para máxima velocidade e experiência de usuário fluida.
               </p>
             </div>
-            <div className="space-y-3">
-              <UserCheck className="size-6 text-gold" />
-              <h3 className="font-bold text-lg">Multi-Tenant</h3>
+            <div className="group space-y-4 p-6 rounded-2xl bg-white/5 border border-white/5 hover:border-gold/20 transition-all duration-300">
+              <UserCheck className="size-8 text-gold" />
+              <h3 className="font-display font-semibold text-lg">Inteligência Multi-Tenant</h3>
               <p className="text-sm text-white/50 leading-relaxed">
-                Isolamento completo de dados e segurança RLS para cada empresa na plataforma.
+                Isolamento total de dados com segurança rigorosa, garantindo soberania para cada operação.
               </p>
             </div>
-            <div className="space-y-3">
-              <Database className="size-6 text-gold" />
-              <h3 className="font-bold text-lg">White Label</h3>
+            <div className="group space-y-4 p-6 rounded-2xl bg-white/5 border border-white/5 hover:border-gold/20 transition-all duration-300">
+              <Database className="size-8 text-gold" />
+              <h3 className="font-display font-semibold text-lg">Design White Label</h3>
               <p className="text-sm text-white/50 leading-relaxed">
-                Sua marca, suas cores e seus módulos. Laugh One se adapta à sua identidade visual.
+                Identidade corporativa sob medida: adaptabilidade total para sua marca brilhar.
               </p>
             </div>
           </div>
