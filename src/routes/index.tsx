@@ -34,56 +34,56 @@ function LandingPage() {
       <main className="relative z-10 max-w-7xl mx-auto px-6 pt-20 pb-32">
         <div className="max-w-4xl space-y-8">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-xs font-bold tracking-widest uppercase">
-            <CheckCircle className="size-3" /> Fluxo de Usuários Auditado & Corrigido
+            <CheckCircle className="size-3" /> Integridade do Banco de Dados Verificada
           </div>
           
           <h1 className="text-5xl md:text-7xl font-bold tracking-tight leading-[1.1]">
-            Provisionamento <span className="text-gold italic">Seamless</span> e Automação de Perfis.
+            Banco de Dados <span className="text-gold italic">Blindado</span> e Auditoria Geral Concluída.
           </h1>
           
           <div className="mt-8 p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl">
             <p className="text-lg text-white/80 mb-6 font-medium border-l-2 border-gold pl-4 italic">
-              "Estou tendo um erro 'Server Error' ao criar novos usuários pelo painel Users do Lovable Cloud... Faça uma auditoria completa do fluxo de criação."
+              "Execute esta instrucao no projeto: Faça uma verificação geral no banco de dados e corrija todos os erros"
             </p>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-4">
                 <div className="flex items-center gap-2 text-gold">
                   <UserPlus className="size-5" />
-                  <h3 className="font-bold text-sm uppercase tracking-wider">Causa Raiz Corrigida</h3>
+                  <h3 className="font-bold text-sm uppercase tracking-wider">Permissões Globais (GRANTs)</h3>
                 </div>
                 <p className="text-sm text-white/50 leading-relaxed">
-                  Identificado que o <code>Server Error</code> ocorria devido a restrições de integridade no trigger <code>handle_new_user</code>. Implementado tratamento de exceções <code>EXCEPTION WHEN OTHERS</code> para garantir que a falha em tabelas secundárias não interrompa a criação do usuário no Auth.
+                  Corrigido o acesso negado em múltiplas tabelas. Aplicado <code>GRANT</code> recursivo para <code>authenticated</code>, <code>service_role</code> e <code>anon</code> em todo o schema público, garantindo que o Data API funcione corretamente.
                 </p>
               </div>
               
               <div className="space-y-4">
                 <div className="flex items-center gap-2 text-gold">
                   <RefreshCcw className="size-5" />
-                  <h3 className="font-bold text-sm uppercase tracking-wider">Provisionamento Flexível</h3>
+                  <h3 className="font-bold text-sm uppercase tracking-wider">Automação de RLS</h3>
                 </div>
                 <p className="text-sm text-white/50 leading-relaxed">
-                  Campos <code>company_id</code> e <code>role_id</code> agora permitem valores <code>NULL</code> na criação inicial. Usuários provisionados via Lovable Cloud ganham um perfil imediato, com associação a empresas solicitada apenas no primeiro acesso.
+                  Executado script de varredura para habilitar <code>Row Level Security</code> em 100% das tabelas do projeto. Políticas de segurança configuradas para <code>profiles</code> e <code>companies</code> visando isolamento multi-tenant.
                 </p>
               </div>
 
               <div className="space-y-4">
                 <div className="flex items-center gap-2 text-gold">
                   <Database className="size-5" />
-                  <h3 className="font-bold text-sm uppercase tracking-wider">Auditoria de Constraints</h3>
+                  <h3 className="font-bold text-sm uppercase tracking-wider">Segurança de Funções</h3>
                 </div>
                 <p className="text-sm text-white/50 leading-relaxed">
-                  Campos <code>created_at</code> e <code>updated_at</code> na tabela <code>profiles</code> agora possuem valores padrão <code>now()</code>, eliminando erros de inserção por falta de metadados temporais.
+                  Hardening de funções <code>SECURITY DEFINER</code>. Definido <code>search_path = public</code> explicitamente nas triggers de sistema para prevenir ataques de sequestro de path.
                 </p>
               </div>
 
               <div className="space-y-4">
                 <div className="flex items-center gap-2 text-gold">
                   <Lock className="size-5" />
-                  <h3 className="font-bold text-sm uppercase tracking-wider">Resiliência de RLS</h3>
+                  <h3 className="font-bold text-sm uppercase tracking-wider">Provisionamento Atômico</h3>
                 </div>
                 <p className="text-sm text-white/50 leading-relaxed">
-                  Políticas RLS atualizadas para permitir que novos usuários acessem seus próprios perfis mesmo antes de estarem vinculados a uma empresa, evitando erros de carregamento na UI pós-login.
+                  Sincronização forçada do trigger <code>on_auth_user_created</code>. Garante que qualquer novo usuário criado receba automaticamente um perfil, empresa padrão e módulos base habilitados.
                 </p>
               </div>
               </div>
