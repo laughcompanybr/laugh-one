@@ -1,4 +1,4 @@
-# Arkano Club
+# Laugh One
 
 Painel executivo proprietário — gestão de pedidos, clientes, financeiro e operações.
 

@@ -93,7 +93,7 @@ export function AuthHero({ eyebrow, title, highlight, tagline, children }: AuthH
             transition={{ duration: 0.6, delay: 0.6 }}
             className="flex items-center justify-between text-[10px] uppercase tracking-[0.3em] text-muted-foreground"
           >
-            <span>Arkano Club · {new Date().getFullYear()}</span>
+            <span>Laugh One · {new Date().getFullYear()}</span>
             <span className="hidden items-center gap-2 xl:flex">
               <span className="size-1.5 rounded-full bg-gold" />
               Painel executivo

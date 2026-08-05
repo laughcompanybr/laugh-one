@@ -44,17 +44,17 @@ export function AppSidebar() {
           <Tooltip>
             <TooltipTrigger asChild>
               <a
-                href="https://arkanoclub.com/"
+                href="https://laughone.com.br/"
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Visitar site oficial da Arkano Club"
+                aria-label="Visitar site oficial da Laugh One"
                 className="inline-flex rounded-md outline-none transition-all duration-200 hover:opacity-80 hover:scale-[1.02] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-sidebar cursor-pointer"
               >
                 <LaughLogo size={32} showWordmark={!collapsed} />
               </a>
             </TooltipTrigger>
             <TooltipContent side="right" className="hidden md:block">
-              Visitar site oficial da Arkano Club
+              Visitar site oficial da Laugh One
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
