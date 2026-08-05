@@ -103,7 +103,7 @@ import {
 } from "@/features/finance/schemas";
 import { CheckCircle2, ArrowRightLeft, ExternalLink } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ReceiptField, getReceiptUrl } from "@/features/finance/ReceiptField";
+
 import { GoalsPanel } from "@/features/finance/GoalsPanel";
 
 
