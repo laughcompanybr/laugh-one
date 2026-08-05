@@ -8,13 +8,46 @@ import {
   BarChart3, 
   History,
   TrendingUp,
-  LayoutDashboard
+  LayoutDashboard,
+  UserPlus,
+  ShieldCheck,
+  AlertTriangle,
+  RefreshCcw,
+  CheckCircle,
+  Database,
+  ArrowRight
 } from "lucide-react";
 import { PageHeader } from "@/components/common/PageHeader";
-import { Card } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getPlatformStats } from "@/features/admin/admin.functions";
+import { useState } from "react";
+import { 
+  getUnlinkedUsers, 
+  getCompanies, 
+  getRolesAndPermissions, 
+  provisionUser 
+} from "@/domains/auth/services/admin.functions";
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogDescription, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogTrigger,
+  DialogFooter
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { toast } from "sonner";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   beforeLoad: async ({ context }) => {
@@ -22,6 +55,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
   },
   component: AdminDashboard,
 });
+
 
 function AdminDashboard() {
   const { data: stats, isLoading } = useQuery({
