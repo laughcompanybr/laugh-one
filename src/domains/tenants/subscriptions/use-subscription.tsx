@@ -9,7 +9,7 @@ import { useHasSession } from "@/hooks/use-session";
  * Não existe verificação por tipo de plano.
  */
 export function useSubscription() {
-  const hasSession = useHasSession();
+  const { hasSession } = useHasSession();
   const fetchSubscription = useServerFn(getMySubscription);
 
   const query = useQuery({
