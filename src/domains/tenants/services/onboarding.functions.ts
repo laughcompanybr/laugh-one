@@ -3,15 +3,15 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 
 const onboardingSchema = z.object({
-  companyName: z.string().min(2),
-  businessType: z.string(),
-  responsibleName: z.string(),
-  phone: z.string(),
-  commercialEmail: z.string().email(),
-  city: z.string(),
-  state: z.string(),
-  employeeCount: z.string(),
-  mainObjective: z.string(),
+  companyName: z.string().min(2, "Nome da empresa é obrigatório"),
+  businessType: z.string().min(1, "Selecione o segmento"),
+  responsibleName: z.string().min(2, "Nome do responsável é obrigatório"),
+  phone: z.string().min(10, "Telefone inválido"),
+  commercialEmail: z.string().email("E-mail inválido"),
+  city: z.string().min(2, "Cidade é obrigatória"),
+  state: z.string().min(2, "Estado é obrigatório"),
+  employeeCount: z.string().min(1, "Selecione a quantidade de funcionários"),
+  mainObjective: z.string().min(1, "Selecione o objetivo"),
   logoUrl: z.string().optional(),
 });
 
@@ -52,7 +52,7 @@ export const completeOnboarding = createServerFn({ method: "POST" })
       .eq("id", userId)
       .maybeSingle();
 
-    if (!profile?.company_id) throw new Error("User has no company linked");
+    if (!profile?.company_id) throw new Error("Usuário não está vinculado a uma empresa.");
 
     // 1. Update Company Basic Info
     const { error: companyError } = await supabase
@@ -95,10 +95,16 @@ export const completeOnboarding = createServerFn({ method: "POST" })
 async function setupModulesForBusinessType(supabase: any, companyId: string, businessType: string) {
   const moduleMap: Record<string, string[]> = {
     'Barbearia': ['dashboard', 'calendar', 'clients', 'services', 'finance', 'reports'],
+    'Salão de beleza': ['dashboard', 'calendar', 'clients', 'services', 'finance', 'reports'],
     'Joalheria': ['dashboard', 'products', 'inventory', 'orders', 'clients', 'finance', 'reports'],
     'Loja de roupas': ['dashboard', 'products', 'inventory', 'orders', 'clients', 'finance', 'reports'],
+    'Loja de eletrônicos': ['dashboard', 'products', 'inventory', 'orders', 'clients', 'finance', 'reports'],
     'Restaurante': ['dashboard', 'menu', 'orders', 'tables', 'products', 'finance'],
+    'Delivery': ['dashboard', 'menu', 'orders', 'delivery', 'finance'],
     'Clínica': ['dashboard', 'calendar', 'patients', 'procedures', 'finance', 'reports'],
+    'Academia': ['dashboard', 'calendar', 'members', 'finance', 'reports'],
+    'Agência': ['dashboard', 'projects', 'clients', 'finance', 'reports'],
+    'Prestador de serviços': ['dashboard', 'calendar', 'services', 'finance', 'reports'],
     'Default': ['dashboard', 'clients', 'orders', 'finance', 'reports']
   };
 

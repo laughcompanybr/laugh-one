@@ -44,7 +44,7 @@ export function AppSidebar() {
           <Tooltip>
             <TooltipTrigger asChild>
               <a
-                href="https://laughoneclub.com/"
+                href="https://laughone.com.br/"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Visitar site oficial da Laugh One"
