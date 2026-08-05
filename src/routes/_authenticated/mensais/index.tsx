@@ -48,7 +48,7 @@ function MensaisIndexPage() {
                     Visualize pedidos, financeiro e indicadores de {monthName.toLowerCase()}.
                   </p>
                   <Button asChild variant="outline" className="w-full group-hover:bg-gold group-hover:text-black">
-                    <Link to={`/mensais/${monthNum}`}>
+                    <Link to="/mensais/$month" params={{ month: String(monthNum) }}>
                       Abrir Relatório
                       <ChevronRight className="ml-2 size-4" />
                     </Link>
