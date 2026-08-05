@@ -1,11 +1,11 @@
 {
-  "version": 1,
   "asset_id": "63b14d31-f685-422c-9eaa-6b128f9a54d0",
-  "project_id": "5fa2320b-6030-4ee0-9617-8078a4508113",
-  "url": "/__l5e/assets-v1/63b14d31-f685-422c-9eaa-6b128f9a54d0/laughone.png",
-  "r2_key": "a/v1/5fa2320b-6030-4ee0-9617-8078a4508113/63b14d31-f685-422c-9eaa-6b128f9a54d0/laughone.png",
-  "original_filename": "laughone.png",
-  "size": 664533,
   "content_type": "image/png",
-  "created_at": "2026-08-04T23:18:47Z"
+  "created_at": "2026-08-04T23:18:47Z",
+  "original_filename": "laughone.png",
+  "project_id": "3a9d5094-677f-45ca-bcf9-ba19e4cf21e1",
+  "r2_key": "a/v1/3a9d5094-677f-45ca-bcf9-ba19e4cf21e1/63b14d31-f685-422c-9eaa-6b128f9a54d0/laughone.png",
+  "size": 664533,
+  "url": "/__l5e/assets-v1/63b14d31-f685-422c-9eaa-6b128f9a54d0/laughone.png",
+  "version": 1
 }

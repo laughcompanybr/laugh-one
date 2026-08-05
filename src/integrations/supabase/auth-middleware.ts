@@ -98,15 +98,11 @@ export const requireSupabaseAuth = createMiddleware({ type: 'function' }).server
       throw new Error('Unauthorized: No user ID found in token');
     }
 
-    const { data: profile } = await supabase.from('profiles').select('company_id').eq('id', data.claims.sub).maybeSingle();
-    const companyId = profile?.company_id || null;
-
     return next({
       context: {
         supabase,
         userId: data.claims.sub,
         claims: data.claims,
-        companyId,
       },
     });
   },
