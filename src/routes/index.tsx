@@ -26,7 +26,7 @@ export const Route = createFileRoute("/")({
 });
 
 function LandingPage() {
-  const [billingCycle, setBillingCycle] = useState<"monthly" | "quarterly" | "semiannual" | "yearly">("monthly");
+  const [billingCycle, setBillingCycle] = useState<BillingPeriod>("monthly");
 
   const segments = [
     "Barbearias", "Salões de beleza", "Joalherias", "Lojas", "Restaurantes", 
