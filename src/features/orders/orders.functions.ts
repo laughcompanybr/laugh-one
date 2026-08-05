@@ -318,7 +318,7 @@ export const addOrderAttachment = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { data: row, error } = await context.supabase
       .from("order_attachments")
-      .insert({ ...data, uploaded_by: context.userId, company_id: (context as any).companyId })
+      .insert({ ...data, uploaded_by: context.userId, company_id: (context as any).companyId } as any)
       .select("id")
       .single();
     if (error) throw error;
