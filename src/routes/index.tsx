@@ -135,273 +135,71 @@ function LandingPage() {
 
   return (
     <div className="min-h-screen bg-[#020202] text-white selection:bg-gold/30 antialiased font-sans">
-      <div className="hidden">Execute esta instrucao no projeto: Crie um Dashboard Administrativo completo para o Laugh One, integrado totalmente com a arquitetura, banco de dados, autenticação e funcionalidades que já existem no projeto.
-
-Antes de implementar:
-- Faça uma análise completa de todo o projeto atual.
-- Entenda a arquitetura existente.
-- Identifique tabelas, relacionamentos, autenticação, empresas, usuários, assinaturas, permissões e módulos já criados.
-- Não crie uma estrutura paralela ou isolada.
-- Aproveite tudo que já existe e integre o painel administrativo ao sistema atual.
-
-OBJETIVO:
-Criar um painel administrativo exclusivo para o proprietário da plataforma (eu), onde somente minha conta terá acesso.
-
-Esse painel deve ser o centro de controle completo do Laugh One.
-
-====================================
-CONTROLE DE ACESSO ADMIN
-====================================
-
-Criar uma área protegida:
-
-/admin
-
-Regras:
-- Apenas meu usuário administrador pode acessar.
-- Nenhum cliente ou usuário comum pode visualizar ou descobrir essa área.
-- Implementar proteção real no backend, não apenas esconder o menu.
-- Criar validação por role/permissão.
-- Utilizar as melhores práticas de segurança com Supabase Auth e RLS.
-
-Criar estrutura:
-- role: super_admin
-- usuários normais continuam como usuários comuns.
-
-====================================
-DASHBOARD PRINCIPAL
-====================================
-
-Criar uma visão geral com métricas em tempo real:
-
-Cards:
-
-- Total de empresas cadastradas
-- Total de usuários
-- Assinaturas ativas
-- Assinaturas expiradas
-- Receita recorrente mensal (MRR)
-- Receita anual estimada (ARR)
-- Novos clientes no mês
-- Clientes próximos do vencimento
-- Taxa de renovação
-- Cancelamentos
-
-Adicionar gráficos:
-
-- Crescimento de clientes ao longo do tempo
-- Receita mensal
-- Distribuição dos planos
-- Atividade recente
-- Evolução de assinaturas
-
-====================================
-GESTÃO DE CLIENTES
-====================================
-
-Criar uma área completa de clientes.
-
-Funcionalidades:
-
-Listagem com:
-
-- Empresa
-- Responsável
-- Email
-- Telefone
-- Data de cadastro
-- Status
-- Plano atual
-- Data de vencimento
-- Última atividade
-
-Ações:
-
-- Criar cliente manualmente
-- Editar cliente
-- Visualizar detalhes completos
-- Ativar/desativar cliente
-- Resetar senha
-- Alterar dados da empresa
-- Alterar permissões
-- Excluir cliente com confirmação
-
-Ao cadastrar um cliente pelo admin:
-
-Criar automaticamente:
-- empresa
-- usuário
-- relacionamento empresa → usuário
-- assinatura
-- período contratado
-
-Sem precisar acessar Supabase Database manualmente.
-
-====================================
-GESTÃO DE ASSINATURAS
-====================================
-
-Criar uma área completa de assinaturas.
-
-Como o sistema agora possui apenas um plano:
-
-Plano:
-"Plano Completo"
-
-A diferença será somente período:
-
-- Mensal
-- Trimestral
-- Semestral
-- Anual
-
-No admin permitir:
-
-- Criar assinatura para cliente
-- Escolher período
-- Definir data inicial
-- Definir data final automaticamente
-- Alterar vencimento manualmente
-- Renovar assinatura
-- Cancelar assinatura
-- Suspender acesso
-
-Mostrar:
-
-- Cliente
-- Plano
-- Período
-- Valor pago
-- Data de início
-- Data de vencimento
-- Status
-
-====================================
-GESTÃO FINANCEIRA
-====================================
-
-Criar módulo financeiro:
-
-Mostrar:
-
-- Receita total
-- Receita recorrente
-- Receita por período
-- Clientes pagantes
-- Clientes inadimplentes
-
-Permitir registrar:
-
-- Pagamentos manuais
-- Método de pagamento
-- Valor
-- Data
-- Observação
-
-Criar histórico completo.
-
-====================================
-GERENCIAMENTO DE EMPRESAS
-====================================
-
-Como o Laugh One é multi-tenant:
-
-Criar uma área para administrar todas as empresas.
-
-Mostrar:
-
-- Nome da empresa
-- Segmento escolhido
-- Usuários vinculados
-- Configurações
-- Status da conta
-
-Permitir:
-
-- Editar identidade da empresa
-- Alterar segmento
-- Alterar configurações
-- Suspender empresa
-
-====================================
-LOGS E AUDITORIA
-====================================
-
-Criar sistema completo de auditoria.
-
-Registrar:
-
-- Quem realizou ação
-- Qual ação foi feita
-- Data e horário
-- Dados antigos
-- Dados novos
-
-Exemplos:
-
-"Admin alterou plano do cliente X"
-"Admin criou empresa Y"
-"Admin renovou assinatura por 12 meses"
-
-====================================
-CENTRAL DE CONFIGURAÇÕES
-====================================
-
-Criar configurações globais:
-
-- Nome da plataforma
-- Logo
-- Cores
-- Configurações de email
-- Configurações de assinatura
-- Valores dos períodos
-- Textos da página de planos
-
-====================================
-EXPERIÊNCIA DO ADMIN
-====================================
-
-Criar uma interface premium.
-
-Características:
-
-- Design profissional de SaaS enterprise.
-- Sidebar exclusiva.
-- Dashboard responsivo.
-- Busca global.
-- Filtros avançados.
-- Tabelas completas.
-- Paginação.
-- Loading states.
-- Empty states.
-- Toasts de confirmação.
-- Confirmação antes de ações críticas.
-
-Inspirar-se nos melhores dashboards SaaS existentes.
-
-====================================
-INTEGRAÇÃO
-====================================
-
-Antes de finalizar:
-
-- Revisar todas as tabelas existentes.
-- Criar migrations necessárias.
-- Criar policies RLS corretas.
-- Garantir que nada quebre o sistema atual.
-- Garantir compatibilidade com o multi-tenant existente.
-- Garantir que clientes nunca consigam acessar funções administrativas.
-
-Adicionar testes para:
-
-- Bloqueio de usuários comuns no /admin.
-- Criação de clientes pelo painel.
-- Criação de assinatura.
-- Alteração de plano.
-- Renovação.
-- Auditoria funcionando.
-
-O resultado final deve ser um painel administrativo completo no nível de uma plataforma SaaS profissional, permitindo gerenciar todo o Laugh One sem precisar acessar banco de dados ou código.</div>
+      <div className="hidden">Execute esta instrucao no projeto: Altere completamente o sistema de planos da plataforma.
+
+Atualmente existem múltiplos planos com diferentes níveis de acesso. Remova essa lógica de planos por funcionalidades e substitua por um único plano premium com acesso completo a todos os recursos da plataforma.
+
+Nova estrutura:
+
+- Deve existir apenas 1 plano chamado "Plano Completo" (ou nome equivalente).
+- Todos os usuários desse plano devem ter acesso ilimitado a todas as funcionalidades existentes e futuras da plataforma.
+- Não deve existir nenhuma restrição de módulos, permissões ou recursos baseada no tipo de plano.
+- A única diferença entre as opções de contratação deve ser o período de validade da assinatura.
+
+Criar as seguintes opções de duração:
+
+- Mensal: acesso por 1 mês
+- Trimestral: acesso por 3 meses
+- Semestral: acesso por 6 meses
+- Anual: acesso por 12 meses
+
+Ajustar toda a lógica do sistema:
+
+1. Banco de dados:
+- Revisar a estrutura atual de planos/subscriptions.
+- Remover campos ou regras que limitem funcionalidades por plano.
+- Manter apenas controle de:
+  - usuário/empresa assinante
+  - data de início da assinatura
+  - data de vencimento
+  - período contratado
+  - status da assinatura (ativa, expirada, cancelada)
+  - histórico de pagamentos/renovações.
+
+2. Controle de acesso:
+- Remover verificações como:
+  "usuário possui plano X para acessar recurso Y".
+- Substituir por uma única validação:
+  "usuário possui assinatura ativa".
+- Qualquer usuário com assinatura ativa deve acessar todos os módulos disponíveis.
+
+3. Interface de planos:
+- Refazer a página de planos para apresentar apenas um produto.
+- Criar uma apresentação premium mostrando:
+  "Acesso completo à plataforma".
+- Exibir as opções de período como escolha de duração, não como planos diferentes.
+- Destacar economia nos períodos maiores:
+  - Trimestral
+  - Semestral
+  - Anual
+
+4. Área administrativa:
+- Criar gerenciamento simples das assinaturas.
+- Permitir visualizar:
+  - cliente/empresa
+  - plano contratado (sempre Plano Completo)
+  - período escolhido
+  - data de expiração
+  - status.
+- Permitir alterar manualmente datas e status quando necessário.
+
+5. Garantia de compatibilidade:
+- Faça uma auditoria completa no código procurando todas as referências ao sistema antigo de planos.
+- Atualize componentes, hooks, policies, queries, permissões e regras de negócio.
+- Não deixe nenhuma função antiga causando bloqueios ou inconsistências.
+
+Objetivo final:
+Transformar o modelo atual em um SaaS com apenas uma oferta premium, onde o cliente compra acesso completo e escolhe apenas por quanto tempo deseja permanecer ativo.</div>
       {/* Decorative Background */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] bg-gold/5 blur-[150px] rounded-full animate-pulse" />
