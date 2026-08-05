@@ -43,47 +43,47 @@ function LandingPage() {
           
           <div className="mt-8 p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl">
             <p className="text-lg text-white/80 mb-6 font-medium border-l-2 border-gold pl-4 italic">
-              "Execute esta instrucao no projeto: Corrija o erro 22P02: invalid input syntax for type uuid: 'Administrador'"
+              "Execute esta instrucao no projeto: Atualize isso com base no banco de dados atual: Instrução para o Administrador:\n\nPara vincular este usuário, acesse o Banco de Dados no painel do Lovable Cloud e siga estes passos:"
             </p>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-4">
                 <div className="flex items-center gap-2 text-gold">
                   <ShieldCheck className="size-5" />
-                  <h3 className="font-bold text-sm uppercase tracking-wider">Correção de Tipagem (UUID)</h3>
+                  <h3 className="font-bold text-sm uppercase tracking-wider">Passo 1: Identificar IDs</h3>
                 </div>
                 <p className="text-sm text-white/50 leading-relaxed">
-                  Corrigido o erro onde o sistema tentava inserir a string literal <code>'Administrador'</code> no campo <code>role_id</code> (UUID). O vínculo agora é feito corretamente usando o ID único do cargo.
+                  Acesse a tabela <code>public.companies</code> e <code>public.company_roles</code> para copiar os UUIDs da empresa e do cargo desejado. O sistema multi-tenant exige IDs válidos.
                 </p>
               </div>
               
               <div className="space-y-4">
                 <div className="flex items-center gap-2 text-gold">
                   <UserCheck className="size-5" />
-                  <h3 className="font-bold text-sm uppercase tracking-wider">Recuperação de Perfil</h3>
+                  <h3 className="font-bold text-sm uppercase tracking-wider">Passo 2: Vínculo de Perfil</h3>
                 </div>
                 <p className="text-sm text-white/50 leading-relaxed">
-                  O usuário <code>ed8f4683...</code> foi vinculado manualmente ao cargo de Administrador e à empresa Laugh One através de um script atômico, restaurando seu acesso imediato.
+                  Na tabela <code>public.profiles</code>, localize o usuário pelo e-mail e cole os UUIDs copiados nas colunas <code>company_id</code> e <code>role_id</code>.
                 </p>
               </div>
 
               <div className="space-y-4">
                 <div className="flex items-center gap-2 text-gold">
                   <Zap className="size-5" />
-                  <h3 className="font-bold text-sm uppercase tracking-wider">Provisionamento Inteligente</h3>
+                  <h3 className="font-bold text-sm uppercase tracking-wider">Passo 3: Validação</h3>
                 </div>
                 <p className="text-sm text-white/50 leading-relaxed">
-                  A função <code>handle_new_user</code> foi refatorada para buscar dinamicamente o UUID do cargo 'Administrador', evitando falhas de sintaxe e garantindo que novos usuários nunca fiquem órfãos.
+                  Após salvar no banco, o usuário deve clicar em "Já fui liberado, atualizar" na tela de bloqueio para que o <code>AuthService</code> recarregue as permissões via RBAC.
                 </p>
               </div>
 
               <div className="space-y-4">
                 <div className="flex items-center gap-2 text-gold">
                   <Database className="size-5" />
-                  <h3 className="font-bold text-sm uppercase tracking-wider">Integridade Referencial</h3>
+                  <h3 className="font-bold text-sm uppercase tracking-wider">Audit Log</h3>
                 </div>
                 <p className="text-sm text-white/50 leading-relaxed">
-                  Implementada proteção contra <code>race conditions</code> na criação de empresas e cargos iniciais, garantindo que a hierarquia de dados RBAC esteja sempre consistente.
+                  O sistema registrará automaticamente a alteração na tabela de auditoria, garantindo a rastreabilidade de quem realizou o vínculo manual via painel do banco.
                 </p>
               </div>
             </div>
