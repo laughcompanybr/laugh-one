@@ -61,8 +61,11 @@ export const completeOnboarding = createServerFn({ method: "POST" })
         name: data.companyName,
         logo_url: data.logoUrl || null,
         business_type: data.businessType,
-        onboarding_status: 'completed'
+        onboarding_status: 'completed',
+        theme: 'dark', // Default theme
+        enabled_modules: ['dashboard', 'clients', 'orders', 'finance', 'reports']
       } as any)
+
       .eq("id", profile.company_id);
 
     if (companyError) throw companyError;

@@ -33,8 +33,17 @@ export const getMonthlyReport = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((v) => monthlyReportInput.parse(v))
   .handler(async ({ data, context }): Promise<MonthlyReportData> => {
-    const { supabase } = context;
+    const { supabase, userId } = context;
     const { year, month } = data;
+
+    // Get company_id context safely
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("company_id")
+      .eq("id", userId)
+      .maybeSingle();
+
+    if (!profile?.company_id) throw new Error("Usuário não vinculado a uma empresa.");
 
     // Calculate dates
     const startOfMonth = new Date(Date.UTC(year, month - 1, 1));
@@ -43,43 +52,43 @@ export const getMonthlyReport = createServerFn({ method: "POST" })
     const startOfMonthStr = startOfMonth.toISOString();
     const endOfMonthStr = endOfMonth.toISOString();
     
-    // For comparison (previous month)
     const prevMonthDate = new Date(Date.UTC(year, month - 2, 1));
     const prevMonthStartStr = prevMonthDate.toISOString();
     const prevMonthEndStr = new Date(Date.UTC(year, month - 1, 0, 23, 59, 59, 999)).toISOString();
 
+    // Queries scoped by company_id - casting to any to bypass strict property check on temporary schema sync
     const [ordersRes, paymentsRes, expensesRes, prevOrdersRes, prevExpensesRes] = await Promise.all([
-      // Current Month Orders
       supabase
         .from("orders")
         .select("*, clients(id, name, whatsapp), suppliers(id, name)")
+        .eq("company_id" as any, profile.company_id)
         .is("deleted_at", null)
         .gte("created_at", startOfMonthStr)
         .lte("created_at", endOfMonthStr),
-      // Current Month Payments
       supabase
         .from("payments")
         .select("*, orders(order_number, brand, model, clients(name))")
+        .eq("company_id" as any, profile.company_id)
         .gte("paid_at", startOfMonthStr)
         .lte("paid_at", endOfMonthStr),
-      // Current Month Expenses
       supabase
         .from("expenses")
         .select("*")
+        .eq("company_id" as any, profile.company_id)
         .gte("incurred_at", startOfMonthStr.slice(0, 10))
         .lte("incurred_at", endOfMonthStr.slice(0, 10)),
-      // Previous Month Orders (for comparison)
       supabase
         .from("orders")
         .select("sale_price, profit")
+        .eq("company_id" as any, profile.company_id)
         .is("deleted_at", null)
         .neq("status", "cancelled")
         .gte("created_at", prevMonthStartStr)
-        .lte("prevMonthEndStr", prevMonthEndStr),
-      // Previous Month Expenses (for comparison)
+        .lte("created_at", prevMonthEndStr),
       supabase
         .from("expenses")
         .select("amount")
+        .eq("company_id" as any, profile.company_id)
         .gte("incurred_at", prevMonthStartStr.slice(0, 10))
         .lte("incurred_at", prevMonthEndStr.slice(0, 10)),
     ]);
@@ -100,7 +109,6 @@ export const getMonthlyReport = createServerFn({ method: "POST" })
     const received = payments.filter(p => p.direction === 'in').reduce((acc, p) => acc + Number(p.amount || 0), 0);
     const exits = payments.filter(p => p.direction === 'out').reduce((acc, p) => acc + Number(p.amount || 0), 0);
 
-    // Comparison data
     const prevRevenue = (prevOrdersRes.data ?? []).reduce((acc, o) => acc + Number(o.sale_price || 0), 0);
     const prevGrossProfit = (prevOrdersRes.data ?? []).reduce((acc, o) => acc + Number(o.profit || 0), 0);
     const prevExpenses = (prevExpensesRes.data ?? []).reduce((acc, e) => acc + Number(e.amount || 0), 0);
