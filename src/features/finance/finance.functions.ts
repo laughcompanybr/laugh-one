@@ -465,28 +465,88 @@ export const deleteGoal = createServerFn({ method: "POST" })
 
 export const getGoalStats = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((v) => z.object({ from: z.string(), to: z.string() }).parse(v))
+  .inputValidator((v) => z.object({ from: z.string().optional(), to: z.string().optional() }).optional().parse(v))
   .handler(async ({ data, context }) => {
-    const fromISO = toISO(data.from);
-    const toEndISO = toISO(data.to, true);
+    const { supabase } = context;
+    const now = new Date();
+    const currentMonthKey = `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, "0")}`;
+    const startOfCurrentMonth = new Date(now.getUTCFullYear(), now.getUTCMonth(), 1).toISOString();
+    const endOfCurrentMonth = new Date(now.getUTCFullYear(), now.getUTCMonth() + 1, 0, 23, 59, 59, 999).toISOString();
 
-    const [inflowRes, salesCountRes] = await Promise.all([
-      (context.supabase as any)
-        .from("payments")
-        .select("amount")
-        .eq("direction", "in")
-        .gte("paid_at", fromISO)
-        .lte("paid_at", toEndISO),
-      (context.supabase as any)
-        .from("orders")
-        .select("id", { count: "exact", head: true })
-        .is("deleted_at", null)
-        .gte("created_at", fromISO)
-        .lte("created_at", toEndISO),
+    const [goalsRes, paymentsRes, ordersRes] = await Promise.all([
+      (supabase as any).from("goals").select("*").order("month", { ascending: false }),
+      (supabase as any).from("payments").select("amount, paid_at, direction").eq("direction", "in"),
+      (supabase as any).from("orders").select("id, order_number, sale_price, cost_price, commission, card_fee, shipping, other_costs, created_at, clients(name)").is("deleted_at", null),
     ]);
 
-    const inflow = (inflowRes.data ?? []).reduce((a: number, b: any) => a + Number(b.amount), 0);
-    const salesCount = salesCountRes.count ?? 0;
+    const goals = goalsRes.data ?? [];
+    const allPayments = paymentsRes.data ?? [];
+    const allOrders = ordersRes.data ?? [];
 
-    return { inflow, salesCount };
+    const monthlyStats = new Map<string, { sales: number; orders: number; profit: number }>();
+    const getBucket = (iso: string) => iso.slice(0, 7);
+
+    for (const o of allOrders) {
+      const bucket = getBucket(o.created_at);
+      const stat = monthlyStats.get(bucket) ?? { sales: 0, orders: 0, profit: 0 };
+      const sale = Number(o.sale_price ?? 0);
+      const cost = Number(o.cost_price ?? 0);
+      const expense = Number(o.commission ?? 0) + Number(o.card_fee ?? 0) + Number(o.shipping ?? 0) + Number(o.other_costs ?? 0);
+      
+      stat.sales += sale;
+      stat.orders += 1;
+      stat.profit += (sale - cost - expense);
+      monthlyStats.set(bucket, stat);
+    }
+
+    const currentTarget = goals.find((g: any) => g.month.startsWith(currentMonthKey));
+    const currentActual = monthlyStats.get(currentMonthKey) ?? { sales: 0, orders: 0, profit: 0 };
+
+    const goalsHit = goals.map((g: any) => {
+      const monthKey = g.month.slice(0, 7);
+      const actual = monthlyStats.get(monthKey) ?? { sales: 0, orders: 0, profit: 0 };
+      const salesPct = g.sales_target ? actual.sales / g.sales_target : 0;
+      const ordersPct = g.orders_target ? actual.orders / g.orders_target : 0;
+      const profitPct = g.profit_target ? actual.profit / g.profit_target : 0;
+      return {
+        month: monthKey,
+        actual,
+        salesPct,
+        ordersPct,
+        profitPct,
+        hit: salesPct >= 1 || ordersPct >= 1 || profitPct >= 1
+      };
+    });
+
+    const totalHit = goalsHit.filter((h: any) => h.hit).length;
+
+    let salesRecord = { month: "", sales: 0, orders: 0 };
+    let profitRecord = { month: "", profit: 0 };
+    for (const [month, stat] of monthlyStats.entries()) {
+      if (stat.sales > salesRecord.sales) salesRecord = { month, sales: stat.sales, orders: stat.orders };
+      if (stat.profit > profitRecord.profit) profitRecord = { month, profit: stat.profit };
+    }
+
+    let biggestSale = { amount: 0, order_number: "", brand: "", model: "", client: "" };
+    for (const o of allOrders) {
+      const amt = Number(o.sale_price ?? 0);
+      if (amt > biggestSale.amount) {
+        biggestSale = {
+          amount: amt,
+          order_number: o.order_number,
+          brand: o.brand,
+          model: o.model,
+          client: (o.clients as any)?.name ?? ""
+        };
+      }
+    }
+
+    return {
+      current: { target: currentTarget, actual: currentActual },
+      goalsHit,
+      totalHit,
+      salesRecord,
+      profitRecord,
+      biggestSale
+    };
   });
