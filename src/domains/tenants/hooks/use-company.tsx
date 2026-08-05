@@ -21,14 +21,15 @@ export function CompanyProvider({ children }: { children: ReactNode }) {
     if (!company) return;
     const root = document.documentElement;
     const vars = {
-      "--primary": (company as Company).primary_color,
-      "--secondary": (company as Company).secondary_color,
-      "--radius": (company as Company).border_radius,
+      "--primary": company.primary_color,
+      "--secondary": company.secondary_color,
+      "--accent": company.accent_color,
+      "--radius": company.border_radius,
     };
     Object.entries(vars).forEach(([key, value]) => {
       if (value) root.style.setProperty(key, value);
     });
-    if ((company as Company).name) document.title = `${(company as Company).name} | Laugh One`;
+    if (company.name) document.title = `${company.name} | Laugh One`;
   }, [company]);
 
   return (
