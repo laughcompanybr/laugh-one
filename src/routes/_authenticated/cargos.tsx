@@ -17,7 +17,6 @@ import {
   updateRolePermissions 
 } from "@/domains/auth/services/admin.functions";
 
-
 export const Route = createFileRoute("/_authenticated/cargos")({
   component: RolesPage,
 });
@@ -25,79 +24,44 @@ export const Route = createFileRoute("/_authenticated/cargos")({
 function RolesPage() {
   const { hasPermission } = usePermissions();
   const { company } = useCompany();
-  const [roles, setRoles] = useState<any[]>([]);
-  const [permissions, setPermissions] = useState<any[]>([]);
+  const queryClient = useQueryClient();
   const [selectedRole, setSelectedRole] = useState<any>(null);
-  const [rolePermissions, setRolePermissions] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [search, setSearch] = useState("");
 
-  useEffect(() => {
-    if (company?.id) {
-      loadData();
-    }
-  }, [company?.id]);
+  const { data, isLoading } = useQuery({
+    queryKey: ["roles-and-permissions", company?.id],
+    queryFn: () => getRolesAndPermissions(),
+    enabled: !!company?.id
+  });
 
-  async function loadData() {
-    setIsLoading(true);
-    try {
-      const [rolesRes, permsRes] = await Promise.all([
-        supabase.from("company_roles" as any).select("*").eq("company_id", company?.id).order("order"),
-        supabase.from("permissions" as any).select("*").order("category")
-      ]);
-
-      if (rolesRes.data) setRoles(rolesRes.data);
-      if (permsRes.data) setPermissions(permsRes.data);
-      
-      if (rolesRes.data?.[0]) {
-        handleSelectRole(rolesRes.data[0]);
-      }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
-  async function handleSelectRole(role: any) {
-    setSelectedRole(role);
-    const { data } = await supabase
-      .from("role_permissions" as any)
-      .select("permission_id")
-      .eq("role_id", role.id);
-    
-    if (data) {
-      setRolePermissions(data.map((p: any) => p.permission_id));
-    }
-  }
-
-  async function togglePermission(permissionId: string) {
-    if (!selectedRole || !company?.id) return;
-
-    const isEnabled = rolePermissions.includes(permissionId);
-    
-    try {
-      if (isEnabled) {
-        await supabase
-          .from("role_permissions" as any)
-          .delete()
-          .match({ role_id: selectedRole.id, permission_id: permissionId });
-        setRolePermissions(prev => prev.filter(id => id !== permissionId));
-      } else {
-        await supabase
-          .from("role_permissions" as any)
-          .insert({ 
-            role_id: selectedRole.id, 
-            permission_id: permissionId,
-            company_id: company.id 
-          });
-        setRolePermissions(prev => [...prev, permissionId]);
-      }
+  const mutation = useMutation({
+    mutationFn: (vars: { roleId: string, permissionId: string, enabled: boolean }) => 
+      updateRolePermissions(vars),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["roles-and-permissions"] });
       toast.success("Permissão atualizada");
-    } catch (error: any) {
-      toast.error("Erro ao atualizar: " + error.message);
+    },
+    onError: (err: any) => {
+      toast.error("Erro ao atualizar: " + err.message);
     }
-  }
+  });
+
+  const roles = data?.roles || [];
+  const permissions = data?.permissions || [];
+  const rolePermissionsMap = data?.rolePermissions || {};
+
+  const currentRole = selectedRole || roles[0];
+  const activePermissions = currentRole ? (rolePermissionsMap[currentRole.id] || []) : [];
+
+  const togglePermission = (permissionId: string) => {
+    if (!currentRole) return;
+    const isEnabled = activePermissions.includes(permissionId);
+    mutation.mutate({ 
+      roleId: currentRole.id, 
+      permissionId, 
+      enabled: !isEnabled 
+    });
+  };
 
   if (isLoading) return <div className="p-8 text-center text-muted-foreground">Carregando permissões...</div>;
 
@@ -128,9 +92,9 @@ function RolesPage() {
             {roles.map((role) => (
               <button
                 key={role.id}
-                onClick={() => handleSelectRole(role)}
+                onClick={() => setSelectedRole(role)}
                 className={`flex w-full items-center justify-between rounded-lg px-4 py-3 text-left transition-all ${
-                  selectedRole?.id === role.id 
+                  (currentRole?.id === role.id) 
                     ? "bg-primary/10 text-primary shadow-sm" 
                     : "hover:bg-muted"
                 }`}
@@ -153,14 +117,14 @@ function RolesPage() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle className="text-xl">Permissões: {selectedRole?.name}</CardTitle>
+                <CardTitle className="text-xl">Permissões: {currentRole?.name}</CardTitle>
                 <CardDescription>Configure o que este cargo pode acessar e realizar no sistema.</CardDescription>
               </div>
               <div className="flex gap-2">
                 <Button variant="outline" size="sm" className="gap-2">
                   <Copy className="size-4" /> Duplicar
                 </Button>
-                {!selectedRole?.is_system && (
+                {!currentRole?.is_system && (
                   <Button variant="destructive" size="sm" className="gap-2">
                     <Trash2 className="size-4" /> Excluir
                   </Button>
@@ -178,39 +142,44 @@ function RolesPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <Tabs defaultValue={categories[0]} className="w-full">
-              <TabsList className="mb-6 w-full justify-start overflow-x-auto bg-muted/50 p-1">
-                {categories.map(cat => (
-                  <TabsTrigger key={cat} value={cat} className="text-xs uppercase tracking-wider">
-                    {cat}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
+            {categories.length > 0 ? (
+              <Tabs defaultValue={categories[0]} className="w-full">
+                <TabsList className="mb-6 w-full justify-start overflow-x-auto bg-muted/50 p-1">
+                  {categories.map(cat => (
+                    <TabsTrigger key={cat} value={cat} className="text-xs uppercase tracking-wider">
+                      {cat}
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
 
-              {categories.map(category => (
-                <TabsContent key={category} value={category} className="space-y-4">
-                  <div className="grid gap-4 md:grid-cols-2">
-                    {filteredPermissions
-                      .filter(p => p.category === category)
-                      .map(permission => (
-                        <div 
-                          key={permission.id}
-                          className="flex items-center justify-between rounded-lg border p-4 transition-all hover:bg-muted/30"
-                        >
-                          <div className="space-y-0.5">
-                            <div className="text-sm font-medium">{permission.name}</div>
-                            <div className="text-xs text-muted-foreground">{permission.description}</div>
+                {categories.map(category => (
+                  <TabsContent key={category} value={category} className="space-y-4">
+                    <div className="grid gap-4 md:grid-cols-2">
+                      {filteredPermissions
+                        .filter(p => p.category === category)
+                        .map(permission => (
+                          <div 
+                            key={permission.id}
+                            className="flex items-center justify-between rounded-lg border p-4 transition-all hover:bg-muted/30"
+                          >
+                            <div className="space-y-0.5">
+                              <div className="text-sm font-medium">{permission.name}</div>
+                              <div className="text-xs text-muted-foreground">{permission.description}</div>
+                            </div>
+                            <Switch 
+                              checked={activePermissions.includes(permission.id)}
+                              onCheckedChange={() => togglePermission(permission.id)}
+                              disabled={mutation.isPending}
+                            />
                           </div>
-                          <Switch 
-                            checked={rolePermissions.includes(permission.id)}
-                            onCheckedChange={() => togglePermission(permission.id)}
-                          />
-                        </div>
-                      ))}
-                  </div>
-                </TabsContent>
-              ))}
-            </Tabs>
+                        ))}
+                    </div>
+                  </TabsContent>
+                ))}
+              </Tabs>
+            ) : (
+              <div className="py-12 text-center text-muted-foreground">Nenhuma permissão encontrada.</div>
+            )}
           </CardContent>
         </Card>
       </div>
