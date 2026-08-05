@@ -74,6 +74,53 @@ export type Database = {
         }
         Relationships: []
       }
+      audit_logs_v2: {
+        Row: {
+          action: string
+          actor_id: string | null
+          company_id: string | null
+          created_at: string | null
+          entity_id: string
+          entity_type: string
+          id: string
+          new_data: Json | null
+          old_data: Json | null
+          request_id: string | null
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          company_id?: string | null
+          created_at?: string | null
+          entity_id: string
+          entity_type: string
+          id?: string
+          new_data?: Json | null
+          old_data?: Json | null
+          request_id?: string | null
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          company_id?: string | null
+          created_at?: string | null
+          entity_id?: string
+          entity_type?: string
+          id?: string
+          new_data?: Json | null
+          old_data?: Json | null
+          request_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audit_logs_v2_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       business_templates: {
         Row: {
           business_type: string
@@ -839,6 +886,48 @@ export type Database = {
         }
         Relationships: []
       }
+      module_permissions: {
+        Row: {
+          can_edit: boolean | null
+          can_view: boolean | null
+          company_id: string | null
+          id: string
+          module_id: string
+          role_id: string | null
+        }
+        Insert: {
+          can_edit?: boolean | null
+          can_view?: boolean | null
+          company_id?: string | null
+          id?: string
+          module_id: string
+          role_id?: string | null
+        }
+        Update: {
+          can_edit?: boolean | null
+          can_view?: boolean | null
+          company_id?: string | null
+          id?: string
+          module_id?: string
+          role_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "module_permissions_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "module_permissions_role_id_fkey"
+            columns: ["role_id"]
+            isOneToOne: false
+            referencedRelation: "company_roles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       modules: {
         Row: {
           category: string
@@ -883,6 +972,53 @@ export type Database = {
           version?: string | null
         }
         Relationships: []
+      }
+      notification_queue: {
+        Row: {
+          company_id: string | null
+          created_at: string | null
+          id: string
+          last_error: string | null
+          payload: Json
+          recipient: string
+          retry_count: number | null
+          sent_at: string | null
+          status: string | null
+          type: string
+        }
+        Insert: {
+          company_id?: string | null
+          created_at?: string | null
+          id?: string
+          last_error?: string | null
+          payload: Json
+          recipient: string
+          retry_count?: number | null
+          sent_at?: string | null
+          status?: string | null
+          type: string
+        }
+        Update: {
+          company_id?: string | null
+          created_at?: string | null
+          id?: string
+          last_error?: string | null
+          payload?: Json
+          recipient?: string
+          retry_count?: number | null
+          sent_at?: string | null
+          status?: string | null
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_queue_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       order_attachments: {
         Row: {
@@ -1820,6 +1956,36 @@ export type Database = {
         }
         Relationships: []
       }
+      user_consent: {
+        Row: {
+          consent_type: string
+          created_at: string | null
+          granted: boolean | null
+          id: string
+          ip_address: string | null
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          consent_type: string
+          created_at?: string | null
+          granted?: boolean | null
+          id?: string
+          ip_address?: string | null
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          consent_type?: string
+          created_at?: string | null
+          granted?: boolean | null
+          id?: string
+          ip_address?: string | null
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -1868,6 +2034,18 @@ export type Database = {
           }
         | { Args: { _role: string; _user_id: string }; Returns: boolean }
       is_staff_or_admin: { Args: { _user_id: string }; Returns: boolean }
+      log_audit_event: {
+        Args: {
+          p_action: string
+          p_company_id: string
+          p_entity_id: string
+          p_entity_type: string
+          p_new_data: Json
+          p_old_data: Json
+          p_request_id?: string
+        }
+        Returns: string
+      }
       revert_order_stock: { Args: { _order_id: string }; Returns: undefined }
     }
     Enums: {
