@@ -287,138 +287,162 @@ export type Database = {
       companies: {
         Row: {
           accent_color: string | null
+          address: string | null
           block_reason: string | null
           border_radius: string | null
+          business_description: string | null
           business_type: string | null
           button_color: string | null
           card_color: string | null
+          categories: string[] | null
+          city: string | null
+          commercial_email: string | null
+          country: string | null
           created_at: string | null
           currency: string | null
           display_name: string | null
+          employee_count: number | null
           error_color: string | null
-          favicon_url: string | null
           font_family: string | null
+          functional_customizations: Json | null
           id: string
           is_blocked: boolean | null
           language: string | null
-          login_background_url: string | null
           login_footer: string | null
-          login_image_url: string | null
           login_subtitle: string | null
           login_title: string | null
           login_welcome_message: string | null
-          logo_reduced_url: string | null
-          logo_url: string | null
-          mobile_icon_url: string | null
           name: string
           navbar_color: string | null
           onboarding_status: string | null
+          operating_segment: string | null
+          phone: string | null
           plan_id: string | null
           plan_tier: string | null
           primary_color: string | null
           primary_font: string | null
           secondary_color: string | null
           secondary_font: string | null
+          services_offered: string[] | null
           sidebar_color: string | null
-          sidebar_image_url: string | null
           slug: string
+          social_media: Json | null
+          state: string | null
           status: string | null
-          storage_used_bytes: number | null
           success_color: string | null
+          system_preferences: Json | null
           theme_mode: string | null
           timezone: string | null
           updated_at: string | null
           warning_color: string | null
+          website: string | null
+          whatsapp: string | null
         }
         Insert: {
           accent_color?: string | null
+          address?: string | null
           block_reason?: string | null
           border_radius?: string | null
+          business_description?: string | null
           business_type?: string | null
           button_color?: string | null
           card_color?: string | null
+          categories?: string[] | null
+          city?: string | null
+          commercial_email?: string | null
+          country?: string | null
           created_at?: string | null
           currency?: string | null
           display_name?: string | null
+          employee_count?: number | null
           error_color?: string | null
-          favicon_url?: string | null
           font_family?: string | null
+          functional_customizations?: Json | null
           id?: string
           is_blocked?: boolean | null
           language?: string | null
-          login_background_url?: string | null
           login_footer?: string | null
-          login_image_url?: string | null
           login_subtitle?: string | null
           login_title?: string | null
           login_welcome_message?: string | null
-          logo_reduced_url?: string | null
-          logo_url?: string | null
-          mobile_icon_url?: string | null
           name: string
           navbar_color?: string | null
           onboarding_status?: string | null
+          operating_segment?: string | null
+          phone?: string | null
           plan_id?: string | null
           plan_tier?: string | null
           primary_color?: string | null
           primary_font?: string | null
           secondary_color?: string | null
           secondary_font?: string | null
+          services_offered?: string[] | null
           sidebar_color?: string | null
-          sidebar_image_url?: string | null
           slug: string
+          social_media?: Json | null
+          state?: string | null
           status?: string | null
-          storage_used_bytes?: number | null
           success_color?: string | null
+          system_preferences?: Json | null
           theme_mode?: string | null
           timezone?: string | null
           updated_at?: string | null
           warning_color?: string | null
+          website?: string | null
+          whatsapp?: string | null
         }
         Update: {
           accent_color?: string | null
+          address?: string | null
           block_reason?: string | null
           border_radius?: string | null
+          business_description?: string | null
           business_type?: string | null
           button_color?: string | null
           card_color?: string | null
+          categories?: string[] | null
+          city?: string | null
+          commercial_email?: string | null
+          country?: string | null
           created_at?: string | null
           currency?: string | null
           display_name?: string | null
+          employee_count?: number | null
           error_color?: string | null
-          favicon_url?: string | null
           font_family?: string | null
+          functional_customizations?: Json | null
           id?: string
           is_blocked?: boolean | null
           language?: string | null
-          login_background_url?: string | null
           login_footer?: string | null
-          login_image_url?: string | null
           login_subtitle?: string | null
           login_title?: string | null
           login_welcome_message?: string | null
-          logo_reduced_url?: string | null
-          logo_url?: string | null
-          mobile_icon_url?: string | null
           name?: string
           navbar_color?: string | null
           onboarding_status?: string | null
+          operating_segment?: string | null
+          phone?: string | null
           plan_id?: string | null
           plan_tier?: string | null
           primary_color?: string | null
           primary_font?: string | null
           secondary_color?: string | null
           secondary_font?: string | null
+          services_offered?: string[] | null
           sidebar_color?: string | null
-          sidebar_image_url?: string | null
           slug?: string
+          social_media?: Json | null
+          state?: string | null
           status?: string | null
-          storage_used_bytes?: number | null
           success_color?: string | null
+          system_preferences?: Json | null
           theme_mode?: string | null
           timezone?: string | null
           updated_at?: string | null
           warning_color?: string | null
+          website?: string | null
+          whatsapp?: string | null
         }
         Relationships: [
           {
@@ -426,6 +450,53 @@ export type Database = {
             columns: ["plan_id"]
             isOneToOne: false
             referencedRelation: "plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      company_activity_logs: {
+        Row: {
+          action_type: string
+          company_id: string
+          created_at: string
+          description: string | null
+          field_changed: string | null
+          id: string
+          module: string
+          new_value: string | null
+          old_value: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action_type: string
+          company_id: string
+          created_at?: string
+          description?: string | null
+          field_changed?: string | null
+          id?: string
+          module: string
+          new_value?: string | null
+          old_value?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action_type?: string
+          company_id?: string
+          created_at?: string
+          description?: string | null
+          field_changed?: string | null
+          id?: string
+          module?: string
+          new_value?: string | null
+          old_value?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_activity_logs_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
             referencedColumns: ["id"]
           },
         ]
@@ -2143,6 +2214,19 @@ export type Database = {
           p_request_id?: string
         }
         Returns: string
+      }
+      log_company_activity: {
+        Args: {
+          p_action_type: string
+          p_company_id: string
+          p_description: string
+          p_field_changed: string
+          p_module: string
+          p_new_value: string
+          p_old_value: string
+          p_user_id: string
+        }
+        Returns: undefined
       }
       log_system_error: {
         Args: {
