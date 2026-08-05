@@ -31,7 +31,7 @@ function HistoryPage() {
   });
 
   const mutation = useMutation({
-    mutationFn: (logId: string) => restoreField({ logId }),
+    mutationFn: (logId: string) => restoreField({ data: { logId } }),
     onSuccess: () => {
       toast.success("Versão anterior restaurada com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["company-history"] });

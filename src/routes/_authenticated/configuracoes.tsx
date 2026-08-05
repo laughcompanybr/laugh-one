@@ -25,7 +25,7 @@ function SettingsPage() {
   });
 
   const mutation = useMutation({
-    mutationFn: (data: any) => updateSettings(data),
+    mutationFn: (data: any) => updateSettings({ data }),
     onSuccess: () => {
       toast.success("Configurações atualizadas com sucesso!");
       refetch();
