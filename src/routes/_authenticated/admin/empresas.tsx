@@ -79,7 +79,7 @@ function AdminCompanies() {
             <thead>
               <tr className="border-b border-gold/10 bg-muted/30 text-muted-foreground font-medium">
                 <th className="px-6 py-4 text-left">Empresa</th>
-                <th className="px-6 py-4 text-left">Plano</th>
+                <th className="px-6 py-4 text-left">Assinatura</th>
                 <th className="px-6 py-4 text-left">Status</th>
                 <th className="px-6 py-4 text-left">Data de Criação</th>
                 <th className="px-6 py-4 text-right">Ações</th>
