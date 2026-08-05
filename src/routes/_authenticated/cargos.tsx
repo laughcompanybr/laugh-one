@@ -35,11 +35,11 @@ function RolesPage() {
   });
 
   const mutation = useMutation({
-    mutationFn: (vars: { roleId: string, permissionId: string, enabled: boolean }) => 
-      updateRolePermissions(vars),
+    mutationFn: (vars: { roleId: string, companyId: string, permissionIds: string[] }) => 
+      updateRolePermissions({ data: vars }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["roles-and-permissions"] });
-      toast.success("Permissão atualizada");
+      toast.success("Permissões atualizadas");
     },
     onError: (err: any) => {
       toast.error("Erro ao atualizar: " + err.message);
@@ -48,18 +48,33 @@ function RolesPage() {
 
   const roles = data?.roles || [];
   const permissions = data?.permissions || [];
-  const rolePermissionsMap = data?.rolePermissions || {};
+  const rolePermissions = data?.rolePermissions || [];
 
   const currentRole = selectedRole || roles[0];
+  
+  // Create a map of role_id -> permission_ids[]
+  const rolePermissionsMap: Record<string, string[]> = {};
+  rolePermissions.forEach((rp: any) => {
+    if (!rolePermissionsMap[rp.role_id]) {
+      rolePermissionsMap[rp.role_id] = [];
+    }
+    rolePermissionsMap[rp.role_id].push(rp.permission_id);
+  });
+
   const activePermissions = currentRole ? (rolePermissionsMap[currentRole.id] || []) : [];
 
   const togglePermission = (permissionId: string) => {
-    if (!currentRole) return;
+    if (!currentRole || !company?.id) return;
+    
     const isEnabled = activePermissions.includes(permissionId);
+    const newPermissionIds = isEnabled 
+      ? activePermissions.filter(id => id !== permissionId)
+      : [...activePermissions, permissionId];
+
     mutation.mutate({ 
       roleId: currentRole.id, 
-      permissionId, 
-      enabled: !isEnabled 
+      companyId: company.id,
+      permissionIds: newPermissionIds
     });
   };
 
@@ -89,7 +104,7 @@ function RolesPage() {
             </Button>
           </CardHeader>
           <CardContent className="space-y-2">
-            {roles.map((role) => (
+            {roles.map((role: any) => (
               <button
                 key={role.id}
                 onClick={() => setSelectedRole(role)}
@@ -100,7 +115,7 @@ function RolesPage() {
                 }`}
               >
                 <div className="flex items-center gap-3">
-                  <Shield className="size-4" style={{ color: role.color }} />
+                  <Shield className="size-4" style={{ color: role.color || undefined }} />
                   <div>
                     <div className="text-sm font-medium">{role.name}</div>
                     <div className="text-xs text-muted-foreground">{role.description}</div>
