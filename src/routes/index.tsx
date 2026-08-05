@@ -43,7 +43,7 @@ function LandingPage() {
           
           <div className="mt-8 p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl">
             <p className="text-lg text-white/80 mb-6 font-medium border-l-2 border-gold pl-4 italic">
-              "Execute esta instrucao no projeto: Atualize isso com base no banco de dados atual: Instrução para o Administrador:\n\nPara vincular este usuário, acesse o Banco de Dados no painel do Lovable Cloud e siga estes passos:"
+              "Execute esta instrucao no projeto: Adicione uma nova aba no sistema chamada \"Mensais\".\n\nObjetivo:\nCriar um sistema de organização por meses..."
             </p>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
