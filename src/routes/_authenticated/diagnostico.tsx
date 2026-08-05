@@ -26,7 +26,22 @@ function DiagnosticsPage() {
         description="Monitoramento em tempo real de isolamento de tenants e recursão de políticas."
       />
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium">Sessão Atual</CardTitle>
+            <Activity className="text-blue-500 size-4" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-sm font-mono truncate" title={diagnostics?.session.userId}>
+              ID: {diagnostics?.session.userId.split('-')[0]}...
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              Empresa: <span className="font-mono">{diagnostics?.session.companyId?.split('-')[0] || 'Nenhuma'}...</span>
+            </p>
+          </CardContent>
+        </Card>
+
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Status de Recursão</CardTitle>
@@ -42,8 +57,8 @@ function DiagnosticsPage() {
             </div>
             <p className="text-xs text-muted-foreground mt-1">
               {diagnostics?.recursionSafe 
-                ? "As políticas de profiles não apresentam recursão infinita."
-                : "Erro detectado ao validar profundidade da política."}
+                ? "Políticas sem recursão detectada."
+                : "Erro de recursão ou acesso negado."}
             </p>
           </CardContent>
         </Card>
@@ -56,55 +71,80 @@ function DiagnosticsPage() {
           <CardContent>
             <div className="text-2xl font-bold">{diagnostics?.policies.length}</div>
             <p className="text-xs text-muted-foreground mt-1">
-              Políticas de RLS aplicadas à tabela public.profiles.
+              Políticas de RLS em public.profiles.
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Isolamento de Dados</CardTitle>
-            <Activity className="text-blue-500 size-4" />
+            <CardTitle className="text-sm font-medium">Registros Visíveis</CardTitle>
+            <ShieldCheck className="text-emerald-500 size-4" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">Consolidado</div>
+            <div className="text-2xl font-bold">{diagnostics?.visibleProfilesCount}</div>
             <p className="text-xs text-muted-foreground mt-1">
-              {diagnostics?.visibleProfilesCount} registros visíveis para sua empresa.
+              Profiles acessíveis via RLS.
             </p>
           </CardContent>
         </Card>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Detalhamento das Políticas</CardTitle>
-          <CardDescription>Definições técnicas de acesso (PostgreSQL QUAL)</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Nome</TableHead>
-                <TableHead>Comando</TableHead>
-                <TableHead>Expressão (QUAL)</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {diagnostics?.policies.map((p: any, i: number) => (
-                <TableRow key={i}>
-                  <TableCell className="font-mono text-xs">{p.policyname}</TableCell>
-                  <TableCell>
-                    <Badge variant="outline">{p.cmd}</Badge>
-                  </TableCell>
-                  <TableCell className="font-mono text-[10px] text-muted-foreground">
-                    {p.qual}
-                  </TableCell>
-                </TableRow>
+      <div className="grid gap-6 md:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle>Acesso aos Módulos</CardTitle>
+            <CardDescription>Indicadores de acesso baseados em permissões e empresa.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {diagnostics?.moduleAccess.map((m: any) => (
+                <div key={m.module_slug} className="flex items-center justify-between p-2 border rounded-lg">
+                  <span className="font-medium capitalize">{m.module_slug}</span>
+                  {m.has_access ? (
+                    <Badge className="bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 border-emerald-500/20">
+                      <CheckCircle2 className="size-3 mr-1" /> Ativo
+                    </Badge>
+                  ) : (
+                    <Badge variant="outline" className="text-muted-foreground">
+                      <AlertCircle className="size-3 mr-1" /> Bloqueado
+                    </Badge>
+                  )}
+                </div>
               ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Detalhamento das Políticas</CardTitle>
+            <CardDescription>Expressões técnicas de acesso RLS.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Nome</TableHead>
+                  <TableHead>Cmd</TableHead>
+                  <TableHead>Qual</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {diagnostics?.policies.map((p: any, i: number) => (
+                  <TableRow key={i}>
+                    <TableCell className="font-mono text-[10px]">{p.policyname}</TableCell>
+                    <TableCell><Badge variant="outline" className="text-[10px]">{p.cmd}</Badge></TableCell>
+                    <TableCell className="font-mono text-[10px] text-muted-foreground max-w-[200px] truncate">
+                      {p.qual}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

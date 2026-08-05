@@ -1936,6 +1936,50 @@ export type Database = {
           },
         ]
       }
+      system_errors: {
+        Row: {
+          company_id: string | null
+          context: Json | null
+          created_at: string | null
+          error_message: string | null
+          error_type: string | null
+          id: string
+          request_id: string | null
+          stack_trace: string | null
+          user_id: string | null
+        }
+        Insert: {
+          company_id?: string | null
+          context?: Json | null
+          created_at?: string | null
+          error_message?: string | null
+          error_type?: string | null
+          id?: string
+          request_id?: string | null
+          stack_trace?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          company_id?: string | null
+          context?: Json | null
+          created_at?: string | null
+          error_message?: string | null
+          error_type?: string | null
+          id?: string
+          request_id?: string | null
+          stack_trace?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "system_errors_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       system_telemetry: {
         Row: {
           actor_id: string | null
@@ -2033,6 +2077,13 @@ export type Database = {
       }
       apply_order_stock_out: { Args: { _order_id: string }; Returns: undefined }
       check_profiles_recursion: { Args: never; Returns: boolean }
+      get_module_access_indicators: {
+        Args: { _user_id: string }
+        Returns: {
+          has_access: boolean
+          module_slug: string
+        }[]
+      }
       get_user_company_id: { Args: never; Returns: string }
       has_role:
         | {
@@ -2053,6 +2104,18 @@ export type Database = {
           p_new_data: Json
           p_old_data: Json
           p_request_id?: string
+        }
+        Returns: string
+      }
+      log_system_error: {
+        Args: {
+          p_company_id: string
+          p_context?: Json
+          p_error_message: string
+          p_error_type: string
+          p_request_id: string
+          p_stack_trace?: string
+          p_user_id: string
         }
         Returns: string
       }
