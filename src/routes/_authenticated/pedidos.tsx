@@ -248,7 +248,7 @@ function PedidosPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {rows.map((o) => {
+                {(rows as any[]).map((o: any) => {
                   const client = o.clients as { name?: string; whatsapp?: string | null } | null;
                   const balance = Number(o.sale_price ?? 0) - Number(o.amount_received ?? 0);
                   return (
