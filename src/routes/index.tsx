@@ -49,41 +49,41 @@ function LandingPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-4">
                 <div className="flex items-center gap-2 text-gold">
-                  <ShieldCheck className="size-5" />
-                  <h3 className="font-bold text-sm uppercase tracking-wider">Passo 1: Identificar IDs</h3>
+                  <Calendar className="size-5" />
+                  <h3 className="font-bold text-sm uppercase tracking-wider">Módulo "Mensais"</h3>
                 </div>
                 <p className="text-sm text-white/50 leading-relaxed">
-                  Acesse a tabela <code>public.companies</code> e <code>public.company_roles</code> para copiar os UUIDs da empresa e do cargo desejado. O sistema multi-tenant exige IDs válidos.
+                  Implementei uma nova área para organização por meses, separando relatórios, pedidos e dados financeiros para consultas e edições individuais e precisas.
                 </p>
               </div>
               
               <div className="space-y-4">
                 <div className="flex items-center gap-2 text-gold">
-                  <UserCheck className="size-5" />
-                  <h3 className="font-bold text-sm uppercase tracking-wider">Passo 2: Vínculo de Perfil</h3>
+                  <Activity className="size-5" />
+                  <h3 className="font-bold text-sm uppercase tracking-wider">Dashboards Periódicos</h3>
                 </div>
                 <p className="text-sm text-white/50 leading-relaxed">
-                  Na tabela <code>public.profiles</code>, localize o usuário pelo e-mail e cole os UUIDs copiados nas colunas <code>company_id</code> e <code>role_id</code>.
+                  Cada mês conta com seu próprio dashboard de resumo, totalizando vendas, recebimentos, despesas e lucro líquido de forma isolada.
                 </p>
               </div>
 
               <div className="space-y-4">
                 <div className="flex items-center gap-2 text-emerald-500">
-                  <ShieldCheck className="size-5" />
-                  <h3 className="font-bold text-sm uppercase tracking-wider">RLS Blindado</h3>
+                  <TrendingUp className="size-5" />
+                  <h3 className="font-bold text-sm uppercase tracking-wider">Análise Comparativa</h3>
                 </div>
                 <p className="text-sm text-white/50 leading-relaxed">
-                  Reescrevi e consolidei as políticas de profiles para evitar subconsultas que dependem da própria tabela e reduzir o risco de recursão usando <code>Security Definer</code> helpers.
+                  Adicionei inteligência para comparar a performance atual com o mês anterior, permitindo visualizar o crescimento de receita e evolução do lucro.
                 </p>
               </div>
 
               <div className="space-y-4">
                 <div className="flex items-center gap-2 text-gold">
-                  <Activity className="size-5" />
-                  <h3 className="font-bold text-sm uppercase tracking-wider">Telemetria & Diagnóstico</h3>
+                  <Database className="size-5" />
+                  <h3 className="font-bold text-sm uppercase tracking-wider">Arquitetura de Dados</h3>
                 </div>
                 <p className="text-sm text-white/50 leading-relaxed">
-                  Implementei logging para capturar falhas de RLS e uma rota de diagnóstico para auditar isolamento de tenants e conformidade de políticas em tempo real.
+                  A estrutura garante que os registros permaneçam vinculados aos seus respectivos períodos, evitando misturas e facilitando o fechamento fiscal/operacional.
                 </p>
               </div>
 
