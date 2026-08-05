@@ -13,6 +13,7 @@ import {
   Shield,
   Activity,
   Zap,
+  CalendarDays,
   type LucideIcon,
 } from "lucide-react";
 
