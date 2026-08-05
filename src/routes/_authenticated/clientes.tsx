@@ -232,7 +232,7 @@ function ClientesPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {rows.map((c) => (
+                {(rows as any[]).map((c: any) => (
                   <TableRow
                     key={c.id}
                     className={c.deleted_at ? "opacity-50" : "cursor-pointer"}
