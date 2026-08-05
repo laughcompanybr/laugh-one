@@ -1683,6 +1683,36 @@ export type Database = {
           },
         ]
       }
+      system_telemetry: {
+        Row: {
+          actor_id: string | null
+          context: Json | null
+          created_at: string | null
+          event_type: string
+          id: string
+          message: string | null
+          request_id: string | null
+        }
+        Insert: {
+          actor_id?: string | null
+          context?: Json | null
+          created_at?: string | null
+          event_type: string
+          id?: string
+          message?: string | null
+          request_id?: string | null
+        }
+        Update: {
+          actor_id?: string | null
+          context?: Json | null
+          created_at?: string | null
+          event_type?: string
+          id?: string
+          message?: string | null
+          request_id?: string | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -1719,6 +1749,7 @@ export type Database = {
         Returns: number
       }
       apply_order_stock_out: { Args: { _order_id: string }; Returns: undefined }
+      check_profiles_recursion: { Args: never; Returns: boolean }
       get_user_company_id: { Args: never; Returns: string }
       has_role:
         | {

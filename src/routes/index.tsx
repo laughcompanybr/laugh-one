@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { LaughLogo } from "@/components/brand/LaughLogo";
 import { Button } from "@/components/ui/button";
 import { Link } from "@tanstack/react-router";
-import { ShieldCheck, UserCheck, Database, Zap, Lock, AlertTriangle, CheckCircle, RefreshCcw, UserPlus, FileText } from "lucide-react";
+import { ShieldCheck, UserCheck, Database, Zap, Lock, AlertTriangle, CheckCircle, RefreshCcw, UserPlus, FileText, Activity } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   component: LandingPage,
@@ -68,24 +68,25 @@ function LandingPage() {
               </div>
 
               <div className="space-y-4">
-                <div className="flex items-center gap-2 text-gold">
-                  <Zap className="size-5" />
-                  <h3 className="font-bold text-sm uppercase tracking-wider">Passo 3: Validação</h3>
+                <div className="flex items-center gap-2 text-emerald-500">
+                  <ShieldCheck className="size-5" />
+                  <h3 className="font-bold text-sm uppercase tracking-wider">RLS Blindado</h3>
                 </div>
                 <p className="text-sm text-white/50 leading-relaxed">
-                  Após salvar no banco, o usuário deve clicar em "Já fui liberado, atualizar" na tela de bloqueio para que o <code>AuthService</code> recarregue as permissões via RBAC.
+                  Reescrevi e consolidei as políticas de profiles para evitar subconsultas que dependem da própria tabela e reduzir o risco de recursão usando <code>Security Definer</code> helpers.
                 </p>
               </div>
 
               <div className="space-y-4">
                 <div className="flex items-center gap-2 text-gold">
-                  <Database className="size-5" />
-                  <h3 className="font-bold text-sm uppercase tracking-wider">Audit Log</h3>
+                  <Activity className="size-5" />
+                  <h3 className="font-bold text-sm uppercase tracking-wider">Telemetria & Diagnóstico</h3>
                 </div>
                 <p className="text-sm text-white/50 leading-relaxed">
-                  O sistema registrará automaticamente a alteração na tabela de auditoria, garantindo a rastreabilidade de quem realizou o vínculo manual via painel do banco.
+                  Implementei logging para capturar falhas de RLS e uma rota de diagnóstico para auditar isolamento de tenants e conformidade de políticas em tempo real.
                 </p>
               </div>
+
             </div>
           </div>
 
