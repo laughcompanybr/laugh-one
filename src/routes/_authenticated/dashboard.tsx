@@ -7,10 +7,10 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 
 function DashboardPage() {
   return (
-    <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight text-white mb-2">Painel de Controle</h1>
-        <p className="text-muted-foreground">
+    <div className="container mx-auto py-10 px-6 sm:px-8 lg:px-12 max-w-7xl">
+      <div className="mb-12 space-y-2">
+        <h1 className="text-4xl font-display font-medium tracking-tight text-white">Painel de Controle</h1>
+        <p className="text-white/50 font-light text-lg">
           Bem-vindo ao Laugh One. Tecnologia criada para negócios que evoluem.
         </p>
       </div>
