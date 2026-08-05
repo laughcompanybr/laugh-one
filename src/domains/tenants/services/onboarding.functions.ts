@@ -95,8 +95,10 @@ export const completeOnboarding = createServerFn({ method: "POST" })
       p_action: 'onboarding_complete',
       p_entity_type: 'company',
       p_entity_id: profile.company_id,
+      p_old_data: null,
       p_new_data: data
     });
+
 
     return { success: true };
   });
@@ -124,7 +126,9 @@ async function setupBusinessContext(supabase: any, companyId: string, businessTy
     p_action: 'modules_auto_enabled',
     p_entity_type: 'modules',
     p_entity_id: companyId,
+    p_old_data: null,
     p_new_data: { modules: modulesToEnable }
   });
+
 }
 
