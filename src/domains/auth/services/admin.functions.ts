@@ -113,13 +113,3 @@ export const getCompanies = createServerFn({ method: "GET" })
     return data;
   });
 
-
-export const getCompanies = createServerFn({ method: "GET" })
-  .handler(async () => {
-    const { data, error } = await supabase
-      .from("companies")
-      .select("id, name");
-
-    if (error) throw new Error(error.message);
-    return data;
-  });
