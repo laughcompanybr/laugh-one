@@ -18,6 +18,7 @@ import { CompanyProvider } from "@/domains/tenants/hooks/use-company";
 import { ImpersonationBanner } from "@/components/admin/ImpersonationBanner";
 import { ModulesProvider } from "@/domains/tenants/hooks/use-modules";
 import { PermissionsProvider } from "@/domains/auth/hooks/use-permissions";
+import { CookieConsent } from "@/components/auth/CookieConsent";
 
 function NotFoundComponent() {
   return (
@@ -119,11 +120,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 });
 
 function RootShell({ children }: { children: ReactNode }) {
-  // Server always renders the `dark` shell. ThemeProvider re-applies the real
-  // theme (light/dark) inside a useEffect on the client after hydration, so
-  // no attribute divergence exists at hydration time (React #418) and no
-  // suppressHydrationWarning is needed. Users on the `light` theme see a
-  // brief dark flash on first paint; dark users see nothing.
   return (
     <html lang="pt-BR">
       <head>
@@ -160,6 +156,7 @@ function RootComponent() {
               <ImpersonationBanner />
               <Outlet />
               <Toaster richColors position="top-right" />
+              <CookieConsent />
             </PermissionsProvider>
           </ModulesProvider>
         </CompanyProvider>

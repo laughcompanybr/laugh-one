@@ -11,11 +11,11 @@ export function CookieConsent() {
 
   const { data: consent, isLoading } = useQuery({
     queryKey: ["user-consent"],
-    queryFn: () => getConsentFn(),
+    queryFn: () => getConsentFn({}), // Pass empty object if no input is expected but middleware exists
   });
 
   const mutation = useMutation({
-    mutationFn: (granted: boolean) => saveConsentFn({ granted }),
+    mutationFn: (granted: boolean) => saveConsentFn({ data: { granted } }), // Fix type for useServerFn
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["user-consent"] }),
   });
 

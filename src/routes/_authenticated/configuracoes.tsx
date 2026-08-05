@@ -20,11 +20,11 @@ function SettingsPage() {
 
   const { data: company, isLoading, refetch } = useQuery({
     queryKey: ["company-settings"],
-    queryFn: () => getDetails(),
+    queryFn: () => getDetails({}),
   });
 
   const mutation = useMutation({
-    mutationFn: updateSettings,
+    mutationFn: (data: any) => updateSettings({ data }),
     onSuccess: () => {
       toast.success("Configurações atualizadas com sucesso!");
       refetch();
@@ -50,7 +50,8 @@ function SettingsPage() {
     mutation.mutate(data);
   };
 
-  const onboarding = company?.company_onboarding_data?.[0];
+  const onboardingData = company?.company_onboarding_data as any;
+  const onboarding = Array.isArray(onboardingData) ? onboardingData[0] : onboardingData;
 
   return (
     <div className="container max-w-4xl py-8 space-y-8 animate-in fade-in duration-500">
@@ -71,11 +72,11 @@ function SettingsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <Label htmlFor="name">Nome da Empresa</Label>
-              <Input id="name" name="name" defaultValue={company?.name} required />
+              <Input id="name" name="name" defaultValue={company?.name || ""} required />
             </div>
             <div className="space-y-2">
               <Label htmlFor="business_type">Segmento de Atuação</Label>
-              <Select name="business_type" defaultValue={company?.business_type}>
+              <Select name="business_type" defaultValue={company?.business_type || ""}>
                 <SelectTrigger>
                   <SelectValue placeholder="Selecione o segmento" />
                 </SelectTrigger>
@@ -97,24 +98,24 @@ function SettingsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <Label htmlFor="responsible_name">Nome do Responsável</Label>
-              <Input id="responsible_name" name="responsible_name" defaultValue={onboarding?.responsible_name} required />
+              <Input id="responsible_name" name="responsible_name" defaultValue={onboarding?.responsible_name || ""} required />
             </div>
             <div className="space-y-2">
               <Label htmlFor="phone">WhatsApp / Telefone</Label>
-              <Input id="phone" name="phone" defaultValue={onboarding?.phone} required />
+              <Input id="phone" name="phone" defaultValue={onboarding?.phone || ""} required />
             </div>
             <div className="space-y-2">
               <Label htmlFor="commercial_email">E-mail Comercial</Label>
-              <Input id="commercial_email" name="commercial_email" type="email" defaultValue={onboarding?.commercial_email} required />
+              <Input id="commercial_email" name="commercial_email" type="email" defaultValue={onboarding?.commercial_email || ""} required />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="city">Cidade</Label>
-                <Input id="city" name="city" defaultValue={onboarding?.city} required />
+                <Input id="city" name="city" defaultValue={onboarding?.city || ""} required />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="state">Estado</Label>
-                <Input id="state" name="state" defaultValue={onboarding?.state} required />
+                <Input id="state" name="state" defaultValue={onboarding?.state || ""} required />
               </div>
             </div>
           </div>
