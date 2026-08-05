@@ -149,7 +149,6 @@ export function OrderForm({ defaultValues, submitLabel = "Salvar", onSubmit, onC
   }, [selectedClientId, customShip]);
 
 
-  const [uploading, setUploading] = useState(false);
   // Card fee is entered as a % of the sale total; card_fee (BRL) is derived.
   const initialFeePct =
     totalSale > 0 && Number(defaultValues?.card_fee ?? 0) > 0
@@ -210,7 +209,6 @@ export function OrderForm({ defaultValues, submitLabel = "Salvar", onSubmit, onC
     try {
       const safe = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
       const path = `watches/${Date.now()}-${safe}`;
-      const { error } = await supabase.storage.from("order-files").upload(path, file, { contentType: file.type });
       if (error) throw error;
       setValue("photo_path", path, { shouldDirty: true });
       toast.success("Foto anexada");
@@ -287,8 +285,6 @@ export function OrderForm({ defaultValues, submitLabel = "Salvar", onSubmit, onC
               className="hidden"
               onChange={(e) => { const f = e.target.files?.[0]; if (f) handlePhotoUpload(f); }}
             />
-            <Button type="button" variant="outline" onClick={() => fileRef.current?.click()} disabled={uploading}>
-              {uploading ? <Loader2 className="mr-2 size-4 animate-spin" /> : <Upload className="mr-2 size-4" />}
               {photoPath ? "Trocar foto" : "Enviar foto"}
             </Button>
             {photoPath ? (

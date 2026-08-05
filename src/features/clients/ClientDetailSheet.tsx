@@ -81,7 +81,6 @@ export function ClientDetailSheet({ clientId, open, onOpenChange }: Props) {
   const delAttachMut = useMutation({
     mutationFn: (v: { id: string; storage_path: string }) => delAttachFn({ data: v }),
     onSuccess: () => {
-      toast.success("Anexo removido");
       qc.invalidateQueries({ queryKey: ["client", clientId] });
     },
     onError: (e: Error) => toast.error(e.message),

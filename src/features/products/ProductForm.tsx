@@ -55,7 +55,6 @@ export function ProductForm({ defaultValues, submitLabel = "Salvar", onSubmit, o
 
   const imageUrl = String(watch("image_url") ?? "");
   const fileRef = useRef<HTMLInputElement>(null);
-  const [uploading, setUploading] = useState(false);
 
   async function handleImage(file: File) {
     if (!file.type.startsWith("image/")) {
@@ -74,7 +73,6 @@ export function ProductForm({ defaultValues, submitLabel = "Salvar", onSubmit, o
       const path = `${uid}/${Date.now()}-${crypto.randomUUID()}.${ext || "jpg"}`;
       const { error } = await supabase.storage
         .from("product-images")
-        .upload(path, file, { contentType: file.type, upsert: false });
       if (error) throw error;
       setValue("image_url", path, { shouldDirty: true });
       toast.success("Imagem anexada");
@@ -156,8 +154,6 @@ export function ProductForm({ defaultValues, submitLabel = "Salvar", onSubmit, o
               onChange={(e) => { const f = e.target.files?.[0]; if (f) handleImage(f); }}
             />
             <div className="flex gap-2">
-              <Button type="button" variant="outline" onClick={() => fileRef.current?.click()} disabled={uploading}>
-                {uploading ? <Loader2 className="mr-2 size-4 animate-spin" /> : <Upload className="mr-2 size-4" />}
                 {imageUrl ? "Trocar imagem" : "Enviar imagem"}
               </Button>
               {imageUrl ? (

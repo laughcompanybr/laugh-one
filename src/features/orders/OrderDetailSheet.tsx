@@ -73,7 +73,6 @@ const EVENT_LABEL: Record<string, string> = {
   created: "Pedido criado",
   status_changed: "Status alterado",
   payment: "Pagamento",
-  attachment: "Anexo",
 };
 
 export function OrderDetailSheet({ orderId, open, onOpenChange }: Props) {
@@ -147,7 +146,6 @@ export function OrderDetailSheet({ orderId, open, onOpenChange }: Props) {
 
   const delAttachMut = useMutation({
     mutationFn: (v: { id: string; storage_path: string }) => delAttachFn({ data: v }),
-    onSuccess: () => { toast.success("Anexo removido"); invalidate(); },
     onError: (e: Error) => toast.error(e.message),
   });
 
@@ -163,7 +161,6 @@ export function OrderDetailSheet({ orderId, open, onOpenChange }: Props) {
       await addAttachFn({
         data: { order_id: orderId, storage_path: path, filename: file.name, mime: file.type || null, size: file.size, kind: null },
       });
-      toast.success("Anexo enviado");
       invalidate();
     } catch (e) { toast.error((e as Error).message); }
     finally { setUploading(false); if (fileRef.current) fileRef.current.value = ""; }
@@ -234,7 +231,6 @@ export function OrderDetailSheet({ orderId, open, onOpenChange }: Props) {
                   <Truck className="mr-1 size-3.5" /> Rastreio
                 </TabsTrigger>
                 <TabsTrigger value="attachments" className="flex-1">
-                  <Paperclip className="mr-1 size-3.5" /> Anexos ({query.data?.attachments.length ?? 0})
                 </TabsTrigger>
                 <TabsTrigger value="timeline" className="flex-1">
                   <Activity className="mr-1 size-3.5" /> Timeline

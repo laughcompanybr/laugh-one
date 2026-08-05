@@ -52,7 +52,6 @@ export const getOrder = createServerFn({ method: "POST" })
   .inputValidator((v) => idInput.parse(v))
   .handler(async ({ data, context }) => {
     const { supabase } = context;
-    const [orderRes, paymentsRes, eventsRes, attachmentsRes] = await Promise.all([
       supabase
         .from("orders")
         .select("*, clients(id,name,whatsapp,phone,instagram), suppliers(id,name,company,whatsapp), employees(id,full_name,role)")
@@ -70,7 +69,6 @@ export const getOrder = createServerFn({ method: "POST" })
         .eq("order_id", data.id)
         .order("created_at", { ascending: false }),
       supabase
-        .from("order_attachments")
         .select("id, filename, mime, size, kind, storage_path, created_at")
         .eq("order_id", data.id)
         .order("created_at", { ascending: false }),
@@ -105,7 +103,6 @@ export const getOrder = createServerFn({ method: "POST" })
       order: orderRes.data,
       payments,
       events: eventsRes.data ?? [],
-      attachments: attachmentsRes.data ?? [],
       photoUrl,
       totals: {
         totalIn,
@@ -302,7 +299,6 @@ export const addMixedPayments = createServerFn({ method: "POST" })
     return { ok: true, count: inserted?.length ?? 0, sum };
   });
 
-// ---------------- attachments ----------------
 const attachmentInput = z.object({
   order_id: z.string().uuid(),
   storage_path: z.string().min(1).max(500),
@@ -317,7 +313,6 @@ export const addOrderAttachment = createServerFn({ method: "POST" })
   .inputValidator((v) => attachmentInput.parse(v))
   .handler(async ({ data, context }) => {
     const { data: row, error } = await context.supabase
-      .from("order_attachments")
       .insert({ ...data, uploaded_by: context.userId, company_id: (context as any).companyId } as any)
       .select("id")
       .single();
@@ -336,7 +331,6 @@ export const deleteOrderAttachment = createServerFn({ method: "POST" })
   .inputValidator((v) => z.object({ id: z.string().uuid(), storage_path: z.string() }).parse(v))
   .handler(async ({ data, context }) => {
     await context.supabase.storage.from("order-files").remove([data.storage_path]);
-    const { error } = await context.supabase.from("order_attachments").delete().eq("id", data.id);
     if (error) throw error;
     return { ok: true };
   });

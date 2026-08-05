@@ -42,10 +42,8 @@ export const getClient = createServerFn({ method: "POST" })
   .inputValidator((v) => idInput.parse(v))
   .handler(async ({ data, context }) => {
     const { supabase } = context;
-    const [clientRes, attachmentsRes, historyRes, ordersRes] = await Promise.all([
       supabase.from("clients").select("*").eq("id", data.id).maybeSingle(),
       supabase
-        .from("client_attachments")
         .select("id, filename, mime, size, kind, storage_path, created_at")
         .eq("client_id", data.id)
         .order("created_at", { ascending: false }),
@@ -84,7 +82,6 @@ export const getClient = createServerFn({ method: "POST" })
 
     return {
       client: clientRes.data,
-      attachments: attachmentsRes.data ?? [],
       history: historyRes.data ?? [],
       orders,
       orderPhotos,
@@ -154,7 +151,6 @@ export const addClientAttachment = createServerFn({ method: "POST" })
   .inputValidator((v) => attachmentInput.parse(v))
   .handler(async ({ data, context }) => {
     const { data: row, error } = await context.supabase
-      .from("client_attachments")
       .insert({ ...data, uploaded_by: context.userId, company_id: (context as any).companyId } as any)
       .select("id")
       .single();
@@ -167,7 +163,6 @@ export const deleteClientAttachment = createServerFn({ method: "POST" })
   .inputValidator((v) => z.object({ id: z.string().uuid(), storage_path: z.string() }).parse(v))
   .handler(async ({ data, context }) => {
     await context.supabase.storage.from("client-files").remove([data.storage_path]);
-    const { error } = await context.supabase.from("client_attachments").delete().eq("id", data.id);
     if (error) throw error;
     return { ok: true };
   });
