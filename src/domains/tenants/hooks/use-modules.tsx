@@ -55,21 +55,10 @@ export function ModulesProvider({ children }: { children: ReactNode }) {
         const allModules = modulesRes.data as unknown as Module[];
         setModules(allModules);
 
-        const enabled = new Set<string>();
-        // Core modules are always enabled if not explicitly disabled
-        allModules.filter(m => m.is_core).forEach(m => enabled.add(m.id));
-
-        if (companyModulesRes.data) {
-          companyModulesRes.data.forEach((cm: any) => {
-            if (cm.is_enabled) {
-              enabled.add(cm.module_id);
-            } else {
-              enabled.delete(cm.module_id);
-            }
-          });
-        }
-
-        setEnabledModules(enabled);
+        // Plano único: a assinatura ativa libera TODOS os módulos.
+        // company_modules permanece apenas como preferência de ordenação/visual.
+        void companyModulesRes;
+        setEnabledModules(new Set(allModules.map((m) => m.id)));
       } catch (error) {
         console.error("Error loading modules:", error);
       } finally {
