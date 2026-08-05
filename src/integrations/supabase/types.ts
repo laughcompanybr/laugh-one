@@ -1411,8 +1411,12 @@ export type Database = {
       plans: {
         Row: {
           active: boolean | null
+          billing_cycle: string | null
           created_at: string | null
           description: string | null
+          feature_list: string[] | null
+          features: Json | null
+          highlight_text: string | null
           id: string
           integrations: Json | null
           max_clients: number | null
@@ -1421,7 +1425,10 @@ export type Database = {
           max_users: number | null
           modules: Json | null
           name: string
+          price: number | null
           price_monthly: number | null
+          price_quarterly: number | null
+          price_semiannual: number | null
           price_yearly: number | null
           status: string | null
           storage_gb: number | null
@@ -1431,8 +1438,12 @@ export type Database = {
         }
         Insert: {
           active?: boolean | null
+          billing_cycle?: string | null
           created_at?: string | null
           description?: string | null
+          feature_list?: string[] | null
+          features?: Json | null
+          highlight_text?: string | null
           id?: string
           integrations?: Json | null
           max_clients?: number | null
@@ -1441,7 +1452,10 @@ export type Database = {
           max_users?: number | null
           modules?: Json | null
           name: string
+          price?: number | null
           price_monthly?: number | null
+          price_quarterly?: number | null
+          price_semiannual?: number | null
           price_yearly?: number | null
           status?: string | null
           storage_gb?: number | null
@@ -1451,8 +1465,12 @@ export type Database = {
         }
         Update: {
           active?: boolean | null
+          billing_cycle?: string | null
           created_at?: string | null
           description?: string | null
+          feature_list?: string[] | null
+          features?: Json | null
+          highlight_text?: string | null
           id?: string
           integrations?: Json | null
           max_clients?: number | null
@@ -1461,7 +1479,10 @@ export type Database = {
           max_users?: number | null
           modules?: Json | null
           name?: string
+          price?: number | null
           price_monthly?: number | null
+          price_quarterly?: number | null
+          price_semiannual?: number | null
           price_yearly?: number | null
           status?: string | null
           storage_gb?: number | null
@@ -1808,6 +1829,7 @@ export type Database = {
       subscriptions: {
         Row: {
           amount: number
+          billing_cycle: string | null
           canceled_at: string | null
           company_id: string
           created_at: string | null
@@ -1818,6 +1840,7 @@ export type Database = {
           gateway_subscription_id: string | null
           id: string
           is_trial: boolean | null
+          next_payment: string | null
           plan_id: string
           renewal_date: string
           start_date: string
@@ -1826,6 +1849,7 @@ export type Database = {
         }
         Insert: {
           amount: number
+          billing_cycle?: string | null
           canceled_at?: string | null
           company_id: string
           created_at?: string | null
@@ -1836,6 +1860,7 @@ export type Database = {
           gateway_subscription_id?: string | null
           id?: string
           is_trial?: boolean | null
+          next_payment?: string | null
           plan_id: string
           renewal_date: string
           start_date?: string
@@ -1844,6 +1869,7 @@ export type Database = {
         }
         Update: {
           amount?: number
+          billing_cycle?: string | null
           canceled_at?: string | null
           company_id?: string
           created_at?: string | null
@@ -1854,6 +1880,7 @@ export type Database = {
           gateway_subscription_id?: string | null
           id?: string
           is_trial?: boolean | null
+          next_payment?: string | null
           plan_id?: string
           renewal_date?: string
           start_date?: string
@@ -2063,7 +2090,17 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      vw_available_plans: {
+        Row: {
+          active: boolean | null
+          billing_cycle: string | null
+          features: string[] | null
+          id: string | null
+          name: string | null
+          price: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       adjust_product_stock: {
