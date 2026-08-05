@@ -86,30 +86,23 @@ export const completeOnboarding = createServerFn({ method: "POST" })
 
     if (onboardingError) throw onboardingError;
 
-    // 3. Auto-enable Modules based on business type
-    await setupModulesForBusinessType(supabase, profile.company_id, data.businessType);
+    // 3. Auto-enable Modules and Setup Template based on business type
+    await setupBusinessContext(supabase, profile.company_id, data.businessType);
 
     return { success: true };
   });
 
-async function setupModulesForBusinessType(supabase: any, companyId: string, businessType: string) {
-  const moduleMap: Record<string, string[]> = {
-    'Barbearia': ['dashboard', 'calendar', 'clients', 'services', 'finance', 'reports'],
-    'Salão de beleza': ['dashboard', 'calendar', 'clients', 'services', 'finance', 'reports'],
-    'Joalheria': ['dashboard', 'products', 'inventory', 'orders', 'clients', 'finance', 'reports'],
-    'Loja de roupas': ['dashboard', 'products', 'inventory', 'orders', 'clients', 'finance', 'reports'],
-    'Loja de eletrônicos': ['dashboard', 'products', 'inventory', 'orders', 'clients', 'finance', 'reports'],
-    'Restaurante': ['dashboard', 'menu', 'orders', 'tables', 'products', 'finance'],
-    'Delivery': ['dashboard', 'menu', 'orders', 'delivery', 'finance'],
-    'Clínica': ['dashboard', 'calendar', 'patients', 'procedures', 'finance', 'reports'],
-    'Academia': ['dashboard', 'calendar', 'members', 'finance', 'reports'],
-    'Agência': ['dashboard', 'projects', 'clients', 'finance', 'reports'],
-    'Prestador de serviços': ['dashboard', 'calendar', 'services', 'finance', 'reports'],
-    'Default': ['dashboard', 'clients', 'orders', 'finance', 'reports']
-  };
+async function setupBusinessContext(supabase: any, companyId: string, businessType: string) {
+  // Fetch template to know which modules to enable
+  const { data: template } = await supabase
+    .from("business_templates")
+    .select("enabled_modules")
+    .eq("business_type", businessType)
+    .maybeSingle();
 
-  const modulesToEnable = moduleMap[businessType] || moduleMap['Default'];
+  const modulesToEnable = template?.enabled_modules || ['dashboard', 'clients', 'orders', 'finance', 'reports'];
 
+  // Enable modules for the company
   for (const modId of modulesToEnable) {
     await supabase.from("company_modules").upsert({
       company_id: companyId,

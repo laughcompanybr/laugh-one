@@ -29,12 +29,26 @@ export function AppSidebar() {
   const collapsed = state === "collapsed";
   const currentPath = useRouterState({ select: (s) => s.location.pathname });
   const { isSuperAdmin } = useUserRole();
-
+  const { company } = useCompany();
   const { isModuleEnabled } = useModules();
 
   const groups = (["operação", "gestão", "sistema"] as const).map((group) => ({
     group,
-    items: NAV_ITEMS.filter((i) => i.group === group && isModuleEnabled(i.moduleId)),
+    items: NAV_ITEMS.filter((i) => {
+      const isBaseVisible = i.group === group && isModuleEnabled(i.moduleId);
+      return isBaseVisible;
+    }).map(item => {
+      // Dynamic terminology mapping
+      let title = item.title;
+      const businessType = company?.business_type;
+      
+      // Simple dynamic terminology logic for now
+      if (businessType === 'Restaurante' && item.moduleId === 'products') title = "Cardápio";
+      if (businessType === 'Restaurante' && item.moduleId === 'orders') title = "Mesas";
+      if (businessType === 'Barbearia' && item.moduleId === 'clients') title = "Fregueses";
+      
+      return { ...item, title };
+    }),
   }));
 
   return (
