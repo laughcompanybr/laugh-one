@@ -35,7 +35,7 @@ export const getCompanyDetails = createServerFn({ method: "GET" })
 
     if (!profile?.company_id) throw new Error("Empresa não encontrada.");
 
-    const { data: company, error } = await supabase
+    const { data: company, error } = await (supabase as any)
       .from("companies")
       .select(`
         *,
@@ -62,17 +62,14 @@ export const updateCompanySettings = createServerFn({ method: "POST" })
 
     if (!profile?.company_id) throw new Error("Não autorizado.");
 
-    // Check if user is admin or owner
     const { data: isAdmin } = await supabase.rpc("has_role", { 
       _user_id: userId, 
       _role: 'admin' 
     });
     
-    // Also check for 'owner' if role system supports it, or use admin for both as per current logic
     if (!isAdmin) throw new Error("Apenas administradores podem alterar configurações.");
 
-    // Update company
-    const { error: companyError } = await supabase
+    const { error: companyError } = await (supabase as any)
       .from("companies")
       .update({
         name: data.name,
@@ -92,13 +89,12 @@ export const updateCompanySettings = createServerFn({ method: "POST" })
         social_media: data.social_media,
         system_preferences: data.system_preferences,
         functional_customizations: data.functional_customizations,
-      } as any)
+      })
       .eq("id", profile.company_id);
 
     if (companyError) throw companyError;
 
-    // Update onboarding data if exists (syncing basic info)
-    await supabase
+    await (supabase as any)
       .from("company_onboarding_data")
       .update({
         phone: data.phone,
@@ -125,7 +121,7 @@ export const getCompanyHistory = createServerFn({ method: "GET" })
 
     if (!profile?.company_id) throw new Error("Não autorizado.");
 
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from("company_activity_logs")
       .select(`
         *,
@@ -147,7 +143,7 @@ export const restoreCompanyField = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
 
-    const { data: log } = await supabase
+    const { data: log } = await (supabase as any)
       .from("company_activity_logs")
       .select("*")
       .eq("id", data.logId)
@@ -167,19 +163,20 @@ export const restoreCompanyField = createServerFn({ method: "POST" })
       throw new Error("Não autorizado.");
     }
 
-    // Update the field back to old_value
     const updateObj: any = {};
     updateObj[log.field_changed] = log.old_value;
 
-    const { error } = await supabase
-      .from(log.module === 'company' ? 'companies' : log.module)
+    const targetTable = log.module === 'company' ? 'companies' : log.module;
+    const targetCol = log.module === 'company' ? 'id' : 'company_id';
+
+    const { error } = await (supabase as any)
+      .from(targetTable)
       .update(updateObj)
-      .eq(log.module === 'company' ? 'id' : 'company_id', profile.company_id);
+      .eq(targetCol, profile.company_id);
 
     if (error) throw error;
 
-    // Log the restoration
-    await supabase.from("company_activity_logs").insert({
+    await (supabase as any).from("company_activity_logs").insert({
       company_id: profile.company_id,
       user_id: userId,
       action_type: 'RESTORE',
