@@ -25,6 +25,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { PERIOD_LABELS, type BillingPeriod } from "@/domains/tenants/subscriptions/types";
 
 export const Route = createFileRoute("/_authenticated/admin/empresas")({
   component: AdminCompanies,
