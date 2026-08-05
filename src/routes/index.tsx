@@ -11,6 +11,15 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { useQuery } from "@tanstack/react-query";
+import { getSubscriptionPricing } from "@/domains/tenants/subscriptions/subscriptions.functions";
+import {
+  BILLING_PERIODS,
+  PERIOD_LABELS,
+  PLAN_NAME,
+  formatPrice,
+  type BillingPeriod,
+} from "@/domains/tenants/subscriptions/types";
 
 export const Route = createFileRoute("/")({
   component: LandingPage,
