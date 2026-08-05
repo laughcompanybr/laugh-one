@@ -86,8 +86,18 @@ function LandingPage() {
                   Políticas RLS atualizadas para permitir que novos usuários acessem seus próprios perfis mesmo antes de estarem vinculados a uma empresa, evitando erros de carregamento na UI pós-login.
                 </p>
               </div>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 text-gold">
+                  <FileText className="size-5" />
+                  <h3 className="font-bold text-sm uppercase tracking-wider">Instruções de Vínculo</h3>
+                </div>
+                <p className="text-sm text-white/50 leading-relaxed">
+                  Adicionada orientação técnica na tela de bloqueio: para vincular usuários, o administrador deve acessar o banco de dados e atualizar as colunas <code>company_id</code> e <code>role_id</code> na tabela <code>public.profiles</code>.
+                </p>
+              </div>
             </div>
-          </div>
 
           <div className="flex flex-wrap gap-4 pt-4">
             <Link to="/dashboard">
