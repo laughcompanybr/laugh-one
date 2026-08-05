@@ -136,5 +136,37 @@ function AuditPage() {
     </div>
   );
 }
-
+function AuditDetailDialog({ log }: { log: any }) {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="ghost" size="icon" className="size-8">
+          <Eye className="size-4" />
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>Detalhes da Operação: {log.operation}</DialogTitle>
+          <DialogDescription>
+            Tabela: {log.table_name} | ID: {log.record_id}
+          </DialogDescription>
+        </DialogHeader>
+        <div className="grid grid-cols-2 gap-4 mt-4">
+          <div className="space-y-2">
+            <h4 className="text-xs font-bold uppercase text-muted-foreground text-red-400">Dado Anterior</h4>
+            <pre className="p-3 rounded bg-muted text-[10px] overflow-auto max-h-[400px]">
+              {JSON.stringify(log.old_data, null, 2)}
+            </pre>
+          </div>
+          <div className="space-y-2">
+            <h4 className="text-xs font-bold uppercase text-muted-foreground text-emerald-400">Novo Dado</h4>
+            <pre className="p-3 rounded bg-muted text-[10px] overflow-auto max-h-[400px]">
+              {JSON.stringify(log.new_data, null, 2)}
+            </pre>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
 
