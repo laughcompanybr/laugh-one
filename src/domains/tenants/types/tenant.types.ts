@@ -21,6 +21,8 @@ export interface Company {
   secondary_font: string | null;
   theme_mode: string | null;
   border_radius: string | null;
+  business_type: string | null;
+  onboarding_status: string | null;
   login_background_url: string | null;
   login_welcome_message: string | null;
   login_title: string | null;
