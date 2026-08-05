@@ -67,6 +67,16 @@ function LayoutComponent() {
             Sua conta foi criada, mas você ainda não foi vinculado a uma empresa ou cargo no sistema. 
             Entre em contato com o administrador para liberar seu acesso.
           </p>
+          <div className="mt-4 p-4 rounded-lg bg-muted text-left text-xs space-y-2 border border-border/50">
+            <p className="font-semibold text-gold">Instrução para o Administrador:</p>
+            <p>Para vincular este usuário, acesse o <strong>Banco de Dados</strong> no painel do Lovable Cloud e siga estes passos:</p>
+            <ol className="list-decimal list-inside space-y-1 text-muted-foreground">
+              <li>Localize a tabela <code>public.profiles</code>.</li>
+              <li>Encontre a linha com o e-mail deste usuário.</li>
+              <li>Preencha a coluna <code>company_id</code> com o ID da empresa.</li>
+              <li>Preencha a coluna <code>role_id</code> com o ID do cargo (ex: Administrador).</li>
+            </ol>
+          </div>
           <div className="flex flex-col gap-3 pt-4">
             <Button 
               variant="outline" 
