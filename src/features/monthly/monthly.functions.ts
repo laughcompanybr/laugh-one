@@ -1,0 +1,129 @@
+import { createServerFn } from "@tanstack/react-start";
+import { z } from "zod";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+
+const monthlyReportInput = z.object({
+  year: z.number().int(),
+  month: z.number().int().min(1).max(12),
+});
+
+export interface MonthlyReportData {
+  summary: {
+    revenue: number;
+    received: number;
+    expenses: number;
+    netProfit: number;
+    orderCount: number;
+  };
+  details: {
+    orders: any[];
+    financial: {
+      entries: any[];
+      exits: any[];
+      expenses: any[];
+    };
+  };
+  comparison: {
+    prevMonthRevenue: number;
+    prevMonthProfit: number;
+  };
+}
+
+export const getMonthlyReport = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((v) => monthlyReportInput.parse(v))
+  .handler(async ({ data, context }): Promise<MonthlyReportData> => {
+    const { supabase } = context;
+    const { year, month } = data;
+
+    // Calculate dates
+    const startOfMonth = new Date(Date.UTC(year, month - 1, 1));
+    const endOfMonth = new Date(Date.UTC(year, month, 0, 23, 59, 59, 999));
+    
+    const startOfMonthStr = startOfMonth.toISOString();
+    const endOfMonthStr = endOfMonth.toISOString();
+    
+    // For comparison (previous month)
+    const prevMonthDate = new Date(Date.UTC(year, month - 2, 1));
+    const prevMonthStartStr = prevMonthDate.toISOString();
+    const prevMonthEndStr = new Date(Date.UTC(year, month - 1, 0, 23, 59, 59, 999)).toISOString();
+
+    const [ordersRes, paymentsRes, expensesRes, prevOrdersRes, prevExpensesRes] = await Promise.all([
+      // Current Month Orders
+      supabase
+        .from("orders")
+        .select("*, clients(id, name, whatsapp), suppliers(id, name)")
+        .is("deleted_at", null)
+        .gte("created_at", startOfMonthStr)
+        .lte("created_at", endOfMonthStr),
+      // Current Month Payments
+      supabase
+        .from("payments")
+        .select("*, orders(order_number, brand, model, clients(name))")
+        .gte("paid_at", startOfMonthStr)
+        .lte("paid_at", endOfMonthStr),
+      // Current Month Expenses
+      supabase
+        .from("expenses")
+        .select("*")
+        .gte("incurred_at", startOfMonthStr.slice(0, 10))
+        .lte("incurred_at", endOfMonthStr.slice(0, 10)),
+      // Previous Month Orders (for comparison)
+      supabase
+        .from("orders")
+        .select("sale_price, profit")
+        .is("deleted_at", null)
+        .neq("status", "cancelled")
+        .gte("created_at", prevMonthStartStr)
+        .lte("prevMonthEndStr", prevMonthEndStr),
+      // Previous Month Expenses (for comparison)
+      supabase
+        .from("expenses")
+        .select("amount")
+        .gte("incurred_at", prevMonthStartStr.slice(0, 10))
+        .lte("incurred_at", prevMonthEndStr.slice(0, 10)),
+    ]);
+
+    if (ordersRes.error) throw ordersRes.error;
+    if (paymentsRes.error) throw paymentsRes.error;
+    if (expensesRes.error) throw expensesRes.error;
+
+    const orders = ordersRes.data ?? [];
+    const payments = paymentsRes.data ?? [];
+    const expenses = expensesRes.data ?? [];
+    
+    const activeOrders = orders.filter(o => o.status !== 'cancelled');
+    
+    const revenue = activeOrders.reduce((acc, o) => acc + Number(o.sale_price || 0), 0);
+    const grossProfit = activeOrders.reduce((acc, o) => acc + Number(o.profit || 0), 0);
+    const totalExpenses = expenses.reduce((acc, e) => acc + Number(e.amount || 0), 0);
+    const received = payments.filter(p => p.direction === 'in').reduce((acc, p) => acc + Number(p.amount || 0), 0);
+    const exits = payments.filter(p => p.direction === 'out').reduce((acc, p) => acc + Number(p.amount || 0), 0);
+
+    // Comparison data
+    const prevRevenue = (prevOrdersRes.data ?? []).reduce((acc, o) => acc + Number(o.sale_price || 0), 0);
+    const prevGrossProfit = (prevOrdersRes.data ?? []).reduce((acc, o) => acc + Number(o.profit || 0), 0);
+    const prevExpenses = (prevExpensesRes.data ?? []).reduce((acc, e) => acc + Number(e.amount || 0), 0);
+
+    return {
+      summary: {
+        revenue,
+        received,
+        expenses: totalExpenses + exits,
+        netProfit: grossProfit - totalExpenses,
+        orderCount: activeOrders.length,
+      },
+      details: {
+        orders,
+        financial: {
+          entries: payments.filter(p => p.direction === 'in'),
+          exits: payments.filter(p => p.direction === 'out'),
+          expenses,
+        },
+      },
+      comparison: {
+        prevMonthRevenue: prevRevenue,
+        prevMonthProfit: prevGrossProfit - prevExpenses,
+      },
+    };
+  });
