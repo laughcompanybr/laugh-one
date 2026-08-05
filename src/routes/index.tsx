@@ -23,6 +23,24 @@ import {
 
 export const Route = createFileRoute("/")({
   component: LandingPage,
+  head: () => ({
+    meta: [
+      { title: "Laugh One — Plano único com acesso completo" },
+      {
+        name: "description",
+        content:
+          "Gestão completa para o seu negócio com um único plano: todos os módulos liberados. Escolha apenas o período da assinatura.",
+      },
+      { property: "og:title", content: "Laugh One — Plano único com acesso completo" },
+      {
+        property: "og:description",
+        content:
+          "Clientes, financeiro, pedidos, estoque, agenda e relatórios em uma só plataforma. Um plano, acesso total.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
 });
 
 function LandingPage() {
