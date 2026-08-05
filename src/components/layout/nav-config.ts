@@ -37,6 +37,7 @@ export const NAV_ITEMS: NavItem[] = [
   { title: "Financeiro", to: "/financeiro", icon: Wallet, group: "gestão", moduleId: "finance" },
   { title: "Anexos", to: "/anexos", icon: Paperclip, group: "gestão", moduleId: "attachments" },
   { title: "Relatórios", to: "/relatorios", icon: FileBarChart, group: "gestão", moduleId: "reports" },
+  { title: "Mensais", to: "/mensais", icon: CalendarDays, group: "gestão", moduleId: "reports" },
   { title: "Automações", to: "/automacoes", icon: Zap, group: "gestão", moduleId: "automation" },
 
   { title: "Módulos", to: "/modulos", icon: LayoutGrid, group: "sistema", moduleId: "settings" },
