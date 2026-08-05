@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
@@ -8,9 +8,6 @@ import {
   changeOrderStatus,
   addMixedPayments,
   deletePayment,
-  addOrderAttachment,
-  deleteOrderAttachment,
-  signOrderAttachment,
 } from "./orders.functions";
 import { getCardFeePercent } from "@/features/settings/settings.functions";
 import {
@@ -22,7 +19,6 @@ import {
   type PaymentMethod,
 } from "./schemas";
 
-import { supabase } from "@/integrations/supabase/client";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -38,20 +34,15 @@ import {
 } from "@/components/ui/select";
 import {
   Loader2,
-  Paperclip,
-  Upload,
-  Download,
-  Trash2,
   Activity,
   Wallet,
   Truck,
   Pencil,
-  Copy,
+  Trash2,
   Plus,
   ArrowDownCircle,
   ArrowUpCircle,
   Package,
-  ExternalLink,
 } from "lucide-react";
 import { OrderForm } from "./OrderForm";
 import { formatBRL, formatDate } from "@/lib/format";
@@ -62,19 +53,6 @@ interface Props {
   onOpenChange: (o: boolean) => void;
 }
 
-function formatBytes(n: number | null | undefined) {
-  if (!n) return "—";
-  if (n < 1024) return `${n} B`;
-  if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KB`;
-  return `${(n / (1024 * 1024)).toFixed(1)} MB`;
-}
-
-const EVENT_LABEL: Record<string, string> = {
-  created: "Pedido criado",
-  status_changed: "Status alterado",
-  payment: "Pagamento",
-};
-
 export function OrderDetailSheet({ orderId, open, onOpenChange }: Props) {
   const qc = useQueryClient();
   const getFn = useServerFn(getOrder);
@@ -83,13 +61,8 @@ export function OrderDetailSheet({ orderId, open, onOpenChange }: Props) {
   const addMixedFn = useServerFn(addMixedPayments);
   const delPayFn = useServerFn(deletePayment);
   const cardFeeFn = useServerFn(getCardFeePercent);
-  const addAttachFn = useServerFn(addOrderAttachment);
-  const delAttachFn = useServerFn(deleteOrderAttachment);
-  const signFn = useServerFn(signOrderAttachment);
 
   const [editing, setEditing] = useState(false);
-  const [uploading, setUploading] = useState(false);
-  const fileRef = useRef<HTMLInputElement>(null);
 
   const query = useQuery({
     queryKey: ["order", orderId],
@@ -134,7 +107,7 @@ export function OrderDetailSheet({ orderId, open, onOpenChange }: Props) {
           })),
         } as never,
       }),
-    onSuccess: (r) => { toast.success(`${r.count} pagamento(s) registrado(s)`); invalidate(); },
+    onSuccess: (r: any) => { toast.success(`${r.count} pagamento(s) registrado(s)`); invalidate(); },
     onError: (e: Error) => toast.error(e.message),
   });
 
@@ -144,41 +117,9 @@ export function OrderDetailSheet({ orderId, open, onOpenChange }: Props) {
     onError: (e: Error) => toast.error(e.message),
   });
 
-  const delAttachMut = useMutation({
-    mutationFn: (v: { id: string; storage_path: string }) => delAttachFn({ data: v }),
-    onError: (e: Error) => toast.error(e.message),
-  });
-
-  const handleUpload = useCallback(async (file: File) => {
-    if (!orderId) return;
-    if (file.size > 15 * 1024 * 1024) return toast.error("Arquivo excede 15MB");
-    setUploading(true);
-    try {
-      const safe = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-      const path = `${orderId}/${Date.now()}-${safe}`;
-      const { error: upErr } = await supabase.storage.from("order-files").upload(path, file, { contentType: file.type });
-      if (upErr) throw upErr;
-      await addAttachFn({
-        data: { order_id: orderId, storage_path: path, filename: file.name, mime: file.type || null, size: file.size, kind: null },
-      });
-      invalidate();
-    } catch (e) { toast.error((e as Error).message); }
-    finally { setUploading(false); if (fileRef.current) fileRef.current.value = ""; }
-  }, [orderId, addAttachFn]); // eslint-disable-line
-
-  const handleDownload = async (storage_path: string, filename: string | null) => {
-    try {
-      const { url } = await signFn({ data: { storage_path } });
-      const a = document.createElement("a");
-      a.href = url; a.download = filename ?? "arquivo"; a.target = "_blank"; a.rel = "noopener";
-      document.body.appendChild(a); a.click(); a.remove();
-    } catch (e) { toast.error((e as Error).message); }
-  };
-
-  const order = query.data?.order;
-  const client = order?.clients as { name?: string; whatsapp?: string | null; instagram?: string | null } | null;
-  const supplier = order?.suppliers as { name?: string; company?: string | null; whatsapp?: string | null } | null;
-  const totals = query.data?.totals;
+  const order = (query.data as any)?.order;
+  const client = order?.clients;
+  const totals = (query.data as any)?.totals;
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -189,7 +130,7 @@ export function OrderDetailSheet({ orderId, open, onOpenChange }: Props) {
               {query.isLoading ? "Carregando..." : `Pedido #${order?.order_number ?? "—"}`}
             </SheetTitle>
             {order ? (
-              <Badge className={STATUS_TONE[order.status]}>{STATUS_LABEL[order.status]}</Badge>
+              <Badge className={(STATUS_TONE as any)[order.status]}>{(STATUS_LABEL as any)[order.status]}</Badge>
             ) : null}
           </div>
           {order ? (
@@ -218,19 +159,16 @@ export function OrderDetailSheet({ orderId, open, onOpenChange }: Props) {
                   {ORDER_STATUS.map((s) => <SelectItem key={s} value={s}>{STATUS_LABEL[s]}</SelectItem>)}
                 </SelectContent>
               </Select>
-              {statusMut.isPending ? <Loader2 className="size-4 animate-spin text-muted-foreground" /> : null}
             </div>
 
             <Tabs defaultValue="info" className="mt-6">
               <TabsList className="w-full">
                 <TabsTrigger value="info" className="flex-1">Dados</TabsTrigger>
                 <TabsTrigger value="payments" className="flex-1">
-                  <Wallet className="mr-1 size-3.5" /> Pagamentos ({query.data?.payments.length ?? 0})
+                  <Wallet className="mr-1 size-3.5" /> Pagamentos ({(query.data as any)?.payments?.length ?? 0})
                 </TabsTrigger>
                 <TabsTrigger value="tracking" className="flex-1">
                   <Truck className="mr-1 size-3.5" /> Rastreio
-                </TabsTrigger>
-                <TabsTrigger value="attachments" className="flex-1">
                 </TabsTrigger>
                 <TabsTrigger value="timeline" className="flex-1">
                   <Activity className="mr-1 size-3.5" /> Timeline
@@ -246,7 +184,6 @@ export function OrderDetailSheet({ orderId, open, onOpenChange }: Props) {
                       brand: order.brand ?? "",
                       model: order.model ?? "",
                       reference: order.reference ?? "",
-                      photo_path: order.photo_path ?? "",
                       quantity: order.quantity ?? 1,
                       sale_price: order.sale_price,
                       cost_price: order.cost_price,
@@ -283,20 +220,12 @@ export function OrderDetailSheet({ orderId, open, onOpenChange }: Props) {
                       </Button>
                     </div>
 
-                    {query.data?.photoUrl ? (
-                      <div className="overflow-hidden rounded-xl border border-border bg-muted/30">
-                        <img src={query.data.photoUrl} alt={order.model ?? "Relógio"} className="max-h-72 w-full object-contain" />
-                      </div>
-                    ) : null}
-
                     <dl className="grid grid-cols-2 gap-4 text-sm">
                       <Info label="Cliente" value={client?.name} />
-                      <Info label="Fornecedor" value={supplier?.name} />
                       <Info label="Marca" value={order.brand} />
                       <Info label="Modelo" value={order.model} />
                       <Info label="Referência" value={order.reference} />
                       <Info label="Quantidade" value={String(order.quantity ?? 1)} />
-                      <Info label="Forma de pagamento" value={order.payment_method} />
                       <Info label="Data da compra" value={formatDate(order.purchase_date)} />
                       <Info label="Previsão de entrega" value={formatDate(order.expected_delivery)} />
                       <Info label="Criado em" value={formatDate(order.created_at)} />
@@ -308,41 +237,13 @@ export function OrderDetailSheet({ orderId, open, onOpenChange }: Props) {
                         <Info label="Total venda" value={formatBRL(totals.totalSale)} />
                         <Info label="Total custo" value={formatBRL(totals.totalCost)} />
                         <Info label="Comissão" value={formatBRL(order.commission)} />
-                        <Info label="Taxa cartão" value={formatBRL(order.card_fee)} />
-                        <Info label="Frete" value={formatBRL(order.shipping)} />
-                        <Info label="Outras despesas" value={formatBRL(order.other_costs)} />
-                        <Info label="Lucro bruto" value={formatBRL(totals.grossProfit)} />
                         <Info label="Lucro líquido" value={formatBRL(totals.netProfit)} />
                         <Info label="Recebido" value={formatBRL(totals.totalIn)} />
                         <Info label="Pendente" value={formatBRL(totals.balance)} />
                       </div>
                     </div>
-
-                    {(order.ship_zip || order.ship_street || order.ship_city) ? (
-                      <div className="rounded-xl border border-border bg-card/40 p-4">
-                        <p className="mb-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">Endereço de entrega</p>
-                        <dl className="grid grid-cols-2 gap-3 text-sm">
-                          <Info label="CEP" value={order.ship_zip} />
-                          <Info
-                            label="Endereço"
-                            value={[order.ship_street, order.ship_number, order.ship_complement].filter(Boolean).join(", ") || null}
-                          />
-                          <Info label="Bairro" value={order.ship_district} />
-                          <Info label="Cidade / UF" value={[order.ship_city, order.ship_state].filter(Boolean).join(" / ") || null} />
-                          <Info label="Referência" value={order.ship_reference} />
-                        </dl>
-                      </div>
-                    ) : null}
-
-                    {order.notes ? (
-                      <div className="rounded-lg border border-border bg-muted/30 p-3 text-sm">
-                        <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Observações</p>
-                        <p className="mt-1 whitespace-pre-wrap">{order.notes}</p>
-                      </div>
-                    ) : null}
                   </div>
                 )}
-
               </TabsContent>
 
               <TabsContent value="payments" className="mt-4">
@@ -352,9 +253,9 @@ export function OrderDetailSheet({ orderId, open, onOpenChange }: Props) {
                   onSubmit={async (v) => { await addMixedMut.mutateAsync(v); }}
                 />
                 <div className="mt-4">
-                  {query.data?.payments.length ? (
+                  {(query.data as any)?.payments?.length ? (
                     <ul className="divide-y divide-border rounded-lg border border-border">
-                      {query.data.payments.map((p) => (
+                      {(query.data as any).payments.map((p: any) => (
                         <li key={p.id} className="flex items-center gap-3 p-3 text-sm">
                           {p.direction === "in" ? (
                             <ArrowDownCircle className="size-5 text-emerald-500" />
@@ -368,12 +269,6 @@ export function OrderDetailSheet({ orderId, open, onOpenChange }: Props) {
                               {p.installments ? ` · ${p.installments}x` : ""}
                               {" · "}{formatDate(p.paid_at)}
                             </p>
-                            {(p.card_fee_percent ?? null) !== null && Number(p.card_fee_percent) > 0 ? (
-                              <p className="text-[11px] text-muted-foreground">
-                                Taxa {Number(p.card_fee_percent).toFixed(2)}% = {formatBRL(p.card_fee)}
-                              </p>
-                            ) : null}
-                            {p.notes ? <p className="mt-0.5 text-xs text-muted-foreground">{p.notes}</p> : null}
                           </div>
                           <Button
                             size="icon"
@@ -385,111 +280,40 @@ export function OrderDetailSheet({ orderId, open, onOpenChange }: Props) {
                         </li>
                       ))}
                     </ul>
-                  ) : (
-                    <p className="py-8 text-center text-sm text-muted-foreground">Nenhum pagamento registrado.</p>
-                  )}
+                  ) : null}
                 </div>
               </TabsContent>
 
-              <TabsContent value="tracking" className="mt-4 space-y-4">
+              <TabsContent value="tracking" className="mt-4">
                 <div className="rounded-xl border border-border bg-card/40 p-4">
-                  <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Código de rastreio</p>
+                  <Info label="Código de Rastreio" value={order.tracking_code} />
                   {order.tracking_code ? (
-                    <div className="mt-2 flex items-center gap-2">
-                      <code className="rounded bg-muted px-2 py-1 font-mono text-sm">{order.tracking_code}</code>
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        onClick={() => {
-                          navigator.clipboard.writeText(order.tracking_code!);
-                          toast.success("Copiado");
-                        }}
-                      >
-                        <Copy className="size-4" />
-                      </Button>
-                      <Button size="sm" variant="outline" asChild>
-                        <a
-                          href={`https://rastreamento.correios.com.br/app/index.php?objeto=${encodeURIComponent(order.tracking_code)}`}
-                          target="_blank"
-                          rel="noopener"
-                        >
-                          <ExternalLink className="mr-1 size-3.5" /> Correios
-                        </a>
-                      </Button>
-                    </div>
-                  ) : (
-                    <p className="mt-2 text-sm text-muted-foreground">Nenhum código informado.</p>
-                  )}
-                </div>
-                <dl className="grid grid-cols-2 gap-4 text-sm">
-                  <Info label="Data da compra" value={formatDate(order.purchase_date)} />
-                  <Info label="Previsão de entrega" value={formatDate(order.expected_delivery)} />
-                </dl>
-              </TabsContent>
-
-              <TabsContent value="attachments" className="mt-4 space-y-3">
-                <input ref={fileRef} type="file" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleUpload(f); }} />
-                <div className="flex flex-wrap gap-2">
-                  <Button onClick={() => fileRef.current?.click()} disabled={uploading} className="flex-1">
-                    {uploading ? <Loader2 className="mr-2 size-4 animate-spin" /> : <Upload className="mr-2 size-4" />}
-                    Enviar anexo
-                  </Button>
-                  <Button asChild variant="outline">
-                    <a
-                      href={`/anexos?order_id=${order.id}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="mt-3"
+                      onClick={() => window.open(`https://www.linkcorreios.com.br/${order.tracking_code}`, "_blank")}
                     >
-                      <ExternalLink className="mr-2 size-4" /> Comprovantes financeiros
-                    </a>
-                  </Button>
+                      Rastrear nos Correios <Package className="ml-2 size-3.5" />
+                    </Button>
+                  ) : null}
                 </div>
-
-                {query.data?.attachments.length ? (
-                  <ul className="divide-y divide-border rounded-lg border border-border">
-                    {query.data.attachments.map((a) => (
-                      <li key={a.id} className="flex items-center gap-3 p-3">
-                        <Paperclip className="size-4 text-muted-foreground" />
-                        <div className="min-w-0 flex-1">
-                          <p className="truncate text-sm font-medium">{a.filename ?? "arquivo"}</p>
-                          <p className="text-xs text-muted-foreground">{formatBytes(a.size)} · {formatDate(a.created_at)}</p>
-                        </div>
-                        <Button size="icon" variant="ghost" onClick={() => handleDownload(a.storage_path, a.filename)}>
-                          <Download className="size-4" />
-                        </Button>
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          onClick={() => { if (confirm("Remover anexo?")) delAttachMut.mutate({ id: a.id, storage_path: a.storage_path }); }}
-                        >
-                          <Trash2 className="size-4 text-destructive" />
-                        </Button>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="py-8 text-center text-sm text-muted-foreground">Nenhum anexo enviado.</p>
-                )}
               </TabsContent>
 
               <TabsContent value="timeline" className="mt-4">
-                {query.data?.events.length ? (
-                  <ol className="relative ml-3 border-l border-border">
-                    {query.data.events.map((e) => (
-                      <li key={e.id} className="mb-4 ml-4">
-                        <span className="absolute -left-1.5 mt-1.5 flex size-3 items-center justify-center rounded-full bg-gold" />
-                        <p className="text-sm font-medium">
-                          {EVENT_LABEL[e.type] ?? e.type}{" "}
-                          <span className="text-muted-foreground">· {formatDate(e.created_at)}</span>
-                        </p>
-                        {e.message ? <p className="text-sm text-muted-foreground">{e.message}</p> : null}
-                        <TimelineMeta type={e.type} meta={e.meta as Record<string, unknown> | null} />
+                {(query.data as any)?.events?.length ? (
+                  <ol className="space-y-4">
+                    {(query.data as any).events.map((e: any) => (
+                      <li key={e.id} className="flex gap-3 text-sm">
+                        <div className="mt-1 size-2 shrink-0 rounded-full bg-gold" />
+                        <div>
+                          <p className="font-medium">{e.message}</p>
+                          <p className="text-xs text-muted-foreground">{formatDate(e.created_at)}</p>
+                        </div>
                       </li>
                     ))}
                   </ol>
-                ) : (
-                  <p className="py-8 text-center text-sm text-muted-foreground">Sem eventos registrados.</p>
-                )}
+                ) : null}
               </TabsContent>
             </Tabs>
           </>
@@ -499,7 +323,22 @@ export function OrderDetailSheet({ orderId, open, onOpenChange }: Props) {
   );
 }
 
-function Info({ label, value }: { label: string; value: string | number | null | undefined }) {
+function StatBox({ label, value, tone = "neutral" }: { label: string; value: string; tone?: "neutral" | "positive" | "negative" | "warning" }) {
+  const tones = {
+    neutral: "text-foreground",
+    positive: "text-emerald-500",
+    negative: "text-destructive",
+    warning: "text-amber-500",
+  };
+  return (
+    <div className="rounded-xl border border-border bg-card/40 p-3">
+      <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">{label}</p>
+      <p className={`mt-1 font-display text-lg ${tones[tone]}`}>{value}</p>
+    </div>
+  );
+}
+
+function Info({ label, value }: { label: string; value: string | null | undefined }) {
   return (
     <div>
       <dt className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{label}</dt>
@@ -508,309 +347,58 @@ function Info({ label, value }: { label: string; value: string | number | null |
   );
 }
 
-function StatBox({ label, value, tone = "neutral" }: { label: string; value: string; tone?: "neutral" | "positive" | "negative" | "warning" }) {
-  const cls =
-    tone === "positive" ? "text-emerald-500" :
-    tone === "negative" ? "text-destructive" :
-    tone === "warning" ? "text-amber-500" : "text-foreground";
-  return (
-    <div className="rounded-lg border border-border bg-card/40 p-3">
-      <p className="text-[10px] uppercase tracking-wider text-muted-foreground">{label}</p>
-      <p className={`mt-1 font-display text-base ${cls}`}>{value}</p>
-    </div>
-  );
-}
-
-const CARD_METHODS: readonly PaymentMethod[] = ["Cartão de Crédito", "Cartão de Débito"];
-
 interface MixedEntry {
   direction: "in" | "out";
-  method: PaymentMethod;
   amount: number;
-  installments: number | null;
-  card_fee_percent: number | null;
-  card_fee: number;
+  method: string;
+  installments?: number;
+  card_fee?: number;
+  card_fee_percent?: number;
   paid_at: string;
-  notes: string;
+  notes?: string;
 }
 
-function makeEntry(method: PaymentMethod, direction: "in" | "out", cardPct: number): MixedEntry {
-  const isCard = CARD_METHODS.includes(method);
-  return {
-    direction,
-    method,
-    amount: 0,
-    installments: isCard ? 1 : null,
-    card_fee_percent: isCard ? cardPct : null,
-    card_fee: 0,
-    paid_at: new Date().toISOString().slice(0, 10),
-    notes: "",
-  };
-}
+function MixedPaymentForm({ defaultCardFeePercent, suggestedTotal, onSubmit }: { defaultCardFeePercent: number; suggestedTotal: number; onSubmit: (v: { entries: MixedEntry[]; expected_total: number }) => Promise<void> }) {
+  const [loading, setLoading] = useState(false);
+  const [method, setMethod] = useState<PaymentMethod>("PIX");
+  const [amount, setAmount] = useState<string>(suggestedTotal.toFixed(2));
 
-function TimelineMeta({ type, meta }: { type: string; meta: Record<string, unknown> | null }) {
-  if (!meta) return null;
-  if (type === "status_changed" && "from" in meta && "to" in meta) {
-    return (
-      <p className="mt-0.5 text-xs text-muted-foreground">
-        <code className="rounded bg-muted px-1">{String(meta.from)}</code>
-        {" → "}
-        <code className="rounded bg-muted px-1">{String(meta.to)}</code>
-      </p>
-    );
-  }
-  if (type === "values_changed") {
-    const entries = Object.entries(meta);
-    return (
-      <ul className="mt-1 space-y-0.5 text-xs text-muted-foreground">
-        {entries.map(([k, v]) => {
-          const change = v as { from?: unknown; to?: unknown };
-          return (
-            <li key={k}>
-              <span className="font-medium">{k}</span>:{" "}
-              <code className="rounded bg-muted px-1">{String(change.from ?? "—")}</code>
-              {" → "}
-              <code className="rounded bg-muted px-1">{String(change.to ?? "—")}</code>
-            </li>
-          );
-        })}
-      </ul>
-    );
-  }
-  return null;
-}
-
-function MixedPaymentForm({
-  defaultCardFeePercent,
-  suggestedTotal,
-  onSubmit,
-}: {
-  defaultCardFeePercent: number;
-  suggestedTotal: number;
-  onSubmit: (v: { entries: MixedEntry[]; expected_total: number }) => Promise<void>;
-}) {
-  const [direction, setDirection] = useState<"in" | "out">("in");
-  const [entries, setEntries] = useState<MixedEntry[]>([]);
-  const [expectedTotal, setExpectedTotal] = useState<number>(suggestedTotal);
-  const [submitting, setSubmitting] = useState(false);
-
-  // Sync suggested total when it changes (e.g. after a payment is inserted)
-  useMemo(() => {
-    setExpectedTotal(suggestedTotal);
-  }, [suggestedTotal]);
-
-  const sum = entries.reduce((a, b) => a + Number(b.amount || 0), 0);
-  const diff = expectedTotal - sum;
-
-  function toggleMethod(m: PaymentMethod) {
-    setEntries((prev) => {
-      const exists = prev.find((e) => e.method === m);
-      if (exists) return prev.filter((e) => e.method !== m);
-      return [...prev, makeEntry(m, direction, defaultCardFeePercent)];
-    });
-  }
-
-  function updateEntry(idx: number, patch: Partial<MixedEntry>) {
-    setEntries((prev) => {
-      const next = [...prev];
-      const merged = { ...next[idx], ...patch };
-      if (CARD_METHODS.includes(merged.method)) {
-        const pct = merged.card_fee_percent ?? 0;
-        merged.card_fee = Number(((merged.amount || 0) * pct / 100).toFixed(2));
-      } else {
-        merged.card_fee = 0;
-        merged.card_fee_percent = null;
-      }
-      next[idx] = merged;
-      return next;
-    });
-  }
-
-  function changeDirection(v: "in" | "out") {
-    setDirection(v);
-    setEntries((prev) => prev.map((e) => ({ ...e, direction: v })));
-  }
-
-  async function handleSubmit() {
-    if (!entries.length) {
-      toast.error("Selecione ao menos uma forma de pagamento");
-      return;
-    }
-    if (entries.some((e) => !e.amount || e.amount <= 0)) {
-      toast.error("Informe o valor de cada pagamento");
-      return;
-    }
-    if (expectedTotal > 0 && Math.abs(diff) > 0.01) {
-      toast.error(`A soma (${formatBRL(sum)}) não confere com o total (${formatBRL(expectedTotal)}).`);
-      return;
-    }
-    setSubmitting(true);
+  const handleAdd = async () => {
+    setLoading(true);
     try {
-      await onSubmit({ entries, expected_total: expectedTotal });
-      setEntries([]);
+      await onSubmit({
+        expected_total: 0,
+        entries: [{
+          direction: "in",
+          amount: Number(amount),
+          method,
+          paid_at: new Date().toISOString(),
+        }]
+      });
+      setAmount("0");
     } finally {
-      setSubmitting(false);
+      setLoading(false);
     }
-  }
+  };
 
   return (
-    <div className="rounded-xl border border-border bg-card/40 p-4">
-      <div className="mb-3 flex flex-wrap items-center gap-3">
-        <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Registrar pagamento</p>
-        <div className="ml-auto flex items-center gap-2">
-          <Label className="text-xs">Tipo</Label>
-          <Select value={direction} onValueChange={(v) => changeDirection(v as "in" | "out")}>
-            <SelectTrigger className="h-8 w-[130px]"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="in">Entrada</SelectItem>
-              <SelectItem value="out">Saída</SelectItem>
-            </SelectContent>
-          </Select>
+    <div className="space-y-3 rounded-xl border border-border bg-muted/20 p-4">
+      <div className="grid grid-cols-2 gap-3">
+        <div className="space-y-1.5">
+          <Label>Método</Label>
+          <select value={method} onChange={(e) => setMethod(e.target.value as any)} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+            {PAYMENT_METHODS.map((m) => <option key={m} value={m}>{m}</option>)}
+          </select>
+        </div>
+        <div className="space-y-1.5">
+          <Label>Valor</Label>
+          <Input type="number" step="0.01" value={amount} onChange={(e) => setAmount(e.target.value)} />
         </div>
       </div>
-
-      <div className="mb-3">
-        <Label className="text-xs">Formas de pagamento (selecione uma ou mais)</Label>
-        <div className="mt-2 flex flex-wrap gap-2">
-          {PAYMENT_METHODS.map((m) => {
-            const active = entries.some((e) => e.method === m);
-            return (
-              <button
-                key={m}
-                type="button"
-                onClick={() => toggleMethod(m)}
-                className={`rounded-full border px-3 py-1 text-xs font-medium transition ${
-                  active
-                    ? "border-primary bg-primary/10 text-primary"
-                    : "border-border bg-background text-muted-foreground hover:border-primary/40"
-                }`}
-              >
-                {m}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {entries.length > 0 ? (
-        <div className="space-y-3">
-          {entries.map((e, idx) => {
-            const isCard = CARD_METHODS.includes(e.method);
-            return (
-              <div key={e.method} className="rounded-lg border border-border bg-background p-3">
-                <div className="mb-2 flex items-center justify-between">
-                  <p className="text-sm font-medium">{e.method}</p>
-                  <Button size="icon" variant="ghost" onClick={() => toggleMethod(e.method)}>
-                    <Trash2 className="size-4 text-destructive" />
-                  </Button>
-                </div>
-                <div className="grid gap-3 sm:grid-cols-6">
-                  <div className="space-y-1.5 sm:col-span-2">
-                    <Label className="text-xs">Valor recebido</Label>
-                    <Input
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      value={e.amount || ""}
-                      onChange={(ev) => updateEntry(idx, { amount: parseFloat(ev.target.value) || 0 })}
-                    />
-                  </div>
-                  {isCard ? (
-                    <>
-                      <div className="space-y-1.5">
-                        <Label className="text-xs">Parcelas</Label>
-                        <Input
-                          type="number"
-                          min="1"
-                          step="1"
-                          value={e.installments ?? 1}
-                          onChange={(ev) => updateEntry(idx, { installments: parseInt(ev.target.value, 10) || 1 })}
-                        />
-                      </div>
-                      <div className="space-y-1.5">
-                        <Label className="text-xs">Taxa (%)</Label>
-                        <Input
-                          type="number"
-                          step="0.01"
-                          min="0"
-                          max="100"
-                          value={e.card_fee_percent ?? 0}
-                          onChange={(ev) => updateEntry(idx, { card_fee_percent: parseFloat(ev.target.value) || 0 })}
-                        />
-                      </div>
-                      <div className="space-y-1.5">
-                        <Label className="text-xs">Taxa (R$)</Label>
-                        <Input value={formatBRL(e.card_fee)} readOnly className="bg-muted/40" />
-                      </div>
-                    </>
-                  ) : null}
-                  <div className="space-y-1.5 sm:col-span-2">
-                    <Label className="text-xs">Data</Label>
-                    <Input
-                      type="date"
-                      value={e.paid_at}
-                      onChange={(ev) => updateEntry(idx, { paid_at: ev.target.value })}
-                    />
-                  </div>
-                  <div className="space-y-1.5 sm:col-span-6">
-                    <Label className="text-xs">Observações</Label>
-                    <Input
-                      value={e.notes}
-                      onChange={(ev) => updateEntry(idx, { notes: ev.target.value })}
-                      placeholder="Opcional"
-                    />
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-
-          <div className="grid gap-3 rounded-lg border border-dashed border-border bg-muted/30 p-3 text-sm sm:grid-cols-4">
-            <div>
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Total esperado</p>
-              <Input
-                type="number"
-                step="0.01"
-                min="0"
-                value={expectedTotal || ""}
-                onChange={(e) => setExpectedTotal(parseFloat(e.target.value) || 0)}
-                className="mt-1 h-9"
-              />
-            </div>
-            <div>
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Soma dos pagamentos</p>
-              <p className="mt-1 font-display text-base">{formatBRL(sum)}</p>
-            </div>
-            <div>
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Diferença</p>
-              <p
-                className={`mt-1 font-display text-base ${
-                  Math.abs(diff) < 0.01
-                    ? "text-emerald-500"
-                    : diff > 0
-                    ? "text-amber-500"
-                    : "text-destructive"
-                }`}
-              >
-                {formatBRL(diff)}
-              </p>
-            </div>
-            <div className="flex items-end">
-              <Button className="w-full" onClick={handleSubmit} disabled={submitting}>
-                {submitting ? <Loader2 className="mr-2 size-4 animate-spin" /> : <Plus className="mr-2 size-4" />}
-                Registrar {entries.length > 1 ? `${entries.length} pagamentos` : "pagamento"}
-              </Button>
-            </div>
-          </div>
-        </div>
-      ) : (
-        <p className="rounded-lg border border-dashed border-border bg-muted/20 px-3 py-6 text-center text-xs text-muted-foreground">
-          Selecione as formas de pagamento acima para começar. Ex.: PIX + Cartão para pagamento misto.
-        </p>
-      )}
+      <Button onClick={handleAdd} disabled={loading} className="w-full">
+        {loading ? <Loader2 className="mr-2 size-4 animate-spin" /> : <Plus className="mr-2 size-4" />}
+        Adicionar Pagamento
+      </Button>
     </div>
   );
 }
-
-// unused-suppress: keep icon import used only if attachments empty
-void Package;
