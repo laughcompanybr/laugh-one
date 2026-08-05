@@ -1310,6 +1310,7 @@ export type Database = {
           amount: number
           card_fee: number | null
           card_fee_percent: number | null
+          company_id: string | null
           created_at: string
           created_by: string | null
           direction: Database["public"]["Enums"]["payment_direction"]
@@ -1326,6 +1327,7 @@ export type Database = {
           amount: number
           card_fee?: number | null
           card_fee_percent?: number | null
+          company_id?: string | null
           created_at?: string
           created_by?: string | null
           direction: Database["public"]["Enums"]["payment_direction"]
@@ -1342,6 +1344,7 @@ export type Database = {
           amount?: number
           card_fee?: number | null
           card_fee_percent?: number | null
+          company_id?: string | null
           created_at?: string
           created_by?: string | null
           direction?: Database["public"]["Enums"]["payment_direction"]
@@ -1355,6 +1358,13 @@ export type Database = {
           receipt_url?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "payments_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "payments_employee_id_fkey"
             columns: ["employee_id"]
