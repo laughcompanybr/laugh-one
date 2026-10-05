@@ -33,6 +33,7 @@ const ALLOW = new Set([
   "src/integrations/supabase/auth-middleware.ts",
   "src/integrations/supabase/auth-attacher.ts",
   "src/integrations/supabase/types.ts",
+  "src/integrations/supabase/previewAuthStorage.ts",
   // Build config referencing the upstream npm packages by their real names.
   "vite.config.ts",
   "bunfig.toml",
