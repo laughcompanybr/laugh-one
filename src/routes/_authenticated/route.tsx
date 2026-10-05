@@ -69,7 +69,7 @@ function LayoutComponent() {
           </p>
           <div className="mt-4 p-4 rounded-lg bg-muted text-left text-xs space-y-2 border border-border/50">
             <p className="font-semibold text-gold">Instrução para o Administrador:</p>
-            <p>Para vincular este usuário, acesse o <strong>Banco de Dados</strong> no painel do Lovable Cloud e siga estes passos:</p>
+            <p>Para vincular este usuário, acesse o <strong>Banco de Dados</strong> no painel de administração do sistema e siga estes passos:</p>
             <ol className="list-decimal list-inside space-y-1 text-muted-foreground">
               <li>Localize a tabela <code>public.profiles</code>.</li>
               <li>Encontre a linha com o e-mail deste usuário.</li>
