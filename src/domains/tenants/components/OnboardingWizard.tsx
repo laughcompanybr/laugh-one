@@ -113,7 +113,7 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
   const [cepLoading, setCepLoading] = useState(false);
 
   const lookupPostalCode = async (rawValue: string) => {
-    const postalCode = rawValue.replace(/\\D/g, "");
+    const postalCode = rawValue.replace(/\D/g, "");
     if (postalCode.length !== 8) return;
 
     setCepLoading(true);
@@ -143,6 +143,11 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
 
   const onSubmit = async (data: OnboardingFormValues) => {
     try {
+      const normalizedPostalCode = data.postalCode.replace(/\D/g, "").slice(0, 8);
+      if (normalizedPostalCode.length !== 8) {
+        form.setError("postalCode", { type: "manual", message: "CEP inválido" });
+        throw new Error("Informe um CEP válido com 8 dígitos.");
+      }
       const { data: sessionData } = await supabase.auth.getSession();
       const userId = sessionData.session?.user?.id;
       if (!userId) throw new Error("Sua sessão expirou. Faça login novamente.");
@@ -163,7 +168,7 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
           business_type: data.businessType,
           onboarding_status: "completed",
           theme_mode: "dark",
-          postal_code: data.postalCode.replace(/\\D/g, ""),
+          postal_code: normalizedPostalCode,
           city: data.city,
           state: data.state.toUpperCase(),
           neighborhood: data.neighborhood,
@@ -231,7 +236,7 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
       if (moduleError) throw moduleError;
 
       toast.success("Configuração inicial concluída com sucesso!");
-      onComplete();
+      await onComplete();
     } catch (error: any) {
       toast.error("Erro ao salvar configurações: " + error.message);
     }
@@ -352,11 +357,14 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
                         placeholder="00000-000"
                         inputMode="numeric"
                         maxLength={9}
+                        autoComplete="postal-code"
                         {...form.register("postalCode", {
                           onChange: (event) => {
-                            const digits = event.target.value.replace(/\\D/g, "").slice(0, 8);
-                            event.target.value = digits.length > 5 ? `${digits.slice(0, 5)}-${digits.slice(5)}` : digits;
-                            if (digits.length === 8) void lookupPostalCode(event.target.value);
+                            const digits = event.target.value.replace(/\D/g, "").slice(0, 8);
+                            const formatted = digits.length > 5 ? `${digits.slice(0, 5)}-${digits.slice(5)}` : digits;
+                            event.target.value = formatted;
+                            form.setValue("postalCode", formatted, { shouldDirty: true, shouldValidate: true });
+                            if (digits.length === 8) void lookupPostalCode(formatted);
                           },
                           onBlur: (event) => void lookupPostalCode(event.target.value),
                         })}
