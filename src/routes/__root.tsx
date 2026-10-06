@@ -19,6 +19,7 @@ import { ImpersonationBanner } from "@/components/admin/ImpersonationBanner";
 import { ModulesProvider } from "@/domains/tenants/hooks/use-modules";
 import { PermissionsProvider } from "@/domains/auth/hooks/use-permissions";
 import { CookieConsent } from "@/components/auth/CookieConsent";
+import { GlobalCommandPalette } from "@/components/system/GlobalCommandPalette";
 
 function NotFoundComponent() {
   return (
@@ -157,6 +158,7 @@ function RootComponent() {
               <Outlet />
               <Toaster richColors position="top-right" />
               <CookieConsent />
+              <GlobalCommandPalette />
             </PermissionsProvider>
           </ModulesProvider>
         </CompanyProvider>
