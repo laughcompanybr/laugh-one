@@ -130,6 +130,12 @@ function SignInForm({ onForgot, onSignUp }: { onForgot: () => void; onSignUp: ()
           Esqueci minha senha
         </button>
       </div>
+      <div className="space-y-2 rounded-lg border border-border/50 bg-secondary/20 p-3 text-xs">
+        <label className="flex items-start gap-2"><input type="checkbox" className="mt-0.5" {...form.register("acceptedTerms")} /><span>Li e aceito os <Link to="/termos" className="text-gold hover:underline">Termos de Uso</Link>.</span></label>
+        {form.formState.errors.acceptedTerms && <p className="text-xs text-destructive">{form.formState.errors.acceptedTerms.message}</p>}
+        <label className="flex items-start gap-2"><input type="checkbox" className="mt-0.5" {...form.register("acceptedPrivacy")} /><span>Li e aceito a <Link to="/privacidade" className="text-gold hover:underline">Política de Privacidade</Link>.</span></label>
+        {form.formState.errors.acceptedPrivacy && <p className="text-xs text-destructive">{form.formState.errors.acceptedPrivacy.message}</p>}
+      </div>
       <Button type="submit" className="h-11 w-full" disabled={form.formState.isSubmitting}>
         {form.formState.isSubmitting ? <Loader2 className="size-4 animate-spin" /> : "Entrar"}
       </Button>
@@ -144,14 +150,14 @@ function SignInForm({ onForgot, onSignUp }: { onForgot: () => void; onSignUp: ()
 function SignUpForm({ onDone }: { onDone: () => void }) {
   const form = useForm<SignUpInput>({
     resolver: zodResolver(signUpSchema),
-    defaultValues: { fullName: "", companyName: "", email: "", password: "", confirm: "" },
+    defaultValues: { fullName: "", companyName: "", legalName: "", tradeName: "", documentType: "CNPJ", documentNumber: "", cpf: "", phone: "", email: "", password: "", confirm: "", acceptedTerms: false, acceptedPrivacy: false },
   });
 
   const onSubmit = async (values: SignUpInput) => {
     const { data, error } = await supabase.auth.signUp({
       email: values.email,
       password: values.password,
-      options: { data: { full_name: values.fullName, company_name: values.companyName } },
+      options: { data: { full_name: values.fullName, company_name: values.companyName, legal_name: values.legalName, trade_name: values.tradeName, document_type: values.documentType, document_number: values.documentNumber, cpf: values.cpf, phone: values.phone, terms_version: "2026-10-01", privacy_version: "2026-10-01" } },
     });
     if (error) {
       toast.error("Não foi possível criar a conta", { description: error.message });
@@ -172,6 +178,22 @@ function SignUpForm({ onDone }: { onDone: () => void }) {
         {...form.register("fullName")} error={form.formState.errors.fullName?.message} />
       <Field icon={<Building2 className="size-4" />} label="Nome da empresa" id="companyName" autoComplete="organization"
         {...form.register("companyName")} error={form.formState.errors.companyName?.message} />
+      <div className="grid grid-cols-2 gap-3">
+        <div className="space-y-1.5">
+          <Label htmlFor="documentType" className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">Tipo de documento</Label>
+          <select id="documentType" className="h-11 w-full rounded-md border border-input bg-secondary/30 px-3 text-sm" {...form.register("documentType")}>
+            <option value="CNPJ">CNPJ — empresa</option>
+            <option value="CPF">CPF — profissional/autônomo</option>
+          </select>
+        </div>
+        <Field label="CNPJ ou CPF" id="documentNumber" inputMode="numeric" {...form.register("documentNumber")} error={form.formState.errors.documentNumber?.message} />
+      </div>
+      <Field icon={<Building2 className="size-4" />} label="Razão social / nome legal" id="legalName" autoComplete="organization" {...form.register("legalName")} error={form.formState.errors.legalName?.message} />
+      <Field icon={<Building2 className="size-4" />} label="Nome fantasia" id="tradeName" autoComplete="organization" {...form.register("tradeName")} error={form.formState.errors.tradeName?.message} />
+      <div className="grid grid-cols-2 gap-3">
+        <Field label="CPF do responsável" id="cpf" inputMode="numeric" {...form.register("cpf")} error={form.formState.errors.cpf?.message} />
+        <Field label="Telefone / WhatsApp" id="phone" type="tel" autoComplete="tel" {...form.register("phone")} error={form.formState.errors.phone?.message} />
+      </div>
       <Field icon={<Mail className="size-4" />} label="E-mail" id="email" type="email" autoComplete="email"
         {...form.register("email")} error={form.formState.errors.email?.message} />
       <Field icon={<Lock className="size-4" />} label="Senha" id="password" type="password" autoComplete="new-password"
