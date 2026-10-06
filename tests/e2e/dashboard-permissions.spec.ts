@@ -58,6 +58,7 @@ test.describe("dashboard access (is_staff_or_admin coverage)", () => {
     });
 
     await page.goto("/dashboard");
+    await page.waitForTimeout(500);
     // Se o gate de auth mandar para /auth, valida no mínimo que não há blank screen
     await expect(page.locator("body")).not.toBeEmpty();
   });
@@ -77,6 +78,7 @@ test.describe("dashboard access (is_staff_or_admin coverage)", () => {
     });
 
     await page.goto("/dashboard");
+    await page.waitForTimeout(500);
     const authRedirected = page.url().includes("/auth");
     if (!authRedirected) {
       await page.waitForURL(/\/access-denied/, { timeout: 6000 });
