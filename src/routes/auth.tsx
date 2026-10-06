@@ -8,7 +8,6 @@ import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
 import { AuthHero } from "@/components/auth/AuthHero";
-import { bootstrapUserWorkspace } from "@/domains/auth/services/AuthService";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -71,7 +70,6 @@ function AuthPage() {
 
 function SignInForm({ onForgot, onSignUp }: { onForgot: () => void; onSignUp: () => void }) {
   const navigate = useNavigate();
-  const bootstrapFn = useServerFn(bootstrapUserWorkspace);
   const form = useForm<SignInInput>({
     resolver: zodResolver(signInSchema),
     defaultValues: { email: "", password: "" },
@@ -84,7 +82,8 @@ function SignInForm({ onForgot, onSignUp }: { onForgot: () => void; onSignUp: ()
       return;
     }
     try {
-      await bootstrapFn();
+      const { error: workspaceError } = await supabase.rpc("bootstrap_current_user_workspace");
+      if (workspaceError) throw new Error(workspaceError.message);
     } catch (bootstrapError) {
       toast.error("Não foi possível preparar seu espaço de trabalho", {
         description: bootstrapError instanceof Error ? bootstrapError.message : "Tente novamente.",
