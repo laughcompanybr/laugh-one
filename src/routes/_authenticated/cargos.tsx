@@ -5,12 +5,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useCompany } from "@/domains/tenants/hooks/use-company";
 import { Shield, Plus, Copy, Trash2, Search, History, ShieldCheck } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { 
   getRolesAndPermissions, 
@@ -27,6 +30,10 @@ function RolesPage() {
   const queryClient = useQueryClient();
   const [selectedRole, setSelectedRole] = useState<any>(null);
   const [search, setSearch] = useState("");
+  const [createOpen, setCreateOpen] = useState(false);
+  const [roleName, setRoleName] = useState("");
+  const [roleDescription, setRoleDescription] = useState("");
+  const [roleActionPending, setRoleActionPending] = useState(false);
 
   const { data, isLoading } = useQuery({
     queryKey: ["roles-and-permissions", company?.id],
@@ -62,6 +69,59 @@ function RolesPage() {
   });
 
   const activePermissions = currentRole ? (rolePermissionsMap[currentRole.id] || []) : [];
+
+  const refreshRoles = () => queryClient.invalidateQueries({ queryKey: ["roles-and-permissions"] });
+
+  const createRole = async (duplicate = false) => {
+    if (!company?.id) return;
+    const source = currentRole;
+    const name = (duplicate ? `${source?.name ?? "Cargo"} — cópia` : roleName).trim();
+    if (!name) { toast.error("Informe o nome do cargo."); return; }
+    setRoleActionPending(true);
+    try {
+      const { data: created, error } = await supabase.from("company_roles").insert({
+        company_id: company.id,
+        name,
+        description: duplicate ? source?.description ?? null : roleDescription.trim() || null,
+        color: duplicate ? source?.color ?? null : null,
+        icon: duplicate ? source?.icon ?? null : null,
+        is_active: true,
+        is_system: false,
+        order: (roles.reduce((max, role: any) => Math.max(max, Number(role.order ?? 0)), 0) + 1),
+      }).select("*").single();
+      if (error) throw error;
+      const sourcePermissions = duplicate && source ? rolePermissionsMap[source.id] ?? [] : [];
+      if (sourcePermissions.length) {
+        const { error: permissionsError } = await supabase.from("role_permissions").insert(
+          sourcePermissions.map((permissionId) => ({ role_id: created.id, permission_id: permissionId, company_id: company.id }))
+        );
+        if (permissionsError) throw permissionsError;
+      }
+      setSelectedRole(created);
+      setCreateOpen(false);
+      setRoleName("");
+      setRoleDescription("");
+      refreshRoles();
+      toast.success(duplicate ? "Cargo duplicado com sucesso." : "Cargo criado com sucesso.");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Não foi possível criar o cargo.");
+    } finally { setRoleActionPending(false); }
+  };
+
+  const deleteRole = async () => {
+    if (!company?.id || !currentRole || currentRole.is_system) return;
+    if (!window.confirm(`Excluir o cargo "${currentRole.name}"?`)) return;
+    setRoleActionPending(true);
+    try {
+      const { error } = await supabase.from("company_roles").delete().eq("id", currentRole.id).eq("company_id", company.id);
+      if (error) throw error;
+      setSelectedRole(null);
+      refreshRoles();
+      toast.success("Cargo excluído.");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Não foi possível excluir o cargo.");
+    } finally { setRoleActionPending(false); }
+  };
 
   const togglePermission = (permissionId: string) => {
     if (!currentRole || !company?.id) return;
