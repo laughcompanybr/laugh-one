@@ -75,7 +75,10 @@ function SignInForm({ onForgot, onSignUp }: { onForgot: () => void; onSignUp: ()
   const navigate = useNavigate();
   const form = useForm<SignInInput>({
     resolver: zodResolver(signInSchema),
-    defaultValues: {\n      email: localStorage.getItem("laugh-one-login-email") ?? "",\n      password: "",\n    },
+    defaultValues: {
+      email: localStorage.getItem("laugh-one-login-email") ?? "",
+      password: "",
+    },
   });
 
   const onSubmit = async (values: SignInInput) => {
