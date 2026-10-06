@@ -43,7 +43,7 @@ export function CookieConsent() {
           <p className="mt-1 text-sm text-white/70">
             Usamos cookies estritamente necessários para o funcionamento do Laugh One. Cookies analíticos,
             de preferências e marketing somente serão utilizados se você autorizar. Saiba mais na{" "}
-            <Link to="/cookies" className="text-gold hover:underline">Política de Cookies</Link>.
+            <Link to={"/cookies" as never} className="text-gold hover:underline">Política de Cookies</Link>.
           </p>
         </div>
 
