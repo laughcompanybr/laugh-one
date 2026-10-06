@@ -55,8 +55,8 @@ export const signUpSchema = z
     email: z.string().trim().email("E-mail inválido").max(255),
     password: z.string().min(12, "Use pelo menos 12 caracteres").max(72).regex(/[a-z]/, "Inclua pelo menos uma letra minúscula").regex(/[A-Z]/, "Inclua pelo menos uma letra maiúscula").regex(/[0-9]/, "Inclua pelo menos um número").regex(/[^A-Za-z0-9\s]/, "Inclua pelo menos um caractere especial").regex(/^\S+$/, "A senha não pode conter espaços"),
     confirm: z.string(),
-    acceptedTerms: z.literal(true, { errorMap: () => ({ message: "Você precisa aceitar os Termos de Uso" }) }),
-    acceptedPrivacy: z.literal(true, { errorMap: () => ({ message: "Você precisa aceitar a Política de Privacidade" }) }),
+    acceptedTerms: z.boolean().refine((value) => value === true, { message: "Você precisa aceitar os Termos de Uso" }),
+    acceptedPrivacy: z.boolean().refine((value) => value === true, { message: "Você precisa aceitar a Política de Privacidade" }),
   })
   .refine((d) => isValidDocument(d.documentNumber, d.documentType), {
     path: ["documentNumber"],
