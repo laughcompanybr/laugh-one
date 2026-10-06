@@ -18,11 +18,13 @@ const onboardingSchema = z.object({
   responsibleName: z.string().min(2, "Nome do responsável é obrigatório"),
   phone: z.string().min(10, "Telefone inválido"),
   commercialEmail: z.string().email("E-mail inválido"),
+  postalCode: z.string().min(8, "CEP inválido"),
   city: z.string().min(2, "Cidade é obrigatória"),
-  state: z.string().min(2, "Estado é obrigatório"),
+  state: z.string().length(2, "Selecione a UF"),
+  neighborhood: z.string().min(2, "Bairro é obrigatório"),
+  address: z.string().min(2, "Logradouro é obrigatório"),
   employeeCount: z.string().min(1, "Selecione a quantidade de funcionários"),
   mainObjective: z.string().min(1, "Selecione o objetivo"),
-  
 });
 
 type OnboardingFormValues = z.infer<typeof onboardingSchema>;
@@ -34,6 +36,16 @@ const BUSINESS_TYPES = [
 ];
 
 const EMPLOYEE_COUNTS = ["1-5", "6-20", "21-50", "50+"];
+
+const BRAZILIAN_STATES = [
+  ["AC", "Acre"], ["AL", "Alagoas"], ["AP", "Amapá"], ["AM", "Amazonas"],
+  ["BA", "Bahia"], ["CE", "Ceará"], ["DF", "Distrito Federal"], ["ES", "Espírito Santo"],
+  ["GO", "Goiás"], ["MA", "Maranhão"], ["MT", "Mato Grosso"], ["MS", "Mato Grosso do Sul"],
+  ["MG", "Minas Gerais"], ["PA", "Pará"], ["PB", "Paraíba"], ["PR", "Paraná"],
+  ["PE", "Pernambuco"], ["PI", "Piauí"], ["RJ", "Rio de Janeiro"], ["RN", "Rio Grande do Norte"],
+  ["RS", "Rio Grande do Sul"], ["RO", "Rondônia"], ["RR", "Roraima"], ["SC", "Santa Catarina"],
+  ["SP", "São Paulo"], ["SE", "Sergipe"], ["TO", "Tocantins"],
+] as const;
 const OBJECTIVES = [
   "Organizar vendas", "Melhorar financeiro", "Gestão de estoque", 
   "Fidelizar clientes", "Escalar o negócio", "Outro"
@@ -51,8 +63,11 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
       responsibleName: "",
       phone: "",
       commercialEmail: "",
+      postalCode: "",
       city: "",
       state: "",
+      neighborhood: "",
+      address: "",
       employeeCount: "",
       mainObjective: "",
     }
@@ -69,7 +84,7 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
       if (!profile?.company_id) return;
       const companyId = profile.company_id;
         const [{ data: company }, { data: existing }] = await Promise.all([
-          supabase.from("companies").select("name, business_type").eq("id", companyId).maybeSingle(),
+          supabase.from("companies").select("name, business_type, postal_code, city, state, neighborhood, address").eq("id", companyId).maybeSingle(),
           supabase.from("company_onboarding_data").select("business_type, responsible_name, phone, commercial_email, city, state, employee_count, main_objective").eq("company_id", companyId).maybeSingle(),
         ]);
         if (!active) return;
@@ -79,8 +94,11 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
           responsibleName: existing?.responsible_name ?? profile.full_name ?? "",
           phone: existing?.phone ?? profile.phone ?? "",
           commercialEmail: existing?.commercial_email ?? sessionData.session?.user?.email ?? "",
-          city: existing?.city ?? "",
-          state: existing?.state ?? "",
+          postalCode: company?.postal_code ?? "",
+          city: existing?.city ?? company?.city ?? "",
+          state: existing?.state ?? company?.state ?? "",
+          neighborhood: company?.neighborhood ?? "",
+          address: company?.address ?? "",
           employeeCount: existing?.employee_count ?? "",
           mainObjective: existing?.main_objective ?? "",
         });
@@ -91,6 +109,37 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
     void loadExisting();
     return () => { active = false; };
   }, [form]);
+
+  const [cepLoading, setCepLoading] = useState(false);
+
+  const lookupPostalCode = async (rawValue: string) => {
+    const postalCode = rawValue.replace(/\\D/g, "");
+    if (postalCode.length !== 8) return;
+
+    setCepLoading(true);
+    try {
+      const response = await fetch(`https://viacep.com.br/ws/${postalCode}/json/`);
+      if (!response.ok) throw new Error("Não foi possível consultar o CEP.");
+      const result = await response.json() as {
+        erro?: boolean;
+        logradouro?: string;
+        bairro?: string;
+        localidade?: string;
+        uf?: string;
+      };
+
+      if (result.erro) throw new Error("CEP não encontrado.");
+      form.setValue("address", result.logradouro ?? "", { shouldValidate: true });
+      form.setValue("neighborhood", result.bairro ?? "", { shouldValidate: true });
+      form.setValue("city", result.localidade ?? "", { shouldValidate: true });
+      form.setValue("state", result.uf ?? "", { shouldValidate: true });
+      toast.success("Endereço localizado pelo CEP.");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Não foi possível consultar o CEP.");
+    } finally {
+      setCepLoading(false);
+    }
+  };
 
   const onSubmit = async (data: OnboardingFormValues) => {
     try {
@@ -114,6 +163,13 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
           business_type: data.businessType,
           onboarding_status: "completed",
           theme_mode: "dark",
+          postal_code: data.postalCode.replace(/\\D/g, ""),
+          city: data.city,
+          state: data.state.toUpperCase(),
+          neighborhood: data.neighborhood,
+          address: data.address,
+          commercial_email: data.commercialEmail,
+          phone: data.phone,
         } as any)
         .eq("id", companyId);
       if (companyError) throw companyError;
@@ -289,16 +345,55 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="grid gap-2">
                     <Label className="flex items-center gap-2">
-                      <MapPin className="size-4 text-gold" /> Cidade
+                      <MapPin className="size-4 text-gold" /> CEP
                     </Label>
-                    <Input placeholder="Sua cidade" {...form.register("city")} />
+                    <div className="relative">
+                      <Input
+                        placeholder="00000-000"
+                        inputMode="numeric"
+                        maxLength={9}
+                        {...form.register("postalCode", {
+                          onChange: (event) => {
+                            const digits = event.target.value.replace(/\\D/g, "").slice(0, 8);
+                            event.target.value = digits.length > 5 ? `${digits.slice(0, 5)}-${digits.slice(5)}` : digits;
+                            if (digits.length === 8) void lookupPostalCode(event.target.value);
+                          },
+                          onBlur: (event) => void lookupPostalCode(event.target.value),
+                        })}
+                      />
+                      {cepLoading && <Loader2 className="absolute right-3 top-2.5 size-4 animate-spin text-gold" />}
+                    </div>
+                    {form.formState.errors.postalCode && <p className="text-xs text-destructive">{form.formState.errors.postalCode.message}</p>}
                   </div>
                   <div className="grid gap-2">
                     <Label className="flex items-center gap-2">
                       <MapPin className="size-4 text-gold" /> Estado (UF)
                     </Label>
-                    <Input placeholder="UF" maxLength={2} {...form.register("state")} />
+                    <Select value={form.watch("state")} onValueChange={(v) => form.setValue("state", v, { shouldValidate: true })}>
+                      <SelectTrigger><SelectValue placeholder="Selecione a UF" /></SelectTrigger>
+                      <SelectContent>
+                        {BRAZILIAN_STATES.map(([uf, name]) => (
+                          <SelectItem key={uf} value={uf}>{uf} — {name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="grid gap-2">
+                    <Label>Cidade</Label>
+                    <Input placeholder="Preenchida pelo CEP" {...form.register("city")} />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label>Bairro</Label>
+                    <Input placeholder="Preenchido pelo CEP" {...form.register("neighborhood")} />
+                  </div>
+                </div>
+
+                <div className="grid gap-2">
+                  <Label>Logradouro</Label>
+                  <Input placeholder="Rua, avenida, etc." {...form.register("address")} />
                 </div>
               </div>
             )}
