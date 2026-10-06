@@ -321,3 +321,37 @@ export const listSupplierOptions = createServerFn({ method: "GET" })
     if (error) throw error;
     return data ?? [];
   });
+
+
+export const getOrderOverview = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data, error } = await (context.supabase as any)
+      .from("orders")
+      .select("status, sale_price, amount_received, expected_delivery")
+      .is("deleted_at", null);
+    if (error) throw error;
+
+    const rows = data ?? [];
+    const today = new Date().toISOString().slice(0, 10);
+    const active = rows.filter((o: any) => o.status !== "cancelled" && o.status !== "delivered");
+    const pending = rows.filter((o: any) => o.status !== "cancelled" && Number(o.sale_price ?? 0) > Number(o.amount_received ?? 0) + 0.009);
+    const overdue = rows.filter((o: any) =>
+      o.status !== "cancelled" &&
+      o.status !== "delivered" &&
+      o.expected_delivery &&
+      String(o.expected_delivery).slice(0, 10) < today
+    );
+
+    return {
+      total: rows.length,
+      active: active.length,
+      pendingPayment: pending.length,
+      overdue: overdue.length,
+      pipelineValue: active.reduce((sum: number, o: any) => sum + Number(o.sale_price ?? 0), 0),
+      pendingValue: pending.reduce(
+        (sum: number, o: any) => sum + Math.max(0, Number(o.sale_price ?? 0) - Number(o.amount_received ?? 0)),
+        0,
+      ),
+    };
+  });
