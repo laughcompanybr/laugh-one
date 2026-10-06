@@ -22,11 +22,12 @@ export function AppShell({ children }: { children: ReactNode }) {
   return (
     <SidebarProvider defaultOpen>
       <div className="flex min-h-screen w-full bg-background">
+        <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-background focus:px-4 focus:py-3 focus:text-foreground focus:shadow-lg">Pular para o conteúdo principal</a>
         <AppSidebar />
         <div className="flex min-w-0 flex-1 flex-col">
           <AppTopbar userEmail={email} />
           <ProductGuide />
-          <main className="flex-1 overflow-x-hidden">
+          <main id="main-content" tabIndex={-1} className="flex-1 overflow-x-hidden">
             <div className="mx-auto w-full max-w-[1440px] px-4 py-5 sm:px-6 lg:py-8">{children}</div>
           </main>
           <footer className="border-t border-border/60 bg-background/60 backdrop-blur">
