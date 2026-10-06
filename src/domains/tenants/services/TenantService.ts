@@ -1,8 +1,26 @@
 import { createServerFn } from "@tanstack/react-start";
-import { getCurrentCompany as getCompanyFromRepo } from "../repositories/TenantRepository";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 export const getCurrentCompany = createServerFn({ method: "GET" })
-  .handler(async () => {
-    // Business logic like caching or multi-tenant validation could go here
-    return getCompanyFromRepo();
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabase, userId } = context;
+
+    const { data: profile, error: profileError } = await supabase
+      .from("profiles")
+      .select("company_id")
+      .eq("id", userId)
+      .maybeSingle();
+
+    if (profileError) throw new Error(profileError.message);
+    if (!profile?.company_id) return null;
+
+    const { data: company, error: companyError } = await supabase
+      .from("companies")
+      .select("*")
+      .eq("id", profile.company_id)
+      .maybeSingle();
+
+    if (companyError) throw new Error(companyError.message);
+    return company;
   });
