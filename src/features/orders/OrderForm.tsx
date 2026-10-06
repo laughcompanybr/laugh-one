@@ -130,7 +130,7 @@ export function OrderForm({ defaultValues, submitLabel = "Salvar", onSubmit, onC
   useEffect(() => {
     if (!selectedClient || customShip) return;
     const cur = getValues();
-    if (!!(cur.ship_zip || cur.ship_street || cur.ship_city)) return;
+    if (cur.ship_zip || cur.ship_street || cur.ship_city) return;
     applyClientAddress(selectedClient);
   }, [selectedClientId, customShip]);
 
@@ -172,6 +172,7 @@ export function OrderForm({ defaultValues, submitLabel = "Salvar", onSubmit, onC
       if (d.localidade) setValue("ship_city", d.localidade);
       if (d.uf) setValue("ship_state", d.uf);
     } catch {
+      // CEP lookup failures are non-blocking; the user can fill the address manually.
     } finally {
       setCepLoading(false);
     }
