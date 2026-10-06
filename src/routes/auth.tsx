@@ -67,9 +67,10 @@ function AuthPage() {
   );
 }
 
-function SignInForm({ onForgot, onSignUp }: { onForgot: () => void; onSignUp: () => void }) {\n  const [showPassword, setShowPassword] = useState(false);
+function SignInForm({ onForgot, onSignUp }: { onForgot: () => void; onSignUp: () => void }) {
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-  const [showPassword, setShowPassword] = useState(false);\n  const form = useForm<SignInInput>({
+  const form = useForm<SignInInput>({
     resolver: zodResolver(signInSchema),
     defaultValues: { email: "", password: "" },
   });
@@ -147,7 +148,9 @@ function SignInForm({ onForgot, onSignUp }: { onForgot: () => void; onSignUp: ()
   );
 }
 
-function SignUpForm({ onDone }: { onDone: () => void }) {\n  const [showPassword, setShowPassword] = useState(false);\n  const [showConfirm, setShowConfirm] = useState(false);
+function SignUpForm({ onDone }: { onDone: () => void }) {
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const form = useForm<SignUpInput>({
     resolver: zodResolver(signUpSchema),
     defaultValues: { fullName: "", companyName: "", legalName: "", tradeName: "", documentType: "CNPJ", documentNumber: "", cpf: "", phone: "", email: "", password: "", confirm: "", acceptedTerms: false, acceptedPrivacy: false },
