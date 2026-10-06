@@ -9,9 +9,17 @@ export const signUpSchema = z
   .object({
     fullName: z.string().trim().min(2, "Informe seu nome").max(120),
     companyName: z.string().trim().min(2, "Informe o nome da empresa").max(120),
+    legalName: z.string().trim().min(2, "Informe a razão social").max(180),
+    tradeName: z.string().trim().min(2, "Informe o nome fantasia").max(120),
+    documentType: z.enum(["CNPJ", "CPF"]),
+    documentNumber: z.string().trim().min(11, "Informe um CNPJ ou CPF válido").max(18),
+    cpf: z.string().trim().min(11, "Informe o CPF do responsável").max(14),
+    phone: z.string().trim().min(10, "Informe um telefone válido").max(20),
     email: z.string().trim().email("E-mail inválido").max(255),
     password: z.string().min(8, "Use pelo menos 8 caracteres").max(72),
     confirm: z.string(),
+    acceptedTerms: z.literal(true, { errorMap: () => ({ message: "Você precisa aceitar os Termos de Uso" }) }),
+    acceptedPrivacy: z.literal(true, { errorMap: () => ({ message: "Você precisa aceitar a Política de Privacidade" }) }),
   })
   .refine((d) => d.password === d.confirm, {
     path: ["confirm"],
