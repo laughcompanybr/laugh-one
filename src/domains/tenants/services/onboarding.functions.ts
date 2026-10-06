@@ -112,14 +112,40 @@ async function setupBusinessContext(supabase: any, companyId: string, businessTy
     .eq("business_type", businessType)
     .maybeSingle();
 
-  const modulesToEnable = template?.enabled_modules || ['dashboard', 'clients', 'orders', 'finance', 'reports'];
+  const configuredModules = Array.isArray(template?.enabled_modules)
+    ? template.enabled_modules
+    : ['dashboard', 'clients', 'orders', 'finance', 'reports'];
 
-  for (const modId of modulesToEnable) {
-    await supabase.from("company_modules").upsert({
+  // company_modules.module_id is UUID-based. Templates may store either
+  // module UUIDs or legacy module names, so resolve both safely here.
+  const { data: allModules, error: modulesError } = await supabase
+    .from("modules")
+    .select("id, name");
+
+  if (modulesError) throw modulesError;
+
+  const moduleIds = configuredModules
+    .map((value: unknown) => String(value))
+    .map((value: string) => {
+      const direct = allModules?.find((module: any) => module.id === value);
+      if (direct) return direct.id;
+
+      const byName = allModules?.find(
+        (module: any) => module.name.toLowerCase() === value.toLowerCase()
+      );
+      return byName?.id ?? null;
+    })
+    .filter((id: string | null): id is string => Boolean(id));
+
+  for (const moduleId of moduleIds) {
+    const { error } = await supabase.from("company_modules").upsert({
       company_id: companyId,
-      module_id: modId,
-      is_enabled: true
+      module_id: moduleId,
+      is_enabled: true,
+      activated_at: new Date().toISOString()
     }, { onConflict: 'company_id,module_id' });
+
+    if (error) throw error;
   }
 
   // Record module activation in audit
