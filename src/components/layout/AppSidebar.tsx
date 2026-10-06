@@ -111,7 +111,7 @@ export function AppSidebar() {
                         tooltip={item.title}
                         className="h-10 rounded-lg data-[active=true]:bg-sidebar-accent data-[active=true]:text-gold"
                       >
-                        <Link to={item.to} className="flex items-center gap-3">
+                        <Link to={item.to as never} search={{} as never} className="flex items-center gap-3">
                           <item.icon className="size-4 shrink-0" />
                           {!collapsed && <span className="text-sm">{item.title}</span>}
                         </Link>
@@ -140,7 +140,7 @@ export function AppSidebar() {
                     tooltip="Painel Super Admin"
                     className="h-10 rounded-lg data-[active=true]:bg-gold/10 data-[active=true]:text-gold"
                   >
-                    <Link to="/admin" className="flex items-center gap-3">
+                    <Link to="/admin" search={{} as never} className="flex items-center gap-3">
                       <ShieldAlert className="size-4 shrink-0" />
                       {!collapsed && <span className="text-sm">Painel Super Admin</span>}
                     </Link>
