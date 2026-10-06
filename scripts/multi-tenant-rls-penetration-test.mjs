@@ -50,7 +50,7 @@ try {
   clientB = seedClient.data.id;
 
   const seedA = await admin.from("products").insert({
-    company_id: companyA, name: `${suffix} A product`, cost_price: 10, sale_price: 20, stock: 10,
+    company_id: companyA, name: `${suffix} A product`, cost_price: 10, sale_price: 20, stock_qty: 10,
   }).select().single();
   if (seedA.error) throw seedA.error;
   productA = seedA.data.id;
