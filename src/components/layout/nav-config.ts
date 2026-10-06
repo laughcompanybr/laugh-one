@@ -5,6 +5,7 @@ import {
   Package, 
   BarChart3, 
   Settings,
+  CreditCard,
   Calendar,
   ShieldCheck,
   TrendingUp,
@@ -47,5 +48,6 @@ export const NAV_ITEMS: NavItem[] = [
   { title: "Cargos e Permissões", to: "/cargos", icon: Shield, group: "sistema", moduleId: "settings" },
   { title: "Histórico", to: "/historico", icon: History, group: "sistema", moduleId: "settings" },
   { title: "Auditoria", to: "/auditoria", icon: Activity, group: "sistema", moduleId: "settings" },
+  { title: "Assinatura", to: "/assinatura", icon: CreditCard, group: "sistema", moduleId: "settings" },
   { title: "Configurações", to: "/configuracoes", icon: Settings, group: "sistema", moduleId: "settings" },
 ];
