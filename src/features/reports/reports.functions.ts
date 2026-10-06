@@ -47,6 +47,12 @@ export const getReports = createServerFn({ method: "POST" })
     const totalExpenses = expenses.reduce((a, b) => a + Number(b.amount ?? 0), 0);
     const netProfit = grossProfit - totalExpenses;
     const ticket = activeOrders.length ? revenue / activeOrders.length : 0;
+    const grossMargin = revenue > 0 ? (grossProfit / revenue) * 100 : 0;
+    const netMargin = revenue > 0 ? (netProfit / revenue) * 100 : 0;
+    const amountReceived = activeOrders.reduce((a, b) => a + Number(b.amount_received ?? 0), 0);
+    const outstanding = Math.max(0, revenue - amountReceived);
+    const collectionRate = revenue > 0 ? (amountReceived / revenue) * 100 : 0;
+    const cancellationRate = orders.length > 0 ? ((orders.length - activeOrders.length) / orders.length) * 100 : 0;
 
     // Monthly evolution (revenue + profit) — fill every month in the range
     const monthMap = new Map<string, { key: string; revenue: number; profit: number; orders: number }>();
@@ -126,6 +132,12 @@ export const getReports = createServerFn({ method: "POST" })
         cancelled: orders.length - activeOrders.length,
         clients: clientMap.size,
         suppliers: supMap.size,
+        grossMargin,
+        netMargin,
+        amountReceived,
+        outstanding,
+        collectionRate,
+        cancellationRate,
       },
       monthly,
       statusDist,
