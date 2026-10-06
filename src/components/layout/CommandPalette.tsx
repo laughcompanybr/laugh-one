@@ -32,7 +32,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 
   const go = (to: string) => {
     onOpenChange(false);
-    navigate({ to });
+    navigate({ to: to as never, search: {} as never });
   };
 
   return (
