@@ -121,6 +121,113 @@ export type Database = {
           },
         ]
       }
+      automation_runs: {
+        Row: {
+          company_id: string
+          error_message: string | null
+          finished_at: string | null
+          id: string
+          payload: Json
+          result: Json | null
+          started_at: string
+          status: string
+          trigger_type: string
+          workflow_id: string
+        }
+        Insert: {
+          company_id: string
+          error_message?: string | null
+          finished_at?: string | null
+          id?: string
+          payload?: Json
+          result?: Json | null
+          started_at?: string
+          status: string
+          trigger_type: string
+          workflow_id: string
+        }
+        Update: {
+          company_id?: string
+          error_message?: string | null
+          finished_at?: string | null
+          id?: string
+          payload?: Json
+          result?: Json | null
+          started_at?: string
+          status?: string
+          trigger_type?: string
+          workflow_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "automation_runs_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "automation_runs_workflow_id_fkey"
+            columns: ["workflow_id"]
+            isOneToOne: false
+            referencedRelation: "automation_workflows"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      automation_workflows: {
+        Row: {
+          company_id: string
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          last_executed_at: string | null
+          name: string
+          status: string
+          steps: Json
+          total_executions: number
+          trigger_config: Json
+          updated_at: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          last_executed_at?: string | null
+          name: string
+          status?: string
+          steps?: Json
+          total_executions?: number
+          trigger_config?: Json
+          updated_at?: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          last_executed_at?: string | null
+          name?: string
+          status?: string
+          steps?: Json
+          total_executions?: number
+          trigger_config?: Json
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "automation_workflows_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       business_templates: {
         Row: {
           business_type: string
