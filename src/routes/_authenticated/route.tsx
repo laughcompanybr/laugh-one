@@ -70,15 +70,35 @@ function LayoutComponent() {
       if (profileLookupError) throw profileLookupError;
       if (!currentProfile?.company_id) return { status: "no_company" as const };
 
-      const { data: onboardingData, error: onboardingError } = await supabase
-        .from("company_onboarding_data")
-        .select("onboarding_completed")
-        .eq("company_id", currentProfile.company_id)
-        .maybeSingle();
+      const [{ data: onboardingData, error: onboardingError }, { data: companyData, error: companyError }] = await Promise.all([
+        supabase
+          .from("company_onboarding_data")
+          .select("onboarding_completed, business_type, responsible_name, phone, commercial_email, city, state, employee_count, main_objective")
+          .eq("company_id", currentProfile.company_id)
+          .maybeSingle(),
+        supabase
+          .from("companies")
+          .select("name, business_type, onboarding_status")
+          .eq("id", currentProfile.company_id)
+          .maybeSingle(),
+      ]);
       if (onboardingError) throw onboardingError;
+      if (companyError) throw companyError;
+
+      const complete =
+        onboardingData?.onboarding_completed === true &&
+        Boolean(onboardingData.business_type || companyData?.business_type) &&
+        Boolean(onboardingData.responsible_name) &&
+        Boolean(onboardingData.phone) &&
+        Boolean(onboardingData.commercial_email) &&
+        Boolean(onboardingData.city) &&
+        Boolean(onboardingData.state) &&
+        Boolean(onboardingData.employee_count) &&
+        Boolean(onboardingData.main_objective) &&
+        companyData?.onboarding_status === "completed";
 
       return {
-        status: onboardingData?.onboarding_completed ? "completed" : "pending",
+        status: complete ? "completed" : "pending",
         companyId: currentProfile.company_id,
       } as const;
     },
