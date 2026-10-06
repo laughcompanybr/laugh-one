@@ -2,12 +2,14 @@
 // Tailwind, path aliases, Nitro/Cloudflare and Lovable preview integration.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
+// Lovable Preview uses its worker runtime; Vercel needs the Vercel Nitro preset.
+// Keeping this explicit prevents the deployment target from being inferred from
+// the local environment while preserving the Lovable sandbox behavior.
+const isVercel = Boolean(process.env.VERCEL);
+
 export default defineConfig({
-  // Explicitly enable Nitro so the SSR Worker bundle is emitted during
-  // non-sandbox builds as well as Lovable Preview deployments.
-  nitro: true,
+  nitro: isVercel ? { preset: "vercel" } : true,
   tanstackStart: {
-    // Use the project's SSR wrapper as the TanStack Start server entry.
     server: { entry: "server" },
   },
 });
