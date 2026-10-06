@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { LogOut, Search, User as UserIcon } from "lucide-react";
+import { Accessibility, LogOut, Search, User as UserIcon, Minus, Plus, PlayCircle, CircleHelp } from "lucide-react";
 import { toast } from "sonner";
 
 import { SidebarTrigger } from "@/components/ui/sidebar";
@@ -22,10 +22,24 @@ import { ThemeToggle } from "@/components/common/ThemeToggle";
 
 export function AppTopbar({ userEmail }: { userEmail: string }) {
   const [paletteOpen, setPaletteOpen] = useState(false);
+  const [fontScale, setFontScale] = useState(() => Number(localStorage.getItem("laugh-one:font-scale") || "1"));
+  const [reducedMotion, setReducedMotion] = useState(() => localStorage.getItem("laugh-one:reduced-motion") === "true");
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   const initials = userEmail.slice(0, 2).toUpperCase();
+
+  const applyAccessibility = (scale: number, motion: boolean) => {
+    const safeScale = Math.min(1.25, Math.max(1, scale));
+    document.documentElement.style.fontSize = `${safeScale * 100}%`;
+    document.documentElement.classList.toggle("reduce-motion", motion);
+    setFontScale(safeScale);
+    setReducedMotion(motion);
+    localStorage.setItem("laugh-one:font-scale", String(safeScale));
+    localStorage.setItem("laugh-one:reduced-motion", String(motion));
+  };
+
+  useState(() => { document.documentElement.style.fontSize = `${fontScale * 100}%`; document.documentElement.classList.toggle("reduce-motion", reducedMotion); return true; });
 
   const handleSignOut = async () => {
     await queryClient.cancelQueries();
@@ -60,6 +74,32 @@ export function AppTopbar({ userEmail }: { userEmail: string }) {
         >
           <Search className="size-4" />
         </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon" className="h-9 w-9" aria-label="Acessibilidade">
+              <Accessibility className="size-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-64">
+            <DropdownMenuLabel>Acessibilidade</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <div className="px-2 py-2">
+              <p className="mb-2 text-xs text-muted-foreground">Tamanho do texto</p>
+              <div className="flex gap-2">
+                <Button variant="outline" className="min-h-10 flex-1" onClick={() => applyAccessibility(fontScale - 0.125, reducedMotion)} disabled={fontScale <= 1}><Minus className="size-4" /> Menor</Button>
+                <Button variant="outline" className="min-h-10 flex-1" onClick={() => applyAccessibility(1, reducedMotion)}>Normal</Button>
+                <Button variant="outline" className="min-h-10 flex-1" onClick={() => applyAccessibility(fontScale + 0.125, reducedMotion)} disabled={fontScale >= 1.25}><Plus className="size-4" /> Maior</Button>
+              </div>
+            </div>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => applyAccessibility(fontScale, !reducedMotion)}>
+              <PlayCircle className="mr-2 size-4" /> {reducedMotion ? "Ativar animações" : "Reduzir animações"}
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => window.dispatchEvent(new Event("laugh-one:restart-guide"))}>
+              <CircleHelp className="mr-2 size-4" /> Repetir tutorial
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
         <ThemeToggle />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
