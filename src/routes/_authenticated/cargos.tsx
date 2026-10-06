@@ -258,6 +258,19 @@ function RolesPage() {
           </CardContent>
         </Card>
       </div>
+    <Dialog open={createOpen} onOpenChange={setCreateOpen}>
+      <DialogContent className="max-w-md">
+        <DialogHeader><DialogTitle>Criar novo cargo</DialogTitle></DialogHeader>
+        <div className="space-y-4 py-2">
+          <div className="space-y-2"><Label htmlFor="role-name">Nome do cargo</Label><Input id="role-name" value={roleName} onChange={(e) => setRoleName(e.target.value)} placeholder="Ex.: Vendedor" autoFocus /></div>
+          <div className="space-y-2"><Label htmlFor="role-description">Descrição</Label><Input id="role-description" value={roleDescription} onChange={(e) => setRoleDescription(e.target.value)} placeholder="Descreva a função deste cargo" /></div>
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => setCreateOpen(false)}>Cancelar</Button>
+          <Button onClick={() => void createRole(false)} disabled={roleActionPending || !roleName.trim()}>{roleActionPending ? "Criando..." : "Criar cargo"}</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
     </div>
   );
 }
