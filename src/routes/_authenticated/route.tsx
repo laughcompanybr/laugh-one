@@ -5,7 +5,6 @@ import { AppShell } from "@/components/layout/AppShell";
 import { LaughLogo } from "@/components/brand/LaughLogo";
 import { Button } from "@/components/ui/button";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { getOnboardingStatus } from "@/domains/tenants/services/onboarding.functions";
 import { OnboardingWizard } from "@/domains/tenants/components/OnboardingWizard";
 
 export const Route = createFileRoute("/_authenticated")({
@@ -58,7 +57,31 @@ function LayoutComponent() {
 
   const { data: onboarding, isLoading: isOnboardingLoading } = useQuery({
     queryKey: ["onboarding-status"],
-    queryFn: () => getOnboardingStatus(),
+    queryFn: async () => {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const userId = sessionData.session?.user?.id;
+      if (!userId) return { status: "no_company" as const };
+
+      const { data: currentProfile, error: profileLookupError } = await supabase
+        .from("profiles")
+        .select("company_id")
+        .eq("id", userId)
+        .maybeSingle();
+      if (profileLookupError) throw profileLookupError;
+      if (!currentProfile?.company_id) return { status: "no_company" as const };
+
+      const { data: onboardingData, error: onboardingError } = await supabase
+        .from("company_onboarding_data")
+        .select("onboarding_completed")
+        .eq("company_id", currentProfile.company_id)
+        .maybeSingle();
+      if (onboardingError) throw onboardingError;
+
+      return {
+        status: onboardingData?.onboarding_completed ? "completed" : "pending",
+        companyId: currentProfile.company_id,
+      } as const;
+    },
     enabled: !!profile?.company_id,
   });
 
