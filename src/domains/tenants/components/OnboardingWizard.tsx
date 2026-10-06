@@ -114,8 +114,7 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
           name: data.companyName,
           business_type: data.businessType,
           onboarding_status: "completed",
-          theme: "dark",
-          enabled_modules: ["dashboard", "clients", "orders", "finance", "reports"],
+          theme_mode: "dark",
         } as any)
         .eq("id", companyId);
       if (companyError) throw companyError;
