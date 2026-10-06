@@ -78,7 +78,8 @@ export const getReports = createServerFn({ method: "POST" })
 
     // Status distribution
     const statusMap = new Map<string, number>();
-    for (const o of orders) statusMap.set(o.status, (statusMap.get(o.status) ?? 0) + 1);
+    for (const o of orders) const status = o.status ?? "unknown";
+      statusMap.set(status, (statusMap.get(status) ?? 0) + 1);
     const statusDist = Array.from(statusMap.entries()).map(([status, count]) => ({ status, count }));
 
     // Top clients
