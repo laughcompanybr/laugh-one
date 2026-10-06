@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getBusinessTemplate } from "@/domains/tenants/services/business-template.functions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Activity, ArrowDownRight, ArrowUpRight, Boxes, CircleDollarSign, Package, Users } from "lucide-react";
+import { Activity, ArrowDownRight, ArrowUpRight, Boxes, CircleDollarSign, Package, Users, type LucideIcon } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getDashboardSnapshot } from "@/domains/tenants/services/dashboard.functions";
 import { formatBRL } from "@/lib/format";
@@ -89,7 +89,7 @@ export function DynamicDashboard() {
 }
 
 
-function MetricCard({ label, value, icon: Icon, positive, warning }: { label: string; value: string; icon: typeof Activity; positive?: boolean; warning?: boolean }) {
+function MetricCard({ label, value, icon: Icon, positive, warning }: { label: string; value: string; icon: LucideIcon; positive?: boolean; warning?: boolean }) {
   return (
     <Card className="glass-panel group transition-all duration-300 hover:-translate-y-0.5 hover:border-gold/30">
       <CardContent className="flex items-center justify-between p-5">
