@@ -129,6 +129,8 @@ try {
   if (productA) await admin.from("products").delete().eq("id", productA);
   if (productB) await admin.from("products").delete().eq("id", productB);
   if (clientB) await admin.from("clients").delete().eq("id", clientB);
+  if (companyA) await admin.from("company_roles").delete().eq("company_id", companyA);
+  if (companyB) await admin.from("company_roles").delete().eq("company_id", companyB);
   if (companyA) await admin.from("companies").delete().eq("id", companyA);
   if (companyB) await admin.from("companies").delete().eq("id", companyB);
   if (userA) await admin.auth.admin.deleteUser(userA.id);
