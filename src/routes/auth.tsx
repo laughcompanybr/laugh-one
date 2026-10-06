@@ -7,6 +7,7 @@ import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
 import { AuthHero } from "@/components/auth/AuthHero";
+import { bootstrapUserWorkspace } from "@/domains/auth/services/AuthService";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -69,6 +70,7 @@ function AuthPage() {
 
 function SignInForm({ onForgot, onSignUp }: { onForgot: () => void; onSignUp: () => void }) {
   const navigate = useNavigate();
+  const bootstrapFn = useServerFn(bootstrapUserWorkspace);
   const form = useForm<SignInInput>({
     resolver: zodResolver(signInSchema),
     defaultValues: { email: "", password: "" },
@@ -80,6 +82,7 @@ function SignInForm({ onForgot, onSignUp }: { onForgot: () => void; onSignUp: ()
       toast.error("Não foi possível entrar", { description: error.message });
       return;
     }
+    await bootstrapFn();
     // If the account has an enrolled TOTP factor, prompt for the OTP before
     // landing on the dashboard. AAL2 upgrade happens on /mfa-verify.
     const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
