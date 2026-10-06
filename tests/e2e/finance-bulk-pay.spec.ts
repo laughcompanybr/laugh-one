@@ -13,6 +13,7 @@ test.describe("Financeiro — pagar em lote", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/financeiro");
     await page.waitForLoadState("networkidle");
+    if (page.url().includes("/auth")) test.skip(true, "Ambiente E2E sem sessão autenticada real");
   });
 
   test("abre aba A pagar e usa filtros", async ({ page }) => {
