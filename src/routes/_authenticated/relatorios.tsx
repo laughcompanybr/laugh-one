@@ -30,6 +30,9 @@ import {
   Package,
   ShoppingBag,
   TrendingUp,
+  Percent,
+  Wallet,
+  AlertCircle,
   Truck,
   Users,
 } from "lucide-react";
@@ -262,11 +265,35 @@ function ReportsPage() {
         }
       />
 
-      <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8">
         <StatCard label="Receita" value={formatBRL(data?.totals.revenue ?? 0)} icon={DollarSign} accent="gold" />
         <StatCard label="Lucro líquido" value={formatBRL(data?.totals.netProfit ?? 0)} icon={TrendingUp} accent={(data?.totals.netProfit ?? 0) >= 0 ? "success" : "warning"} />
+        <StatCard label="Margem bruta" value={`${(data?.totals.grossMargin ?? 0).toFixed(1)}%`} icon={Percent} accent="success" />
+        <StatCard label="Margem líquida" value={`${(data?.totals.netMargin ?? 0).toFixed(1)}%`} icon={Percent} accent={(data?.totals.netMargin ?? 0) >= 0 ? "success" : "warning"} />
         <StatCard label="Pedidos" value={formatNumber(data?.totals.orders ?? 0)} icon={ShoppingBag} />
         <StatCard label="Ticket médio" value={formatBRL(data?.totals.ticket ?? 0)} icon={Package} />
+        <StatCard label="Recebido" value={formatBRL(data?.totals.amountReceived ?? 0)} icon={Wallet} accent="success" />
+        <StatCard label="Em aberto" value={formatBRL(data?.totals.outstanding ?? 0)} icon={AlertCircle} accent={(data?.totals.outstanding ?? 0) > 0 ? "warning" : "success"} />
+      </div>
+      <div className="grid gap-3 md:grid-cols-2">
+        <Card>
+          <CardContent className="flex items-center justify-between p-4">
+            <div>
+              <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Taxa de recebimento</p>
+              <p className="mt-1 text-xl font-semibold">{(data?.totals.collectionRate ?? 0).toFixed(1)}%</p>
+            </div>
+            <Wallet className="size-5 text-muted-foreground" />
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="flex items-center justify-between p-4">
+            <div>
+              <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Taxa de cancelamento</p>
+              <p className="mt-1 text-xl font-semibold">{(data?.totals.cancellationRate ?? 0).toFixed(1)}%</p>
+            </div>
+            <AlertCircle className="size-5 text-muted-foreground" />
+          </CardContent>
+        </Card>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-3">
