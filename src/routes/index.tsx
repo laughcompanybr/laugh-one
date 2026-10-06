@@ -594,10 +594,10 @@ Faça uma migração real da arquitetura de planos para o novo modelo SaaS de pl
           <div className="space-y-4">
             <h4 className="text-white font-bold">Empresa</h4>
             <ul className="space-y-2">
-              <li>Sobre nós</li>
-              <li>Carreiras</li>
-              <li>Contato</li>
-              <li>Blog</li>
+              <li><a href="#features" className="hover:text-white transition-colors">Conhecer o produto</a></li>
+              <li><a href="#segments" className="hover:text-white transition-colors">Segmentos atendidos</a></li>
+              <li><a href="#pricing" className="hover:text-white transition-colors">Assinatura</a></li>
+              <li><Link to="/auth" className="hover:text-white transition-colors">Começar agora</Link></li>
             </ul>
           </div>
           <div className="space-y-4">
