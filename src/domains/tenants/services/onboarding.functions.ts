@@ -124,14 +124,28 @@ async function setupBusinessContext(supabase: any, companyId: string, businessTy
 
   if (modulesError) throw modulesError;
 
+  const legacyNames: Record<string, string> = {
+    dashboard: "Dashboard",
+    orders: "Pedidos",
+    products: "Produtos",
+    clients: "Clientes",
+    suppliers: "Fornecedores",
+    employees: "Funcionários",
+    finance: "Financeiro",
+    reports: "Relatórios",
+    automation: "Automações",
+    settings: "Configurações",
+  };
+
   const moduleIds = configuredModules
     .map((value: unknown) => String(value))
     .map((value: string) => {
       const direct = allModules?.find((module: any) => module.id === value);
       if (direct) return direct.id;
 
+      const targetName = legacyNames[value.toLowerCase()] ?? value;
       const byName = allModules?.find(
-        (module: any) => module.name.toLowerCase() === value.toLowerCase()
+        (module: any) => module.name.toLowerCase() === targetName.toLowerCase()
       );
       return byName?.id ?? null;
     })
