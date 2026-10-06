@@ -18,7 +18,7 @@ export function sanitizeReceiptPath(input: string | null | undefined): string | 
     throw new ReceiptValidationException("Caminho do comprovante inválido.", "invalid_path");
   }
   if (!ALLOWED_EXTENSIONS.has(extensionOf(value))) {
-    throw new ReceiptValidationException("Extensão do comprovante não permitida.", "invalid_extension");
+    throw new ReceiptValidationException("Extensão do comprovante não permitido.", "invalid_extension");
   }
   return value;
 }
