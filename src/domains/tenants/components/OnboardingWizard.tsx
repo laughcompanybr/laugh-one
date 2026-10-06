@@ -68,7 +68,6 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
         const { data: profile } = await supabase.from("profiles").select("company_id, full_name, phone").eq("id", userId).maybeSingle();
       if (!profile?.company_id) return;
       const companyId = profile.company_id;
-        if (!profile?.company_id) return;
         const [{ data: company }, { data: existing }] = await Promise.all([
           supabase.from("companies").select("name, business_type").eq("id", companyId).maybeSingle(),
           supabase.from("company_onboarding_data").select("business_type, responsible_name, phone, commercial_email, city, state, employee_count, main_objective").eq("company_id", companyId).maybeSingle(),
