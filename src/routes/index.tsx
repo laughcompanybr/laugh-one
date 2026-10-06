@@ -170,9 +170,63 @@ function LandingPage() {
               </div>
             </div>
           </div>
-          <div className="bento-tile p-8 aspect-video flex flex-col items-center justify-center bg-gradient-to-br from-gold/10 to-transparent">
-            <LayoutDashboard className="size-24 text-gold/20 mb-4" />
-            <p className="text-gold/50 italic tracking-widest uppercase text-sm">Preview do Dashboard Laugh One</p>
+          <div className="bento-tile relative overflow-hidden aspect-video bg-[#0b0b0b] border border-gold/15 shadow-2xl">
+            <div className="absolute inset-0 bg-gradient-to-br from-gold/10 via-transparent to-transparent" />
+            <div className="relative h-full flex">
+              <aside className="w-16 sm:w-20 border-r border-white/10 bg-black/30 p-3 space-y-3">
+                <div className="size-9 rounded-lg bg-gold/15 flex items-center justify-center"><LayoutDashboard className="size-4 text-gold" /></div>
+                {["Pedidos","Clientes","Produtos","Financeiro"].map((item) => (
+                  <div key={item} className="h-7 rounded-md bg-white/5 flex items-center px-2">
+                    <span className="hidden sm:block text-[7px] text-white/35 truncate">{item}</span>
+                  </div>
+                ))}
+              </aside>
+              <div className="flex-1 p-4 sm:p-6 space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-[8px] uppercase tracking-widest text-gold/60">Laugh One</p>
+                    <h3 className="text-sm sm:text-base font-semibold text-white">Visão geral</h3>
+                  </div>
+                  <div className="h-7 w-20 rounded-md bg-gold/10 border border-gold/20" />
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  {[
+                    ["Pedidos","128"],
+                    ["Clientes","342"],
+                    ["Produtos","86"],
+                    ["Saldo","R$ 18,4k"],
+                  ].map(([label,value]) => (
+                    <div key={label} className="rounded-lg border border-white/10 bg-white/[0.035] p-2">
+                      <p className="text-[7px] text-white/40">{label}</p>
+                      <p className="text-xs sm:text-sm font-bold text-white mt-1">{value}</p>
+                    </div>
+                  ))}
+                </div>
+                <div className="grid grid-cols-5 gap-2 h-[45%]">
+                  <div className="col-span-3 rounded-lg border border-white/10 bg-white/[0.025] p-3">
+                    <p className="text-[8px] text-white/45 mb-3">Fluxo financeiro</p>
+                    <div className="h-full flex items-end gap-1">
+                      {[35,52,42,68,55,78,62,88,72,94].map((h,i) => (
+                        <div key={i} className="flex-1 rounded-t-sm bg-gold/35" style={{height:`${h}%`}} />
+                      ))}
+                    </div>
+                  </div>
+                  <div className="col-span-2 rounded-lg border border-white/10 bg-white/[0.025] p-3">
+                    <p className="text-[8px] text-white/45 mb-2">Estoque em atenção</p>
+                    <div className="space-y-2">
+                      {[["Produto A","12"],["Produto B","5"],["Produto C","2"]].map(([name,stock]) => (
+                        <div key={name} className="flex justify-between text-[7px] text-white/45 border-b border-white/5 pb-1">
+                          <span>{name}</span><span className="text-gold">{stock}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="absolute bottom-3 right-4 rounded-full border border-gold/20 bg-black/70 px-3 py-1 text-[8px] uppercase tracking-widest text-gold/70 backdrop-blur">
+              Preview do Dashboard Laugh One
+            </div>
           </div>
         </section>
 
