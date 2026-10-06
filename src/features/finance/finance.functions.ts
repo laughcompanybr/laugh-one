@@ -550,3 +550,78 @@ export const getGoalStats = createServerFn({ method: "POST" })
       biggestSale
     };
   });
+
+export const getFinanceOverview = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabase } = context;
+    const [ordersRes, paymentsRes] = await Promise.all([
+      (supabase as any)
+        .from("orders")
+        .select("id, sale_price, amount_received, cost_price, expected_delivery, purchase_date, status")
+        .is("deleted_at", null)
+        .neq("status", "cancelled"),
+      (supabase as any)
+        .from("payments")
+        .select("order_id, amount, direction"),
+    ]);
+
+    if (ordersRes.error) throw ordersRes.error;
+    if (paymentsRes.error) throw paymentsRes.error;
+
+    const paidOutByOrder = new Map<string, number>();
+    for (const payment of paymentsRes.data ?? []) {
+      if (!payment.order_id || payment.direction !== "out") continue;
+      paidOutByOrder.set(
+        payment.order_id,
+        (paidOutByOrder.get(payment.order_id) ?? 0) + Number(payment.amount ?? 0),
+      );
+    }
+
+    const today = new Date().toISOString().slice(0, 10);
+    let receivable = 0;
+    let receivableOverdue = 0;
+    let payable = 0;
+    let payableOverdue = 0;
+    let receivableCount = 0;
+    let payableCount = 0;
+    let overdueCount = 0;
+
+    for (const order of ordersRes.data ?? []) {
+      const saleBalance = Math.max(
+        0,
+        Number(order.sale_price ?? 0) - Number(order.amount_received ?? 0),
+      );
+      if (saleBalance > 0.009) {
+        receivable += saleBalance;
+        receivableCount += 1;
+        if (order.expected_delivery && order.expected_delivery < today) {
+          receivableOverdue += saleBalance;
+          overdueCount += 1;
+        }
+      }
+
+      const costBalance = Math.max(
+        0,
+        Number(order.cost_price ?? 0) - (paidOutByOrder.get(order.id) ?? 0),
+      );
+      if (costBalance > 0.009) {
+        payable += costBalance;
+        payableCount += 1;
+        const due = order.expected_delivery ?? order.purchase_date;
+        if (due && due < today) payableOverdue += costBalance;
+      }
+    }
+
+    return {
+      receivable,
+      payable,
+      netOpen: receivable - payable,
+      receivableOverdue,
+      payableOverdue,
+      overdueTotal: receivableOverdue + payableOverdue,
+      receivableCount,
+      payableCount,
+      overdueCount,
+    };
+  });
