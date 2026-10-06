@@ -47,9 +47,14 @@ const BRAZILIAN_STATES = [
   ["SP", "São Paulo"], ["SE", "Sergipe"], ["TO", "Tocantins"],
 ] as const;
 const OBJECTIVES = [
-  "Organizar vendas", "Melhorar financeiro", "Gestão de estoque", 
+  "Organizar vendas", "Melhorar financeiro", "Gestão de estoque",
   "Fidelizar clientes", "Escalar o negócio", "Outro"
 ];
+
+function formatPostalCode(value: string) {
+  const digits = value.replace(/\D/g, "").slice(0, 8);
+  return digits.length > 5 ? `${digits.slice(0, 5)}-${digits.slice(5)}` : digits;
+}
 
 export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
   const [step, setStep] = useState(1);
@@ -94,7 +99,7 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
           responsibleName: existing?.responsible_name ?? profile.full_name ?? "",
           phone: existing?.phone ?? profile.phone ?? "",
           commercialEmail: existing?.commercial_email ?? sessionData.session?.user?.email ?? "",
-          postalCode: company?.postal_code ?? "",
+          postalCode: formatPostalCode(company?.postal_code ?? ""),
           city: existing?.city ?? company?.city ?? "",
           state: existing?.state ?? company?.state ?? "",
           neighborhood: company?.neighborhood ?? "",
@@ -306,7 +311,7 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
                   <Label className="flex items-center gap-2">
                     <Briefcase className="size-4 text-gold" /> Segmento de Atuação
                   </Label>
-                  <Select onValueChange={(v) => form.setValue("businessType", v)}>
+                  <Select value={form.watch("businessType")} onValueChange={(v) => form.setValue("businessType", v, { shouldValidate: true, shouldDirty: true })}>
                     <SelectTrigger>
                       <SelectValue placeholder="Qual o tipo da sua empresa?" />
                     </SelectTrigger>
@@ -412,7 +417,7 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
                   <Label className="flex items-center gap-2">
                     <Users className="size-4 text-gold" /> Quantidade de Funcionários
                   </Label>
-                  <Select onValueChange={(v) => form.setValue("employeeCount", v)}>
+                  <Select value={form.watch("employeeCount")} onValueChange={(v) => form.setValue("employeeCount", v, { shouldValidate: true, shouldDirty: true })}>
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione..." />
                     </SelectTrigger>
@@ -428,7 +433,7 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
                   <Label className="flex items-center gap-2">
                     <Target className="size-4 text-gold" /> Objetivo Principal
                   </Label>
-                  <Select onValueChange={(v) => form.setValue("mainObjective", v)}>
+                  <Select value={form.watch("mainObjective")} onValueChange={(v) => form.setValue("mainObjective", v, { shouldValidate: true, shouldDirty: true })}>
                     <SelectTrigger>
                       <SelectValue placeholder="O que você busca com o Laugh One?" />
                     </SelectTrigger>
