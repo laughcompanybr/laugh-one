@@ -40,7 +40,8 @@ const OBJECTIVES = [
 ];
 
 export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
-  const [step, setStep] = useState(1);\n  const [loadingExisting, setLoadingExisting] = useState(true);
+  const [step, setStep] = useState(1);
+  const [loadingExisting, setLoadingExisting] = useState(true);
   
   const form = useForm<OnboardingFormValues>({
     resolver: zodResolver(onboardingSchema),
@@ -56,6 +57,39 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
       mainObjective: "",
     }
   });
+
+  useEffect(() => {
+    let active = true;
+    const loadExisting = async () => {
+      try {
+        const { data: sessionData } = await supabase.auth.getSession();
+        const userId = sessionData.session?.user?.id;
+        if (!userId) return;
+        const { data: profile } = await supabase.from("profiles").select("company_id, full_name, phone").eq("id", userId).maybeSingle();
+        if (!profile?.company_id) return;
+        const [{ data: company }, { data: existing }] = await Promise.all([
+          supabase.from("companies").select("name, business_type").eq("id", profile.company_id).maybeSingle(),
+          supabase.from("company_onboarding_data").select("business_type, responsible_name, phone, commercial_email, city, state, employee_count, main_objective").eq("company_id", profile.company_id).maybeSingle(),
+        ]);
+        if (!active) return;
+        form.reset({
+          companyName: company?.name ?? "",
+          businessType: existing?.business_type ?? company?.business_type ?? "",
+          responsibleName: existing?.responsible_name ?? profile.full_name ?? "",
+          phone: existing?.phone ?? profile.phone ?? "",
+          commercialEmail: existing?.commercial_email ?? sessionData.session?.user?.email ?? "",
+          city: existing?.city ?? "",
+          state: existing?.state ?? "",
+          employeeCount: existing?.employee_count ?? "",
+          mainObjective: existing?.main_objective ?? "",
+        });
+      } finally {
+        if (active) setLoadingExisting(false);
+      }
+    };
+    void loadExisting();
+    return () => { active = false; };
+  }, [form]);
 
   const onSubmit = async (data: OnboardingFormValues) => {
     try {
@@ -139,12 +173,6 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
         })), { onConflict: "company_id,module_id" });
       if (moduleError) throw moduleError;
 
-      const { error: auditError } = await supabase.rpc("log_audit_event", {
-        p_company_id: profile.company_id, p_action: "onboarding_complete", p_entity_type: "company",
-        p_entity_id: profile.company_id, p_old_data: null, p_new_data: data,
-      });
-      if (auditError) throw auditError;
-
       toast.success("Configuração inicial concluída com sucesso!");
       onComplete();
     } catch (error: any) {
@@ -161,6 +189,16 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
     if (isValid) setStep(prev => prev + 1);
   };
 
+  if (loadingExisting) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="flex items-center gap-3 text-sm text-muted-foreground">
+          <Loader2 className="size-5 animate-spin text-gold" /> Preparando sua configuração…
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <Card className="w-full max-w-2xl border-gold/20 shadow-2xl">
@@ -168,7 +206,8 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
           <div className="flex justify-center mb-2">
             <LaughLogo size={40} showWordmark />
           </div>
-          <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-gold">Configuração inicial</p>\n          <CardTitle className="text-2xl font-bold bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-gold">Configuração inicial</p>
+          <CardTitle className="text-2xl font-bold bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent">
             Bem-vindo ao Laugh One
           </CardTitle>
           <CardDescription>
