@@ -22,6 +22,7 @@ import {
 } from "@/domains/tenants/subscriptions/types";
 
 import { PremiumDashboard } from "@/domains/tenants/components/PremiumDashboard";
+import { ProductGuide, openProductFeatures } from "@/components/help/ProductGuide";
 
 export const Route = createFileRoute("/")({
   component: LandingPage,
@@ -125,11 +126,14 @@ function LandingPage() {
                 Começar agora
               </Button>
             </Link>
-            <a href="#features" className="w-full sm:w-auto">
-              <Button size="lg" variant="outline" className="h-14 px-10 border-white/10 hover:bg-white/5 text-white font-medium text-lg w-full sm:w-auto">
-                Conhecer funcionalidades
-              </Button>
-            </a>
+            <Button
+              size="lg"
+              variant="outline"
+              onClick={openProductFeatures}
+              className="h-14 px-10 border-white/10 hover:bg-white/5 text-white font-medium text-lg w-full sm:w-auto"
+            >
+              Conhecer funcionalidades
+            </Button>
           </div>
         </section>
 
