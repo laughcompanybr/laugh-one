@@ -120,6 +120,9 @@ export function OrderDetailSheet({ orderId, open, onOpenChange }: Props) {
   const order = (query.data as any)?.order;
   const client = order?.clients;
   const totals = (query.data as any)?.totals;
+  const isOverdue = !!order?.expected_delivery && !["cancelled", "delivered"].includes(order.status) && new Date(order.expected_delivery) < new Date();
+  const currentStatusIndex = order ? ORDER_STATUS.indexOf(order.status) : -1;
+  const nextStatus = currentStatusIndex >= 0 && currentStatusIndex < ORDER_STATUS.length - 1 ? ORDER_STATUS[currentStatusIndex + 1] : null;
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -151,7 +154,12 @@ export function OrderDetailSheet({ orderId, open, onOpenChange }: Props) {
               <StatBox label="Saldo a receber" value={formatBRL(totals.balance)} tone={totals.balance > 0 ? "warning" : "positive"} />
             </div>
 
-            {isOverdue ? (\n              <div className="mt-4 flex items-center gap-3 rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-amber-600 dark:text-amber-400">\n                <AlertTriangle className="size-5 shrink-0" />\n                <div className="min-w-0 flex-1">\n                  <p className="text-sm font-semibold">Entrega em atraso</p>\n                  <p className="text-xs opacity-80">Previsão: {formatDate(order.expected_delivery)}. Atualize o status ou a previsão para manter o pedido operacional.</p>\n                </div>\n              </div>\n            ) : null}\n\n            <div className="mt-4 flex flex-wrap items-center gap-3 rounded-xl border border-border bg-card/40 p-3">
+            {isOverdue ? (
+              <div className="mt-4 flex items-center gap-3 rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-amber-600 dark:text-amber-400">\n                <AlertTriangle className="size-5 shrink-0" />\n                <div className="min-w-0 flex-1">\n                  <p className="text-sm font-semibold">Entrega em atraso</p>\n                  <p className="text-xs opacity-80">Previsão: {formatDate(order.expected_delivery)}. Atualize o status ou a previsão para manter o pedido operacional.</p>\n                </div>
+              </div>
+            ) : null}
+
+            <div className="mt-4 flex flex-wrap items-center gap-3 rounded-xl border border-border bg-card/40 p-3">
               <Label className="text-xs uppercase tracking-wider text-muted-foreground">Status</Label>
               <Select value={order.status} onValueChange={(v) => statusMut.mutate(v as (typeof ORDER_STATUS)[number])}>
                 <SelectTrigger className="max-w-[220px]"><SelectValue /></SelectTrigger>
