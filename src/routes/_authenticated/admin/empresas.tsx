@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Card } from "@/components/ui/card";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -24,6 +25,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { PERIOD_LABELS, type BillingPeriod } from "@/domains/tenants/subscriptions/types";
 
@@ -33,6 +37,11 @@ export const Route = createFileRoute("/_authenticated/admin/empresas")({
 
 function AdminCompanies() {
   const queryClient = useQueryClient();
+  const [search, setSearch] = useState("");
+  const [createOpen, setCreateOpen] = useState(false);
+  const [detailsCompany, setDetailsCompany] = useState<any>(null);
+  const [newCompanyName, setNewCompanyName] = useState("");
+  const [creating, setCreating] = useState(false);
   const { data: companies, isLoading } = useQuery({
     queryKey: ["admin-companies"],
     queryFn: () => getCompanies(),
@@ -45,6 +54,28 @@ function AdminCompanies() {
       toast.success("Status da empresa atualizado.");
     }
   });
+
+  const filteredCompanies = (companies ?? []).filter((company) => {
+    const term = search.trim().toLowerCase();
+    return !term || company.name.toLowerCase().includes(term) || (company.slug ?? "").toLowerCase().includes(term);
+  });
+
+  const createCompany = async () => {
+    const name = newCompanyName.trim();
+    if (!name) { toast.error("Informe o nome da empresa."); return; }
+    setCreating(true);
+    try {
+      const slugBase = name.toLowerCase().normalize("NFD").replace(/[\\u0300-\\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+      const slug = `${slugBase || "empresa"}-${Date.now().toString(36)}`;
+      const { error } = await supabase.from("companies").insert({ name, display_name: name, slug, status: "active", onboarding_status: "pending" });
+      if (error) throw error;
+      toast.success("Empresa criada. O onboarding ficará pendente até os dados serem preenchidos.");
+      setNewCompanyName(""); setCreateOpen(false);
+      queryClient.invalidateQueries({ queryKey: ["admin-companies"] });
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Não foi possível criar a empresa.");
+    } finally { setCreating(false); }
+  };
 
   const impersonateMutation = useMutation({
     mutationFn: (companyId: string) => impersonateCompany({ data: { companyId } }),
@@ -70,7 +101,7 @@ function AdminCompanies() {
         <div className="p-4 border-b border-gold/10 bg-muted/30 flex items-center gap-4">
           <div className="relative flex-1 max-w-sm">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-            <Input placeholder="Buscar empresa por nome ou slug..." className="pl-9 bg-background" />
+            <Input placeholder="Buscar empresa por nome ou slug..." className="pl-9 bg-background" value={search} onChange={(e) => setSearch(e.target.value)} />
           </div>
         </div>
         
@@ -86,7 +117,7 @@ function AdminCompanies() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gold/10">
-              {companies?.map((company) => (
+              {filteredCompanies.map((company) => (
                 <tr key={company.id} className="hover:bg-gold/5 transition-colors group">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
