@@ -8,7 +8,6 @@ import {
   BarChart3, BookOpen, CheckCircle2, ChevronLeft, ChevronRight, CircleHelp,
   LayoutDashboard, PlayCircle, Settings, Sparkles, Users, X,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 const GUIDE_KEY = "laugh-one:product-guide:v1";
 
@@ -69,8 +68,13 @@ export function ProductGuide() {
 
   useEffect(() => {
     const onRestart = () => restart();
+    const onFeatures = () => setFeaturesOpen(true);
     window.addEventListener("laugh-one:restart-guide", onRestart);
-    return () => window.removeEventListener("laugh-one:restart-guide", onRestart);
+    window.addEventListener("laugh-one:open-features", onFeatures);
+    return () => {
+      window.removeEventListener("laugh-one:restart-guide", onRestart);
+      window.removeEventListener("laugh-one:open-features", onFeatures);
+    };
   }, [userId]);
 
   return (
