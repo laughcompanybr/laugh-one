@@ -176,7 +176,10 @@ function AdminCompanies() {
                           <UserCog className="size-4" /> Entrar como empresa
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
+                        <DropdownMenuItem
+                          className="flex items-center gap-2 cursor-pointer"
+                          onClick={() => setDetailsCompany(company)}
+                        >
                           <ExternalLink className="size-4" /> Ver Detalhes
                         </DropdownMenuItem>
                         {company.status !== 'blocked' ? (
@@ -203,6 +206,84 @@ function AdminCompanies() {
           </table>
         </div>
       </Card>
+
+      <Dialog open={createOpen} onOpenChange={setCreateOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Nova empresa</DialogTitle>
+            <DialogDescription>
+              Cadastre a organização e deixe o onboarding pendente para completar os dados depois.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2 py-2">
+            <Label htmlFor="new-company-name">Nome da empresa</Label>
+            <Input
+              id="new-company-name"
+              value={newCompanyName}
+              onChange={(e) => setNewCompanyName(e.target.value)}
+              placeholder="Ex.: Laugh Company"
+              autoFocus
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !creating) void createCompany();
+              }}
+              disabled={creating}
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setCreateOpen(false)} disabled={creating}>
+              Cancelar
+            </Button>
+            <Button
+              className="bg-gold hover:bg-gold/90 text-gold-foreground"
+              onClick={() => void createCompany()}
+              disabled={creating || !newCompanyName.trim()}
+            >
+              {creating ? "Criando..." : "Criar empresa"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!detailsCompany} onOpenChange={(open) => !open && setDetailsCompany(null)}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>{detailsCompany?.name ?? "Detalhes da empresa"}</DialogTitle>
+            <DialogDescription>
+              Informações cadastrais e situação atual da organização.
+            </DialogDescription>
+          </DialogHeader>
+          {detailsCompany && (
+            <div className="grid gap-3 sm:grid-cols-2">
+              <Detail label="Nome" value={detailsCompany.name} />
+              <Detail label="Slug" value={detailsCompany.slug || "—"} />
+              <Detail label="Status" value={detailsCompany.status || "active"} />
+              <Detail
+                label="Criada em"
+                value={detailsCompany.created_at
+                  ? new Date(detailsCompany.created_at).toLocaleDateString("pt-BR")
+                  : "—"}
+              />
+              <div className="rounded-lg border border-border/60 bg-muted/20 p-3 sm:col-span-2">
+                <p className="text-xs text-muted-foreground">Assinatura</p>
+                {(() => {
+                  const sub = detailsCompany.subscriptions?.find((s: any) => s.status === "active")
+                    ?? detailsCompany.subscriptions?.[0];
+                  return sub ? (
+                    <div className="mt-1">
+                      <p className="font-medium">{sub.plan_name} · {PERIOD_LABELS[sub.billing_period as BillingPeriod]}</p>
+                      <p className="text-sm text-muted-foreground">
+                        Status: {sub.status} · Vencimento: {new Date(sub.expires_at).toLocaleDateString("pt-BR")}
+                      </p>
+                    </div>
+                  ) : (
+                    <p className="mt-1 text-sm text-muted-foreground">Nenhuma assinatura vinculada.</p>
+                  );
+                })()}
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
@@ -221,5 +302,15 @@ function StatusBadge({ status }: { status: string }) {
     <Badge variant="outline" className={config.className}>
       {config.label}
     </Badge>
+  );
+}
+
+
+function Detail({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-lg border border-border/60 bg-muted/20 p-3">
+      <p className="text-xs text-muted-foreground">{label}</p>
+      <p className="mt-1 font-medium break-words">{value}</p>
+    </div>
   );
 }
