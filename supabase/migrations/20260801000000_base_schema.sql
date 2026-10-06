@@ -180,7 +180,7 @@ CREATE TABLE IF NOT EXISTS public.company_roles (
   is_active boolean,
   is_system boolean,
   name text NOT NULL,
-  order numeric,
+  "order" numeric,
   updated_at timestamptz NOT NULL DEFAULT now()
 );
 CREATE TABLE IF NOT EXISTS public.coupons (
