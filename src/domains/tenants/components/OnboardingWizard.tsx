@@ -10,8 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { LaughLogo } from "@/components/brand/LaughLogo";
 import { toast } from "sonner";
-import { useServerFn } from "@tanstack/react-start";
-import { completeOnboarding } from "../services/onboarding.functions";
+import { supabase } from "@/integrations/supabase/client";
 
 const onboardingSchema = z.object({
   companyName: z.string().min(2, "Nome da empresa é obrigatório"),
@@ -42,7 +41,6 @@ const OBJECTIVES = [
 
 export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
   const [step, setStep] = useState(1);
-  const completeFn = useServerFn(completeOnboarding);
   
   const form = useForm<OnboardingFormValues>({
     resolver: zodResolver(onboardingSchema),
@@ -61,7 +59,92 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
 
   const onSubmit = async (data: OnboardingFormValues) => {
     try {
-      await completeFn({ data });
+      const { data: sessionData } = await supabase.auth.getSession();
+      const userId = sessionData.session?.user?.id;
+      if (!userId) throw new Error("Sua sessão expirou. Faça login novamente.");
+
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("company_id")
+        .eq("id", userId)
+        .maybeSingle();
+      if (profileError) throw profileError;
+      if (!profile?.company_id) throw new Error("Usuário não está vinculado a uma empresa.");
+
+      const { error: companyError } = await supabase
+        .from("companies")
+        .update({
+          name: data.companyName,
+          business_type: data.businessType,
+          onboarding_status: "completed",
+          theme: "dark",
+          enabled_modules: ["dashboard", "clients", "orders", "finance", "reports"],
+        } as any)
+        .eq("id", profile.company_id);
+      if (companyError) throw companyError;
+
+      const { error: onboardingError } = await supabase
+        .from("company_onboarding_data")
+        .upsert({
+          company_id: profile.company_id,
+          business_type: data.businessType,
+          responsible_name: data.responsibleName,
+          phone: data.phone,
+          commercial_email: data.commercialEmail,
+          city: data.city,
+          state: data.state.toUpperCase(),
+          employee_count: data.employeeCount,
+          main_objective: data.mainObjective,
+          onboarding_completed: true,
+        }, { onConflict: "company_id" });
+      if (onboardingError) throw onboardingError;
+
+      const { data: template, error: templateError } = await supabase
+        .from("business_templates")
+        .select("enabled_modules")
+        .eq("business_type", data.businessType)
+        .maybeSingle();
+      if (templateError) throw templateError;
+
+      const configuredModules = Array.isArray(template?.enabled_modules)
+        ? template.enabled_modules
+        : ["dashboard", "clients", "orders", "finance", "reports"];
+
+      const { data: allModules, error: modulesError } = await supabase
+        .from("modules")
+        .select("id, name");
+      if (modulesError) throw modulesError;
+
+      const legacyNames: Record<string, string> = {
+        dashboard: "Dashboard", orders: "Pedidos", products: "Produtos",
+        clients: "Clientes", suppliers: "Fornecedores", employees: "Funcionários",
+        finance: "Financeiro", reports: "Relatórios", automation: "Automações", settings: "Configurações",
+      };
+
+      const moduleIds = configuredModules
+        .map((value: unknown) => String(value))
+        .map((value: string) => {
+          const direct = allModules?.find((module: any) => module.id === value);
+          if (direct) return direct.id;
+          const targetName = legacyNames[value.toLowerCase()] ?? value;
+          return allModules?.find((module: any) => module.name.toLowerCase() === targetName.toLowerCase())?.id ?? null;
+        })
+        .filter((id: string | null): id is string => Boolean(id));
+      if (moduleIds.length === 0) throw new Error("Não foi possível identificar os módulos para este segmento.");
+
+      const { error: moduleError } = await supabase
+        .from("company_modules")
+        .upsert(moduleIds.map((moduleId) => ({
+          company_id: profile.company_id, module_id: moduleId, is_enabled: true, activated_at: new Date().toISOString(),
+        })), { onConflict: "company_id,module_id" });
+      if (moduleError) throw moduleError;
+
+      const { error: auditError } = await supabase.rpc("log_audit_event", {
+        p_company_id: profile.company_id, p_action: "onboarding_complete", p_entity_type: "company",
+        p_entity_id: profile.company_id, p_old_data: null, p_new_data: data,
+      });
+      if (auditError) throw auditError;
+
       toast.success("Configuração inicial concluída com sucesso!");
       onComplete();
     } catch (error: any) {
