@@ -4,7 +4,8 @@ import { getDashboardSnapshot } from "@/domains/tenants/services/dashboard.funct
 import { getBusinessTemplate } from "@/domains/tenants/services/business-template.functions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Activity, ArrowDownRight, ArrowUpRight, Boxes, CircleDollarSign, Package, Users } from "lucide-react";
+import { Activity, ArrowDownRight, ArrowUpRight, Boxes, CircleDollarSign, Package, Users, Plus, Settings2, FileText, UserRoundPlus } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import { formatBRL } from "@/lib/format";
 
 export function PremiumDashboard() {
@@ -118,6 +119,21 @@ export function PremiumDashboard() {
         </Card>
       </div>
 
+      {data && data.counts.orders === 0 && data.counts.clients === 0 && data.counts.products === 0 ? (
+        <Card className="glass-panel border-gold/20">
+          <CardHeader>
+            <CardTitle className="font-display text-xl">Comece por aqui</CardTitle>
+            <p className="text-sm text-muted-foreground">Sua empresa já está conectada. Agora cadastre os primeiros dados para transformar o painel em uma operação completa.</p>
+          </CardHeader>
+          <CardContent className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <QuickAction to="/pedidos" icon={Plus} title="Criar pedido" description="Registre sua primeira venda." />
+            <QuickAction to="/clientes" icon={UserRoundPlus} title="Cadastrar cliente" description="Monte sua base de clientes." />
+            <QuickAction to="/produtos" icon={Boxes} title="Cadastrar produto" description="Comece o controle de estoque." />
+            <QuickAction to="/configuracoes" icon={Settings2} title="Configurar empresa" description="Complete os dados da organização." />
+          </CardContent>
+        </Card>
+      ) : null}
+
       {(data?.lowStockProducts?.length ?? 0) > 0 ? (
         <Card className="glass-panel">
           <CardHeader><CardTitle className="font-display text-xl">Atenção no estoque</CardTitle></CardHeader>
@@ -155,4 +171,16 @@ function Metric({ label, value, icon: Icon, tone }: {
       </CardContent>
     </Card>
   );
+function QuickAction({ to, icon: Icon, title, description }: { to: string; icon: typeof Plus; title: string; description: string }) {
+  return (
+    <Link to={to as any} className="group rounded-xl border border-border bg-background/30 p-4 transition-all hover:-translate-y-0.5 hover:border-gold/40">
+      <div className="mb-3 flex size-9 items-center justify-center rounded-lg bg-gold/10 text-gold">
+        <Icon className="size-4" />
+      </div>
+      <p className="font-semibold group-hover:text-gold transition-colors">{title}</p>
+      <p className="mt-1 text-xs text-muted-foreground">{description}</p>
+    </Link>
+  );
+}
+
 }
