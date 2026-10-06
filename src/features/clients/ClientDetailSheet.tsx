@@ -58,6 +58,7 @@ export function ClientDetailSheet({ clientId, open, onOpenChange }: Props) {
   });
 
   const client = query.data?.client;
+  const overview = (query.data as any)?.overview;
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -203,6 +204,11 @@ export function ClientDetailSheet({ clientId, open, onOpenChange }: Props) {
       </SheetContent>
     </Sheet>
   );
+}
+
+function ClientStat({ label, value, tone = "neutral" }: { label: string; value: string; tone?: "neutral" | "positive" | "warning" }) {
+  const tones = { neutral: "text-foreground", positive: "text-emerald-500", warning: "text-amber-500" };
+  return <div className="rounded-xl border border-border bg-card/40 p-3"><p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">{label}</p><p className={`mt-1 font-display text-lg ${tones[tone]}`}>{value}</p></div>;
 }
 
 function Info({ label, value }: { label: string; value: string | null | undefined }) {
