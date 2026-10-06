@@ -4,7 +4,7 @@ import { getDashboardSnapshot } from "@/domains/tenants/services/dashboard.funct
 import { getBusinessTemplate } from "@/domains/tenants/services/business-template.functions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Activity, ArrowDownRight, ArrowUpRight, Boxes, CircleDollarSign, Package, Users, Plus, Settings2, FileText, UserRoundPlus } from "lucide-react";
+import { Activity, ArrowDownRight, ArrowUpRight, Boxes, CircleDollarSign, Package, Users, Plus, Settings2, UserRoundPlus } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { formatBRL } from "@/lib/format";
 
@@ -193,7 +193,11 @@ function Metric({ label, value, icon: Icon, tone }: {
   icon: typeof ArrowUpRight;
   tone: "positive" | "negative" | "warning";
 }) {
-  const toneClass = tone === "positive" ? "text-emerald-400" : tone === "negative" ? "text-rose-400" : "text-amber-400";
+  const toneClass =
+    tone === "positive" ? "text-emerald-400" :
+    tone === "negative" ? "text-rose-400" :
+    "text-amber-400";
+
   return (
     <Card className="glass-panel">
       <CardContent className="flex items-center justify-between p-5">
@@ -205,16 +209,4 @@ function Metric({ label, value, icon: Icon, tone }: {
       </CardContent>
     </Card>
   );
-function QuickAction({ to, icon: Icon, title, description }: { to: string; icon: typeof Plus; title: string; description: string }) {
-  return (
-    <Link to={to as any} className="group rounded-xl border border-border bg-background/30 p-4 transition-all hover:-translate-y-0.5 hover:border-gold/40">
-      <div className="mb-3 flex size-9 items-center justify-center rounded-lg bg-gold/10 text-gold">
-        <Icon className="size-4" />
-      </div>
-      <p className="font-semibold group-hover:text-gold transition-colors">{title}</p>
-      <p className="mt-1 text-xs text-muted-foreground">{description}</p>
-    </Link>
-  );
-}
-
 }
