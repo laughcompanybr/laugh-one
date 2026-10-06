@@ -31,7 +31,7 @@ export function Breadcrumbs() {
   return (
     <nav aria-label="Breadcrumb" className="hidden min-w-0 items-center gap-1.5 text-xs text-muted-foreground md:flex">
       <Link
-        to="/dashboard"
+        to="/dashboard" search={{} as never}
         className="inline-flex items-center gap-1 transition-colors hover:text-foreground"
       >
         <Home className="size-3.5" />
@@ -45,7 +45,8 @@ export function Breadcrumbs() {
               <span className="truncate font-medium text-foreground">{c.label}</span>
             ) : (
               <Link
-                to={c.to}
+                to={c.to as never}
+                search={{} as never}
                 className="truncate transition-colors hover:text-foreground"
               >
                 {c.label}
