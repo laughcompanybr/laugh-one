@@ -18,8 +18,12 @@ import {
   ArrowUp,
   ArrowDown,
   Sliders,
+  PackageCheck,
+  AlertTriangle,
+  CircleDollarSign,
 } from "lucide-react";
 import { PageHeader } from "@/components/common/PageHeader";
+import { StatCard } from "@/components/common/StatCard";
 import { EmptyState } from "@/components/common/EmptyState";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -94,6 +98,7 @@ function ProdutosPage() {
   const restoreFn = useServerFn(restoreProduct);
   const adjustFn = useServerFn(adjustStock);
   const getFn = useServerFn(getProduct);
+  const overviewFn = useServerFn(getInventoryOverview);
 
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<"" | ProductStatus>("");
@@ -122,6 +127,13 @@ function ProdutosPage() {
     }),
     [search, status, availability, includeDeleted, page, sort, order],
   );
+
+  const overviewQ = useQuery({
+    queryKey: ["inventory", "overview"],
+    queryFn: () => overviewFn(),
+    staleTime: 60_000,
+    refetchInterval: 120_000,
+  });
 
   const query = useQuery({
     queryKey: ["products", filter],
@@ -203,6 +215,15 @@ function ProdutosPage() {
           </Dialog>
         }
       />
+
+      <div className="mb-5 grid gap-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+        <StatCard label="Produtos ativos" value={String((overviewQ.data as any)?.products ?? 0)} icon={Boxes} />
+        <StatCard label="Categorias" value={String((overviewQ.data as any)?.categories ?? 0)} icon={PackageCheck} />
+        <StatCard label="Estoque baixo" value={String((overviewQ.data as any)?.lowStock ?? 0)} icon={AlertTriangle} accent="warning" />
+        <StatCard label="Sem estoque" value={String((overviewQ.data as any)?.outOfStock ?? 0)} icon={AlertTriangle} accent="warning" />
+        <StatCard label="Custo em estoque" value={formatBRL((overviewQ.data as any)?.inventoryCost ?? 0)} icon={CircleDollarSign} accent="gold" />
+        <StatCard label="Valor potencial" value={formatBRL((overviewQ.data as any)?.inventorySale ?? 0)} icon={TrendingUp} accent="success" />
+      </div>
 
       <div className="mb-4 flex flex-wrap items-end gap-3 rounded-2xl border border-border bg-card/40 p-4">
         <div className="min-w-[240px] flex-1">
