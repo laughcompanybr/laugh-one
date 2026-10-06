@@ -202,7 +202,7 @@ function ProdutosPage() {
         actions={
           <Dialog open={openCreate} onOpenChange={setOpenCreate}>
             <DialogTrigger asChild>
-              <Button><Plus className="mr-2 size-4" /> Novo produto</Button>
+              <Button onClick={() => setOpenCreate(true)}><Plus className="mr-2 size-4" /> Novo produto</Button>
             </DialogTrigger>
             <DialogContent className="max-h-[92vh] max-w-2xl overflow-y-auto" description="Cadastro de novo produto">
               <DialogHeader>
