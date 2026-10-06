@@ -153,6 +153,20 @@ export function PremiumDashboard() {
   );
 }
 
+function QuickAction({ to, icon: Icon, title, description }: { to: string; icon: typeof Plus; title: string; description: string }) {
+  return (
+    <Link to={to as never} className="group rounded-xl border border-border bg-background/30 p-4 transition-all hover:border-gold/30 hover:bg-gold/5">
+      <div className="flex items-start gap-3">
+        <div className="rounded-lg bg-gold/10 p-2 text-gold"><Icon className="size-4" /></div>
+        <div>
+          <p className="text-sm font-semibold group-hover:text-gold">{title}</p>
+          <p className="mt-1 text-xs text-muted-foreground">{description}</p>
+        </div>
+      </div>
+    </Link>
+  );
+}
+
 function Metric({ label, value, icon: Icon, tone }: {
   label: string;
   value: string;
