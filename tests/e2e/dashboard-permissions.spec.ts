@@ -26,7 +26,7 @@ async function fakeAuthenticated(page: import("@playwright/test").Page) {
       k.startsWith("sb-"),
     );
     if (!key) {
-      window.localStorage.setItem("sb-e2e-auth-token", JSON.stringify(fake));
+      window.localStorage.setItem("sb-khxlvybhhzcvbtktwidt-auth-token", JSON.stringify(fake));
     }
   });
 }
