@@ -2,11 +2,14 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getBusinessTemplate } from "@/domains/tenants/services/business-template.functions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Activity } from "lucide-react";
+import { Activity, ArrowDownRight, ArrowUpRight, Boxes, CircleDollarSign, Package, Users } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getDashboardSnapshot } from "@/domains/tenants/services/dashboard.functions";
+import { formatBRL } from "@/lib/format";
 
 export function DynamicDashboard() {
   const fetchTemplate = useServerFn(getBusinessTemplate);
+  const fetchSnapshot = useServerFn(getDashboardSnapshot);
   const { data: template, isLoading } = useQuery({
     queryKey: ["business-template"],
     queryFn: () => fetchTemplate(),
@@ -82,5 +85,22 @@ export function DynamicDashboard() {
         </Card>
       </div>
     </div>
+  );
+}
+
+
+function MetricCard({ label, value, icon: Icon, positive, warning }: { label: string; value: string; icon: typeof Activity; positive?: boolean; warning?: boolean }) {
+  return (
+    <Card className="glass-panel group transition-all duration-300 hover:-translate-y-0.5 hover:border-gold/30">
+      <CardContent className="flex items-center justify-between p-5">
+        <div>
+          <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">{label}</p>
+          <p className={`mt-2 text-2xl font-display font-semibold ${warning ? "text-amber-400" : positive ? "text-emerald-400" : "text-foreground"}`}>{value}</p>
+        </div>
+        <div className="flex size-11 items-center justify-center rounded-xl bg-gold/10 text-gold">
+          <Icon className="size-5" />
+        </div>
+      </CardContent>
+    </Card>
   );
 }
