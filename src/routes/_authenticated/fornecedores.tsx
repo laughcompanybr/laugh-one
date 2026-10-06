@@ -139,7 +139,7 @@ function FornecedoresPage() {
         actions={
           <Dialog open={openCreate} onOpenChange={setOpenCreate}>
             <DialogTrigger asChild>
-              <Button><Plus className="mr-2 size-4" /> Novo fornecedor</Button>
+              <Button onClick={() => setOpenCreate(true)}><Plus className="mr-2 size-4" /> Novo fornecedor</Button>
             </DialogTrigger>
             <DialogContent className="max-w-2xl">
               <DialogHeader>
