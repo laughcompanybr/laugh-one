@@ -437,6 +437,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/termos': {
+      id: '/termos',
+      path: '/termos',
+      fullPath: '/termos',
+      preLoaderRoute: typeof TermosRouteImport,
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacidade': {
+      id: '/privacidade',
+      path: '/privacidade',
+      fullPath: '/privacidade',
+      preLoaderRoute: typeof PrivacidadeRouteImport,
+      parentRoute: typeof rootRouteImport
+    }
+    '/cookies': {
+      id: '/cookies',
+      path: '/cookies',
+      fullPath: '/cookies',
+      preLoaderRoute: typeof CookiesRouteImport,
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/assinatura': {
+      id: '/_authenticated/assinatura',
+      path: '/assinatura',
+      fullPath: '/assinatura',
+      preLoaderRoute: typeof AuthenticatedAssinaturaRouteImport,
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin': {
       id: '/_authenticated/admin'
       path: '/admin'
