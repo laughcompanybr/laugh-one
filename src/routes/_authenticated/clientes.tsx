@@ -151,7 +151,7 @@ function ClientesPage() {
         actions={
           <Dialog open={openCreate} onOpenChange={setOpenCreate}>
             <DialogTrigger asChild>
-              <Button>
+              <Button onClick={() => setOpenCreate(true)}>
                 <Plus className="mr-2 size-4" /> Novo cliente
               </Button>
             </DialogTrigger>
