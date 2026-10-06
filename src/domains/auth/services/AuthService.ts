@@ -23,3 +23,12 @@ export const updateUserRole = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     return updateUserRoleRepo({ data });
   });
+
+
+export const bootstrapUserWorkspace = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data, error } = await context.supabase.rpc("bootstrap_current_user_workspace" as any);
+    if (error) throw new Error(error.message);
+    return data;
+  });
