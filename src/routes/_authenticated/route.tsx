@@ -30,7 +30,7 @@ function AuthPending() {
       <LaughLogo size={40} showWordmark />
       <div className="flex items-center gap-2 text-sm text-muted-foreground">
         <Loader2 className="size-4 animate-spin text-gold" />
-        Verificando sessão…
+        Carregando ambiente…
       </div>
     </div>
   );
