@@ -30,7 +30,7 @@ const FEATURE_DETAILS = [
 const TOUR_STEPS = [
   { title: "Bem-vindo ao Laugh One", text: "Este passeio rápido mostra onde encontrar cada recurso. Você pode avançar, voltar ou sair a qualquer momento.", icon: Sparkles },
   ...FEATURE_DETAILS.map(([title, text, icon]) => ({ title, text, icon })),
-  { title: "Você está no controle", text: "Se precisar rever tudo, abra Configurações e clique em "Repetir tutorial". O sistema foi pensado para ser simples, previsível e acessível.", icon: CheckCircle2 },
+  { title: "Você está no controle", text: "Se precisar rever tudo, abra Configurações e clique em \"Repetir tutorial\". O sistema foi pensado para ser simples, previsível e acessível.", icon: CheckCircle2 },
 ];
 
 export function ProductGuide() {
