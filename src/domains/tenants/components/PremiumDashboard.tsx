@@ -69,7 +69,7 @@ export function PremiumDashboard({ preview = false }: { preview?: boolean }) {
     <div className="space-y-6">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {cards.map(({ label, value, icon: Icon }) => (
-          <Card key={label} className="glass-panel transition-all duration-300 hover:-translate-y-0.5 hover:border-gold/30">
+          <Card key={label} className="border border-gold/10 bg-card/95 shadow-[0_12px_35px_-24px_oklch(0_0_0_/_0.9)] transition-all duration-300 hover:-translate-y-0.5 hover:border-gold/30 hover:shadow-[0_18px_45px_-28px_oklch(0.78_0.145_72_/_0.28)]">
             <CardContent className="flex items-center justify-between p-5">
               <div>
                 <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">{label}</p>
@@ -91,7 +91,7 @@ export function PremiumDashboard({ preview = false }: { preview?: boolean }) {
       </div>
 
       <div className="grid gap-4 lg:grid-cols-7">
-        <Card className="glass-panel lg:col-span-4">
+        <Card className="border border-gold/10 bg-card/95 shadow-[0_12px_35px_-24px_oklch(0_0_0_/_0.9)] lg:col-span-4">
           <CardHeader>
             <CardTitle className="font-display text-xl">Visão geral</CardTitle>
           </CardHeader>
@@ -114,7 +114,7 @@ export function PremiumDashboard({ preview = false }: { preview?: boolean }) {
           </CardContent>
         </Card>
 
-        <Card className="glass-panel lg:col-span-3">
+        <Card className="border border-gold/10 bg-card/95 shadow-[0_12px_35px_-24px_oklch(0_0_0_/_0.9)] lg:col-span-3">
           <CardHeader>
             <CardTitle className="font-display text-xl">
               {template.data?.display_name ?? "Laugh One"}
@@ -140,7 +140,7 @@ export function PremiumDashboard({ preview = false }: { preview?: boolean }) {
       </div>
 
       {data && data.counts.orders === 0 && data.counts.clients === 0 && data.counts.products === 0 ? (
-        <Card className="glass-panel border-gold/20">
+        <Card className="border border-gold/20 bg-card/95 shadow-[0_12px_35px_-24px_oklch(0_0_0_/_0.9)]">
           <CardHeader>
             <CardTitle className="font-display text-xl">Comece por aqui</CardTitle>
             <p className="text-sm text-muted-foreground">Sua empresa já está conectada. Agora cadastre os primeiros dados para transformar o painel em uma operação completa.</p>
@@ -155,7 +155,7 @@ export function PremiumDashboard({ preview = false }: { preview?: boolean }) {
       ) : null}
 
       {(data?.lowStockProducts?.length ?? 0) > 0 ? (
-        <Card className="glass-panel">
+        <Card className="border border-gold/10 bg-card/95 shadow-[0_12px_35px_-24px_oklch(0_0_0_/_0.9)]">
           <CardHeader><CardTitle className="font-display text-xl">Atenção no estoque</CardTitle></CardHeader>
           <CardContent>
             <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-5">
@@ -199,7 +199,7 @@ function Metric({ label, value, icon: Icon, tone }: {
     "text-amber-400";
 
   return (
-    <Card className="glass-panel">
+    <Card className="border border-gold/10 bg-card/95 shadow-[0_12px_35px_-24px_oklch(0_0_0_/_0.9)]">
       <CardContent className="flex items-center justify-between p-5">
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">{label}</p>
