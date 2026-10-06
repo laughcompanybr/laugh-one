@@ -64,6 +64,7 @@ function LandingPage() {
 
   const currentPricing = (pricing ?? []).find((p) => p.period === billingCycle);
 
+  // Keep the landing entrypoint explicit so preview deployments always rebuild the route.
   const includedFeatures = [
     "Todos os módulos liberados",
     "Clientes e CRM completo",
