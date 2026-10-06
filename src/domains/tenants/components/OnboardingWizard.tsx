@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -40,7 +40,7 @@ const OBJECTIVES = [
 ];
 
 export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(1);\n  const [loadingExisting, setLoadingExisting] = useState(true);
   
   const form = useForm<OnboardingFormValues>({
     resolver: zodResolver(onboardingSchema),
@@ -168,11 +168,11 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
           <div className="flex justify-center mb-2">
             <LaughLogo size={40} showWordmark />
           </div>
-          <CardTitle className="text-2xl font-bold bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-gold">Configuração inicial</p>\n          <CardTitle className="text-2xl font-bold bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent">
             Bem-vindo ao Laugh One
           </CardTitle>
           <CardDescription>
-            Vamos configurar seu sistema em poucos passos para uma experiência personalizada.
+            Vamos personalizar seu ambiente. Leva menos de 2 minutos e deixa o painel pronto para sua operação.
           </CardDescription>
           
           <div className="flex items-center justify-center gap-2 mt-4">
