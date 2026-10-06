@@ -459,7 +459,7 @@ CREATE TABLE IF NOT EXISTS public.subscription_payments (
   notes text,
   payment_date timestamptz,
   receipt_url text,
-  status text NOT NULL,
+  status text NOT NULL
 );
 CREATE TABLE IF NOT EXISTS public.suppliers (
   avg_delivery_days numeric,
