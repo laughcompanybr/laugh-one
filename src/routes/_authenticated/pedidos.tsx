@@ -62,6 +62,7 @@ import {
   createOrder,
   softDeleteOrder,
   restoreOrder,
+  getOrderOverview,
 } from "@/features/orders/orders.functions";
 import { ORDER_STATUS, STATUS_LABEL, STATUS_TONE, type OrderStatus } from "@/features/orders/schemas";
 import { formatBRL, formatDate } from "@/lib/format";
@@ -75,6 +76,7 @@ function PedidosPage() {
   const createFn = useServerFn(createOrder);
   const delFn = useServerFn(softDeleteOrder);
   const restoreFn = useServerFn(restoreOrder);
+  const overviewFn = useServerFn(getOrderOverview);
 
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<string>("all");
@@ -128,6 +130,13 @@ function PedidosPage() {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const overview = useQuery({
+    queryKey: ["orders-overview"],
+    queryFn: () => overviewFn(),
+    staleTime: 60_000,
+    refetchInterval: 120_000,
+  });
+
   const rows = query.data?.rows ?? [];
   const total = query.data?.count ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
@@ -162,6 +171,21 @@ function PedidosPage() {
           </Dialog>
         }
       />
+
+      <div className="mb-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+        {[
+          ["Total", overview.data?.total ?? "—"],
+          ["Em andamento", overview.data?.active ?? "—"],
+          ["Aguardando pagamento", overview.data?.pendingPayment ?? "—"],
+          ["Em atraso", overview.data?.overdue ?? "—"],
+          ["A receber", overview.data ? formatBRL(overview.data.pendingValue) : "—"],
+        ].map(([label, value]) => (
+          <div key={label} className="rounded-2xl border border-border bg-card/50 p-4">
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">{label}</p>
+            <p className="mt-2 text-xl font-semibold">{value}</p>
+          </div>
+        ))}
+      </div>
 
       <Tabs defaultValue="list" className="space-y-4">
         <TabsList>
