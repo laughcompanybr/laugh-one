@@ -571,10 +571,10 @@ Faça uma migração real da arquitetura de planos para o novo modelo SaaS de pl
           <div className="space-y-4">
             <h4 className="text-white font-bold">Legal</h4>
             <ul className="space-y-2">
-              <li>Privacidade</li>
-              <li>Termos de uso</li>
-              <li>LGPD</li>
-              <li>Cookies</li>
+              <li><Link to="/privacidade" className="hover:text-white transition-colors">Privacidade</Link></li>
+              <li><Link to="/termos" className="hover:text-white transition-colors">Termos de uso</Link></li>
+              <li><Link to="/privacidade#lgpd" className="hover:text-white transition-colors">LGPD</Link></li>
+              <li><Link to="/cookies" className="hover:text-white transition-colors">Cookies</Link></li>
             </ul>
           </div>
         </div>
