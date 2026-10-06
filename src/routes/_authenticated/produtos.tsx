@@ -21,6 +21,7 @@ import {
   PackageCheck,
   AlertTriangle,
   CircleDollarSign,
+  TrendingUp,
 } from "lucide-react";
 import { PageHeader } from "@/components/common/PageHeader";
 import { StatCard } from "@/components/common/StatCard";
@@ -61,6 +62,7 @@ import {
   restoreProduct,
   adjustStock,
   getProduct,
+  getInventoryOverview,
 } from "@/features/products/products.functions";
 import {
   PRODUCT_STATUS,
