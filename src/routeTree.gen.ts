@@ -18,6 +18,7 @@ import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as TermosRouteImport } from './routes/termos'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as CookiesRouteImport } from './routes/cookies'
+import { Route as AuthenticatedAssinaturaRouteImport } from './routes/_authenticated/assinatura'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAuditoriaRouteImport } from './routes/_authenticated/auditoria'
 import { Route as AuthenticatedAutomacoesRouteImport } from './routes/_authenticated/automacoes'
@@ -86,6 +87,11 @@ const CookiesRoute = CookiesRouteImport.update({
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAssinaturaRoute = AuthenticatedAssinaturaRouteImport.update({
+  id: '/assinatura',
+  path: '/assinatura',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedAuditoriaRoute = AuthenticatedAuditoriaRouteImport.update({
@@ -202,6 +208,7 @@ export interface FileRoutesByFullPath {
   '/privacidade': typeof PrivacidadeRoute
   '/cookies': typeof CookiesRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/assinatura': typeof AuthenticatedAssinaturaRoute
   '/auditoria': typeof AuthenticatedAuditoriaRoute
   '/automacoes': typeof AuthenticatedAutomacoesRoute
   '/cargos': typeof AuthenticatedCargosRoute
@@ -232,6 +239,7 @@ export interface FileRoutesByTo {
   '/privacidade': typeof PrivacidadeRoute
   '/cookies': typeof CookiesRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/assinatura': typeof AuthenticatedAssinaturaRoute
   '/auditoria': typeof AuthenticatedAuditoriaRoute
   '/automacoes': typeof AuthenticatedAutomacoesRoute
   '/cargos': typeof AuthenticatedCargosRoute
@@ -264,6 +272,7 @@ export interface FileRoutesById {
   '/privacidade': typeof PrivacidadeRoute
   '/cookies': typeof CookiesRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/_authenticated/assinatura': typeof AuthenticatedAssinaturaRoute
   '/_authenticated/auditoria': typeof AuthenticatedAuditoriaRoute
   '/_authenticated/automacoes': typeof AuthenticatedAutomacoesRoute
   '/_authenticated/cargos': typeof AuthenticatedCargosRoute
@@ -293,6 +302,7 @@ export interface FileRouteTypes {
     | '/mfa-verify'
     | '/reset-password'
     | '/admin'
+    | '/assinatura'
     | '/auditoria'
     | '/automacoes'
     | '/cargos'
@@ -320,6 +330,7 @@ export interface FileRouteTypes {
     | '/mfa-verify'
     | '/reset-password'
     | '/admin'
+    | '/assinatura'
     | '/auditoria'
     | '/automacoes'
     | '/cargos'
@@ -348,6 +359,7 @@ export interface FileRouteTypes {
     | '/mfa-verify'
     | '/reset-password'
     | '/_authenticated/admin'
+    | '/_authenticated/assinatura'
     | '/_authenticated/auditoria'
     | '/_authenticated/automacoes'
     | '/_authenticated/cargos'
@@ -377,6 +389,7 @@ export interface RootRouteChildren {
   MfaVerifyRoute: typeof MfaVerifyRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   TermosRoute: typeof TermosRoute
+  AuthenticatedAssinaturaRoute: typeof AuthenticatedAssinaturaRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
   CookiesRoute: typeof CookiesRoute
 }
