@@ -51,7 +51,7 @@ export function GlobalCommandPalette() {
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
+      if ((event.ctrlKey || event.metaKey) && (event.key.toLowerCase() === "k" || event.key === "/")) {
         event.preventDefault();
         setOpen((value) => !value);
       }
