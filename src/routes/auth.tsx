@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, Mail, Lock, Building2, User } from "lucide-react";
+import { Loader2, Mail, Lock, Building2, User, Eye, EyeOff, CheckCircle2, XCircle } from "lucide-react";
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -69,7 +69,7 @@ function AuthPage() {
 
 function SignInForm({ onForgot, onSignUp }: { onForgot: () => void; onSignUp: () => void }) {
   const navigate = useNavigate();
-  const form = useForm<SignInInput>({
+  const [showPassword, setShowPassword] = useState(false);\n  const form = useForm<SignInInput>({
     resolver: zodResolver(signInSchema),
     defaultValues: { email: "", password: "" },
   });
@@ -266,11 +266,14 @@ interface FieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
   error?: string;
   icon?: React.ReactNode;
+  showPasswordToggle?: boolean;
+  showPassword?: boolean;
+  onTogglePassword?: () => void;
 }
 
 const Field = Object.assign(
   (props: FieldProps) => {
-    const { label, error, icon, id, className, ...rest } = props;
+    const { label, error, icon, id, className, showPasswordToggle, showPassword, onTogglePassword, ...rest } = props;
     return (
       <div className="space-y-1.5">
         <Label htmlFor={id} className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
