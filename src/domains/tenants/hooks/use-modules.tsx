@@ -31,6 +31,31 @@ interface ModulesContextType {
 
 const ModulesContext = createContext<ModulesContextType | undefined>(undefined);
 
+function moduleAliases(module: Module): string[] {
+  const aliases = new Set<string>([module.id]);
+  const routeName = module.main_route.replace(/^\//, "").split("/")[0];
+  if (routeName) aliases.add(routeName);
+
+  const nameAliases: Record<string, string> = {
+    dashboard: "dashboard",
+    pedidos: "orders",
+    produtos: "products",
+    clientes: "clients",
+    fornecedores: "suppliers",
+    funcionários: "employees",
+    financeiro: "finance",
+    relatórios: "reports",
+    automações: "automation",
+    configurações: "settings",
+  };
+
+  const normalizedName = module.name.trim().toLocaleLowerCase("pt-BR");
+  const alias = nameAliases[normalizedName];
+  if (alias) aliases.add(alias);
+
+  return [...aliases];
+}
+
 export function ModulesProvider({ children }: { children: ReactNode }) {
   const { company } = useCompany();
   const [modules, setModules] = useState<Module[]>([]);
@@ -40,6 +65,8 @@ export function ModulesProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     async function loadModules() {
       if (!company?.id) {
+        setModules([]);
+        setEnabledModules(new Set());
         setIsLoading(false);
         return;
       }
@@ -47,7 +74,7 @@ export function ModulesProvider({ children }: { children: ReactNode }) {
       try {
         const [modulesRes, companyModulesRes] = await Promise.all([
           supabase.from("modules").select("*").order("default_order"),
-          supabase.from("company_modules").select("module_id, is_enabled").eq("company_id", company.id)
+          supabase.from("company_modules").select("module_id, is_enabled").eq("company_id", company.id),
         ]);
 
         if (modulesRes.error) throw modulesRes.error;
@@ -55,18 +82,25 @@ export function ModulesProvider({ children }: { children: ReactNode }) {
         const allModules = modulesRes.data as unknown as Module[];
         setModules(allModules);
 
-        // Plano único: a assinatura ativa libera TODOS os módulos.
-        // company_modules permanece apenas como preferência de ordenação/visual.
-        void companyModulesRes;
-        setEnabledModules(new Set(allModules.map((m) => m.id)));
+        const enabled = new Set<string>();
+        for (const module of allModules) {
+          for (const alias of moduleAliases(module)) enabled.add(alias);
+        }
+        setEnabledModules(enabled);
+
+        if (companyModulesRes.error) {
+          console.warn("Não foi possível carregar as preferências de módulos:", companyModulesRes.error);
+        }
       } catch (error) {
         console.error("Error loading modules:", error);
+        setModules([]);
+        setEnabledModules(new Set());
       } finally {
         setIsLoading(false);
       }
     }
 
-    loadModules();
+    void loadModules();
   }, [company?.id]);
 
   const isModuleEnabled = (moduleId: string) => enabledModules.has(moduleId);
