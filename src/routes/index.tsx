@@ -458,6 +458,7 @@ function LandingPage() {
           </div>
         </div>
       </footer>
+      <ProductGuide />
     </div>
   );
 }
