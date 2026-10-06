@@ -297,14 +297,16 @@ Faça uma migração real da arquitetura de planos para o novo modelo SaaS de pl
                 Começar agora
               </Button>
             </Link>
-            <Button size="lg" variant="outline" className="h-14 px-10 border-white/10 hover:bg-white/5 text-white font-medium text-lg w-full sm:w-auto">
-              Conhecer funcionalidades
-            </Button>
+            <a href="#features" className="w-full sm:w-auto">
+              <Button size="lg" variant="outline" className="h-14 px-10 border-white/10 hover:bg-white/5 text-white font-medium text-lg w-full sm:w-auto">
+                Conhecer funcionalidades
+              </Button>
+            </a>
           </div>
         </section>
 
         {/* Adaptation Section */}
-        <section className="grid lg:grid-cols-2 gap-16 items-center">
+        <section id="features" className="grid lg:grid-cols-2 gap-16 items-center">
           <div className="space-y-6">
             <h2 className="text-4xl font-display font-medium tracking-tight">O sistema que se <span className="text-gold">adapta</span> ao seu negócio.</h2>
             <p className="text-white/60 text-lg leading-relaxed font-light">
@@ -345,6 +347,22 @@ Faça uma migração real da arquitetura de planos para o novo modelo SaaS de pl
           <div className="bento-tile p-8 aspect-video flex flex-col items-center justify-center bg-gradient-to-br from-gold/10 to-transparent">
             <LayoutDashboard className="size-24 text-gold/20 mb-4" />
             <p className="text-gold/50 italic tracking-widest uppercase text-sm">Preview do Dashboard Laugh One</p>
+          </div>
+        </section>
+
+        {/* Segments Section */}
+        <section id="segments" className="space-y-12">
+          <div className="text-center space-y-4">
+            <Badge variant="outline" className="border-gold/30 text-gold bg-gold/5">Segmentos</Badge>
+            <h2 className="text-4xl md:text-5xl font-display font-medium tracking-tight">Feito para diferentes tipos de negócio.</h2>
+            <p className="text-white/50 text-lg max-w-2xl mx-auto">Escolha seu segmento na configuração inicial e personalize a operação do Laugh One para a realidade da sua empresa.</p>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+            {segments.map((segment) => (
+              <div key={segment} className="rounded-xl border border-white/5 bg-white/5 px-4 py-4 text-center text-sm text-white/60 hover:border-gold/20 hover:text-white hover:bg-white/[0.07] transition-colors">
+                {segment}
+              </div>
+            ))}
           </div>
         </section>
 
@@ -507,6 +525,20 @@ Faça uma migração real da arquitetura de planos para o novo modelo SaaS de pl
         </section>
 
 
+        {/* Roadmap Section */}
+        <section id="roadmap" className="space-y-10 py-4">
+          <div className="text-center space-y-4">
+            <Badge variant="outline" className="border-gold/30 text-gold bg-gold/5">Evolução contínua</Badge>
+            <h2 className="text-3xl md:text-4xl font-display font-medium">O Laugh One continua evoluindo.</h2>
+            <p className="text-white/50 max-w-2xl mx-auto">Novas funcionalidades entram na plataforma sem exigir um plano diferente. Quem assina o Plano Completo recebe acesso à evolução do produto.</p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-4">
+            <div className="rounded-2xl border border-white/5 bg-white/5 p-6 space-y-3"><Zap className="size-6 text-gold" /><h3 className="font-semibold text-white">Automação</h3><p className="text-sm text-white/50">Mais processos inteligentes para reduzir tarefas manuais.</p></div>
+            <div className="rounded-2xl border border-white/5 bg-white/5 p-6 space-y-3"><BarChart3 className="size-6 text-gold" /><h3 className="font-semibold text-white">Inteligência</h3><p className="text-sm text-white/50">Mais indicadores e visão para apoiar suas decisões.</p></div>
+            <div className="rounded-2xl border border-white/5 bg-white/5 p-6 space-y-3"><ShieldCheck className="size-6 text-gold" /><h3 className="font-semibold text-white">Segurança</h3><p className="text-sm text-white/50">Evolução contínua da proteção e governança da plataforma.</p></div>
+          </div>
+        </section>
+
         {/* Final CTA */}
         <section className="relative overflow-hidden rounded-[3rem] border border-gold/20 bg-gold/5 p-12 md:p-24 text-center space-y-10 group">
           <div className="absolute inset-0 bg-gradient-to-r from-gold/10 via-transparent to-gold/10 opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
@@ -553,10 +585,10 @@ Faça uma migração real da arquitetura de planos para o novo modelo SaaS de pl
           <div className="space-y-4">
             <h4 className="text-white font-bold">Produto</h4>
             <ul className="space-y-2">
-              <li>Funcionalidades</li>
-              <li>Segmentos</li>
-              <li>Planos</li>
-              <li>Roadmap</li>
+              <li><a href="#features" className="hover:text-white transition-colors">Funcionalidades</a></li>
+              <li><a href="#segments" className="hover:text-white transition-colors">Segmentos</a></li>
+              <li><a href="#pricing" className="hover:text-white transition-colors">Planos</a></li>
+              <li><a href="#roadmap" className="hover:text-white transition-colors">Roadmap</a></li>
             </ul>
           </div>
           <div className="space-y-4">
