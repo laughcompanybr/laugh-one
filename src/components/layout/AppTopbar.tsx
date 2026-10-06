@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { Accessibility, LogOut, Search, User as UserIcon, Minus, Plus, PlayCircle, CircleHelp } from "lucide-react";
 import { toast } from "sonner";
@@ -39,7 +39,10 @@ export function AppTopbar({ userEmail }: { userEmail: string }) {
     localStorage.setItem("laugh-one:reduced-motion", String(motion));
   };
 
-  useState(() => { document.documentElement.style.fontSize = `${fontScale * 100}%`; document.documentElement.classList.toggle("reduce-motion", reducedMotion); return true; });
+  useEffect(() => {
+    document.documentElement.style.fontSize = `${fontScale * 100}%`;
+    document.documentElement.classList.toggle("reduce-motion", reducedMotion);
+  }, [fontScale, reducedMotion]);
 
   const handleSignOut = async () => {
     await queryClient.cancelQueries();
