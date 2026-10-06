@@ -131,12 +131,6 @@ function SignInForm({ onForgot, onSignUp }: { onForgot: () => void; onSignUp: ()
           Esqueci minha senha
         </button>
       </div>
-      <div className="space-y-2 rounded-lg border border-border/50 bg-secondary/20 p-3 text-xs">
-        <label className="flex items-start gap-2"><input type="checkbox" className="mt-0.5" {...form.register("acceptedTerms")} /><span>Li e aceito os <Link to="/termos" className="text-gold hover:underline">Termos de Uso</Link>.</span></label>
-        {form.formState.errors.acceptedTerms && <p className="text-xs text-destructive">{form.formState.errors.acceptedTerms.message}</p>}
-        <label className="flex items-start gap-2"><input type="checkbox" className="mt-0.5" {...form.register("acceptedPrivacy")} /><span>Li e aceito a <Link to="/privacidade" className="text-gold hover:underline">Política de Privacidade</Link>.</span></label>
-        {form.formState.errors.acceptedPrivacy && <p className="text-xs text-destructive">{form.formState.errors.acceptedPrivacy.message}</p>}
-      </div>
       <Button type="submit" className="h-11 w-full" disabled={form.formState.isSubmitting}>
         {form.formState.isSubmitting ? <Loader2 className="size-4 animate-spin" /> : "Entrar"}
       </Button>
