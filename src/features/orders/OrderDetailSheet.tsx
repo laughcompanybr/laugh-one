@@ -43,6 +43,10 @@ import {
   ArrowDownCircle,
   ArrowUpCircle,
   Package,
+  Copy,
+  CheckCircle2,
+  AlertTriangle,
+  ArrowRight,
 } from "lucide-react";
 import { OrderForm } from "./OrderForm";
 import { formatBRL, formatDate } from "@/lib/format";
