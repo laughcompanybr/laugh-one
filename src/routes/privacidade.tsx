@@ -11,7 +11,13 @@ function PrivacyPage() {
     <h2>4. Compartilhamento</h2><p>Dados podem ser compartilhados com fornecedores necessários à operação, como infraestrutura, autenticação, comunicação, pagamentos e suporte, sempre observadas as finalidades e medidas de segurança aplicáveis.</p>
     <h2>5. Retenção e segurança</h2><p>Os dados são mantidos pelo período necessário às finalidades informadas e às obrigações legais. Aplicamos controles de acesso, isolamento por empresa, políticas de banco de dados e medidas de segurança compatíveis com o serviço.</p>
     <h2>6. Direitos do titular</h2><p>O titular pode solicitar confirmação, acesso, correção, eliminação quando aplicável, informação sobre compartilhamento e demais direitos previstos na LGPD, pelos canais oficiais informados pelo controlador.</p>
-    <h2>7. Controlador e encarregado</h2><p>A identificação jurídica completa do controlador, endereço e canal do encarregado deverão ser preenchidos antes da publicação definitiva desta política.</p>
+    <h2>7. Solicitações do titular</h2>
+    <p>Solicitações relacionadas aos direitos previstos na LGPD devem ser encaminhadas pelo canal de privacidade indicado pelo controlador. O Laugh One poderá solicitar informações necessárias para confirmar a identidade do solicitante e evitar atendimento indevido.</p>
+    <h2>8. Incidentes de segurança</h2>
+    <p>Incidentes relevantes envolvendo dados pessoais serão tratados por procedimento interno de segurança e comunicação, quando aplicável, conforme a legislação e regulamentação da ANPD.</p>
+    <h2>9. Controlador, operador e encarregado</h2>
+    <p>A definição de controlador, operador e demais responsabilidades dependerá do contexto de cada tratamento. No SaaS, a empresa cliente normalmente determina as finalidades dos dados que insere na plataforma, enquanto o Laugh One presta a infraestrutura e os serviços conforme contrato e instruções aplicáveis.</p>
+    <p><strong>Dados jurídicos do controlador:</strong> devem ser preenchidos com a razão social, CNPJ, endereço e canal oficial de privacidade antes da publicação comercial definitiva.</p>
     <p className="text-xs text-muted-foreground">Documento base técnico-jurídico. Deve ser revisado por advogado e pelo responsável de privacidade antes da publicação comercial definitiva.</p>
   </div></article></main>;
 }
