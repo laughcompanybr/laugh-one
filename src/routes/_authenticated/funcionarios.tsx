@@ -164,7 +164,7 @@ function FuncionariosPage() {
         actions={
           <Dialog open={openCreate} onOpenChange={setOpenCreate}>
             <DialogTrigger asChild>
-              <Button><Plus className="mr-2 size-4" /> Novo funcionário</Button>
+              <Button onClick={() => setOpenCreate(true)}><Plus className="mr-2 size-4" /> Novo funcionário</Button>
             </DialogTrigger>
             <DialogContent className="max-w-2xl" description="Cadastro de novo funcionário">
               <DialogHeader>
