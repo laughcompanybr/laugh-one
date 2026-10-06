@@ -17,8 +17,8 @@ CREATE TABLE IF NOT EXISTS public.audit_log (
   actor uuid,
   changed_at timestamptz NOT NULL DEFAULT now(),
   id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  new_data text,
-  old_data text,
+  new_data jsonb,
+  old_data jsonb,
   operation text NOT NULL,
   record_id text NOT NULL,
   table_name text NOT NULL
@@ -31,22 +31,22 @@ CREATE TABLE IF NOT EXISTS public.audit_logs_v2 (
   entity_id text NOT NULL,
   entity_type text NOT NULL,
   id uuid NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-  new_data text,
-  old_data text,
+  new_data jsonb,
+  old_data jsonb,
   request_id text
 );
 CREATE TABLE IF NOT EXISTS public.business_templates (
   business_type text NOT NULL,
   created_at timestamptz NOT NULL DEFAULT now(),
-  custom_fields text,
-  dashboard_widgets text,
+  custom_fields jsonb,
+  dashboard_widgets jsonb,
   description text,
   display_name text NOT NULL,
-  enabled_modules text,
+  enabled_modules jsonb,
   id uuid NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-  terminology text,
+  terminology jsonb,
   updated_at timestamptz NOT NULL DEFAULT now(),
-  workflows text
+  workflows jsonb
 );
 CREATE TABLE IF NOT EXISTS public.client_attachments (
   client_id uuid NOT NULL,
@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS public.client_attachments (
   id uuid NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   kind text,
   mime text,
-  size text,
+  size numeric,
   storage_path text NOT NULL,
   uploaded_by uuid
 );
@@ -97,12 +97,12 @@ CREATE TABLE IF NOT EXISTS public.companies (
   created_at timestamptz NOT NULL DEFAULT now(),
   currency text,
   display_name text,
-  employee_count text,
+  employee_count numeric,
   error_color text,
   font_family text,
-  functional_customizations text,
+  functional_customizations jsonb,
   id uuid NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-  is_blocked text,
+  is_blocked boolean,
   language text,
   login_footer text,
   login_subtitle text,
@@ -120,11 +120,11 @@ CREATE TABLE IF NOT EXISTS public.companies (
   services_offered text,
   sidebar_color text,
   slug text NOT NULL,
-  social_media text,
+  social_media jsonb,
   state text,
   status text,
   success_color text,
-  system_preferences text,
+  system_preferences jsonb,
   theme_mode text,
   timezone text,
   updated_at timestamptz NOT NULL DEFAULT now(),
@@ -147,11 +147,11 @@ CREATE TABLE IF NOT EXISTS public.company_activity_logs (
 CREATE TABLE IF NOT EXISTS public.company_modules (
   activated_at timestamptz,
   company_id uuid NOT NULL,
-  custom_order text,
+  custom_order numeric,
   id uuid NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-  is_enabled text,
+  is_enabled boolean,
   module_id uuid NOT NULL,
-  settings text,
+  settings jsonb,
   updated_at timestamptz NOT NULL DEFAULT now()
 );
 CREATE TABLE IF NOT EXISTS public.company_onboarding_data (
@@ -163,10 +163,10 @@ CREATE TABLE IF NOT EXISTS public.company_onboarding_data (
   employee_count text,
   id uuid NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   main_objective text,
-  onboarding_completed text,
+  onboarding_completed boolean,
   phone text,
   responsible_name text,
-  segment_data text,
+  segment_data jsonb,
   state text,
   updated_at timestamptz NOT NULL DEFAULT now()
 );
@@ -177,27 +177,27 @@ CREATE TABLE IF NOT EXISTS public.company_roles (
   description text,
   icon text,
   id uuid NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-  is_active text,
-  is_system text,
+  is_active boolean,
+  is_system boolean,
   name text NOT NULL,
-  order text,
+  order numeric,
   updated_at timestamptz NOT NULL DEFAULT now()
 );
 CREATE TABLE IF NOT EXISTS public.coupons (
-  active text,
+  active boolean,
   code text NOT NULL,
   company_id uuid,
   created_at timestamptz NOT NULL DEFAULT now(),
-  discount_fixed text,
-  discount_percent text,
+  discount_fixed numeric,
+  discount_percent numeric,
   id uuid NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-  max_uses text,
-  uses_count text,
+  max_uses numeric,
+  uses_count numeric,
   valid_until text
 );
 CREATE TABLE IF NOT EXISTS public.employees (
-  base_salary text,
-  commission_percent text,
+  base_salary numeric,
+  commission_percent numeric,
   company_id uuid,
   created_at timestamptz NOT NULL DEFAULT now(),
   created_by uuid,
@@ -261,8 +261,8 @@ CREATE TABLE IF NOT EXISTS public.mfa_backup_codes (
   user_id uuid NOT NULL
 );
 CREATE TABLE IF NOT EXISTS public.module_permissions (
-  can_edit text,
-  can_view text,
+  can_edit boolean,
+  can_view boolean,
   company_id uuid,
   id uuid NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   module_id uuid NOT NULL,
@@ -271,12 +271,12 @@ CREATE TABLE IF NOT EXISTS public.module_permissions (
 CREATE TABLE IF NOT EXISTS public.modules (
   category text NOT NULL,
   created_at timestamptz NOT NULL DEFAULT now(),
-  default_order text,
+  default_order numeric,
   dependencies text,
   description text,
   icon text,
   id uuid NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-  is_core text,
+  is_core boolean,
   main_route text NOT NULL,
   name text NOT NULL,
   status text,
@@ -289,7 +289,7 @@ CREATE TABLE IF NOT EXISTS public.notification_queue (
   last_error text,
   payload jsonb NOT NULL,
   recipient text NOT NULL,
-  retry_count text,
+  retry_count numeric,
   sent_at timestamptz,
   status text,
   type text NOT NULL
@@ -301,7 +301,7 @@ CREATE TABLE IF NOT EXISTS public.order_attachments (
   kind text,
   mime text,
   order_id uuid NOT NULL,
-  size text,
+  size numeric,
   storage_path text NOT NULL,
   uploaded_by uuid
 );
@@ -310,7 +310,7 @@ CREATE TABLE IF NOT EXISTS public.order_events (
   created_at timestamptz NOT NULL DEFAULT now(),
   id uuid NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   message text,
-  meta text,
+  meta jsonb,
   order_id uuid NOT NULL,
   type text NOT NULL
 );
@@ -329,9 +329,9 @@ CREATE TABLE IF NOT EXISTS public.order_items (
 CREATE TABLE IF NOT EXISTS public.orders (
   amount_received numeric,
   brand text,
-  card_fee text,
+  card_fee numeric,
   client_id uuid,
-  commission text,
+  commission numeric,
   company_id uuid,
   cost_price numeric,
   created_at timestamptz NOT NULL DEFAULT now(),
@@ -343,10 +343,10 @@ CREATE TABLE IF NOT EXISTS public.orders (
   model text,
   notes text,
   order_number numeric,
-  other_costs text,
+  other_costs numeric,
   payment_method text,
   photo_path text,
-  profit text,
+  profit numeric,
   purchase_date timestamptz,
   quantity numeric,
   reference text,
@@ -359,7 +359,7 @@ CREATE TABLE IF NOT EXISTS public.orders (
   ship_state text,
   ship_street text,
   ship_zip text,
-  shipping text,
+  shipping numeric,
   status public.order_status,
   supplier_id uuid,
   tracking_code text,
@@ -367,15 +367,15 @@ CREATE TABLE IF NOT EXISTS public.orders (
 );
 CREATE TABLE IF NOT EXISTS public.payments (
   amount numeric NOT NULL,
-  card_fee text,
-  card_fee_percent text,
+  card_fee numeric,
+  card_fee_percent numeric,
   company_id uuid,
   created_at timestamptz NOT NULL DEFAULT now(),
   created_by uuid,
   direction public.payment_direction NOT NULL,
   employee_id uuid,
   id uuid NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-  installments text,
+  installments numeric,
   method text,
   notes text,
   order_id uuid,
@@ -396,7 +396,7 @@ CREATE TABLE IF NOT EXISTS public.platform_logs (
   created_at timestamptz NOT NULL DEFAULT now(),
   id uuid NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   ip_address text,
-  metadata text,
+  metadata jsonb,
   user_agent text,
   user_id uuid
 );
@@ -463,7 +463,7 @@ CREATE TABLE IF NOT EXISTS public.subscription_payments (
   subscription_id uuid
 );
 CREATE TABLE IF NOT EXISTS public.suppliers (
-  avg_delivery_days text,
+  avg_delivery_days numeric,
   company text,
   company_id uuid,
   created_at timestamptz NOT NULL DEFAULT now(),
@@ -480,7 +480,7 @@ CREATE TABLE IF NOT EXISTS public.suppliers (
 );
 CREATE TABLE IF NOT EXISTS public.system_errors (
   company_id uuid,
-  context text,
+  context jsonb,
   created_at timestamptz NOT NULL DEFAULT now(),
   error_message text,
   error_type text,
@@ -491,7 +491,7 @@ CREATE TABLE IF NOT EXISTS public.system_errors (
 );
 CREATE TABLE IF NOT EXISTS public.system_telemetry (
   actor_id uuid,
-  context text,
+  context jsonb,
   created_at timestamptz NOT NULL DEFAULT now(),
   event_type text NOT NULL,
   id uuid NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -501,7 +501,7 @@ CREATE TABLE IF NOT EXISTS public.system_telemetry (
 CREATE TABLE IF NOT EXISTS public.user_consent (
   consent_type text NOT NULL,
   created_at timestamptz NOT NULL DEFAULT now(),
-  granted text,
+  granted boolean,
   id uuid NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   ip_address text,
   user_agent text,
