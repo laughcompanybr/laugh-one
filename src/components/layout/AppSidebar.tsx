@@ -69,8 +69,8 @@ export function AppSidebar() {
   }));
 
   return (
-    <Sidebar collapsible="icon" className="border-r border-sidebar-border">
-      <SidebarHeader className="border-b border-sidebar-border px-3 py-4">
+    <Sidebar collapsible="icon" className="border-r border-sidebar-border bg-sidebar shadow-[10px_0_35px_-28px_oklch(0.78_0.145_72_/_0.55)]">
+      <SidebarHeader className="border-b border-sidebar-border bg-sidebar px-3 py-4">
         <TooltipProvider delayDuration={200}>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -109,7 +109,7 @@ export function AppSidebar() {
                         asChild
                         isActive={active}
                         tooltip={item.title}
-                        className="h-10 rounded-lg data-[active=true]:bg-sidebar-accent data-[active=true]:text-gold"
+                        className="h-10 rounded-lg transition-all duration-200 hover:bg-gold/5 hover:text-gold data-[active=true]:bg-gold/10 data-[active=true]:text-gold data-[active=true]:shadow-[inset_2px_0_0_var(--color-gold)]"
                       >
                         <Link to={item.to as never} search={{} as never} className="flex items-center gap-3">
                           <item.icon className="size-4 shrink-0" />
