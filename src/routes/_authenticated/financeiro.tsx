@@ -653,7 +653,15 @@ function MovementsTab({ from, to }: any) {
 
   const createMut = useMutation({
     mutationFn: (v: FinancialTxInput) => createFn({ data: v }),
-    onSuccess: () => { toast.success("Movimentação registrada"); setOpen(false); form.reset(); qc.invalidateQueries({ queryKey: ["finance"] }); },
+    onSuccess: () => {
+      toast.success("Movimentação registrada");
+      setOpen(false);
+      form.reset();
+      void qc.invalidateQueries({ queryKey: ["finance"] });
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || "Não foi possível salvar a movimentação.");
+    },
   });
 
   const rows = query.data ?? [];
@@ -700,7 +708,15 @@ function MovementsTab({ from, to }: any) {
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent><SelectItem value="in">Entrada</SelectItem><SelectItem value="out">Saída</SelectItem></SelectContent>
               </Select>
-              <Input type="number" step="0.01" {...form.register("amount")} placeholder="Valor" />
+              <Input
+                type="number"
+                step="0.01"
+                min="0.01"
+                inputMode="decimal"
+                {...form.register("amount")}
+                placeholder="Valor"
+                aria-invalid={!!form.formState.errors.amount}
+              />
             </div>
             <Input {...form.register("description")} placeholder="Descrição" />
             <Input type="date" {...form.register("paid_at")} />
