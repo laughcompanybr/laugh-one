@@ -92,7 +92,7 @@ function AdminCompanies() {
           title="Gestão de Empresas" 
           description="Administre todas as organizações na plataforma Laugh One."
         />
-        <Button className="bg-gold hover:bg-gold/90 text-gold-foreground">
+        <Button className="bg-gold hover:bg-gold/90 text-gold-foreground" onClick={() => setCreateOpen(true)}>
           <Plus className="mr-2 size-4" /> Nova Empresa
         </Button>
       </div>
