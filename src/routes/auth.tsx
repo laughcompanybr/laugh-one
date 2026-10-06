@@ -67,7 +67,7 @@ function AuthPage() {
   );
 }
 
-function SignInForm({ onForgot, onSignUp }: { onForgot: () => void; onSignUp: () => void }) {
+function SignInForm({ onForgot, onSignUp }: { onForgot: () => void; onSignUp: () => void }) {\n  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);\n  const form = useForm<SignInInput>({
     resolver: zodResolver(signInSchema),
@@ -147,7 +147,7 @@ function SignInForm({ onForgot, onSignUp }: { onForgot: () => void; onSignUp: ()
   );
 }
 
-function SignUpForm({ onDone }: { onDone: () => void }) {
+function SignUpForm({ onDone }: { onDone: () => void }) {\n  const [showPassword, setShowPassword] = useState(false);\n  const [showConfirm, setShowConfirm] = useState(false);
   const form = useForm<SignUpInput>({
     resolver: zodResolver(signUpSchema),
     defaultValues: { fullName: "", companyName: "", legalName: "", tradeName: "", documentType: "CNPJ", documentNumber: "", cpf: "", phone: "", email: "", password: "", confirm: "", acceptedTerms: false, acceptedPrivacy: false },
@@ -262,6 +262,36 @@ function ForgotForm({ onDone }: { onDone: () => void }) {
   );
 }
 
+function PasswordStrength({ password, confirm }: { password: string; confirm: string }) {
+  const checks = [
+    ["12 caracteres ou mais", password.length >= 12],
+    ["Letra maiúscula", /[A-Z]/.test(password)],
+    ["Letra minúscula", /[a-z]/.test(password)],
+    ["Número", /[0-9]/.test(password)],
+    ["Caractere especial", /[^A-Za-z0-9\s]/.test(password)],
+    ["Sem espaços", password.length > 0 && !/\s/.test(password)],
+  ] as const;
+  const score = checks.filter(([, ok]) => ok).length;
+  const strength = score <= 2 ? "Fraca" : score <= 4 ? "Média" : score === 5 ? "Forte" : "Muito forte";
+  const tone = score <= 2 ? "text-rose-400" : score <= 4 ? "text-amber-400" : "text-emerald-400";
+  return (
+    <div className="rounded-lg border border-border/50 bg-secondary/20 p-3 space-y-3">
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-medium">Força da senha</span>
+        <span className={`text-xs font-bold ${tone}`}>{password ? strength : "Digite uma senha"}</span>
+      </div>
+      <div className="grid grid-cols-2 gap-1.5 text-[11px]">
+        {checks.map(([label, ok]) => (
+          <div key={label} className={ok ? "text-emerald-400" : "text-muted-foreground"}>
+            {ok ? <CheckCircle2 className="mr-1 inline size-3.5" /> : <XCircle className="mr-1 inline size-3.5" />}{label}
+          </div>
+        ))}
+      </div>
+      {confirm ? <p className={`text-[11px] ${password === confirm ? "text-emerald-400" : "text-rose-400"}`}>{password === confirm ? "As senhas coincidem." : "As senhas ainda não coincidem."}</p> : null}
+    </div>
+  );
+}
+
 interface FieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
   error?: string;
@@ -287,7 +317,7 @@ const Field = Object.assign(
           ) : null}
           <Input
             id={id}
-            className={`h-11 bg-secondary/30 ${icon ? "pl-10" : ""} ${className ?? ""}`}
+            className={`h-11 bg-secondary/30 ${icon ? "pl-10" : ""} ${showPasswordToggle ? "pr-11" : ""} ${className ?? ""}`}
             {...rest}
           />
         </div>
