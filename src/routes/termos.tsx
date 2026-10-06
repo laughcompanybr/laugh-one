@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/termos" as never)({ component: TermsPage });
+export const Route = createFileRoute("/termos")({ component: TermsPage });
 
 function TermsPage() {
   return <LegalPage title="Termos de Uso" version="2026-10-01">
