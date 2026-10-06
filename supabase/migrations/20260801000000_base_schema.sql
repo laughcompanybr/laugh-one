@@ -619,12 +619,21 @@ END $$;
 
 CREATE OR REPLACE FUNCTION public.adjust_product_stock(_product_id uuid, _qty numeric, _reason text, _type text) RETURNS numeric
 LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
-DECLARE _new numeric; BEGIN
-  UPDATE public.products SET stock_quantity = COALESCE(stock_quantity,0) + _qty WHERE id = _product_id
-  RETURNING stock_quantity INTO _new;
-  INSERT INTO public.product_movements (product_id, quantity, type, reason)
-  VALUES (_product_id, _qty, _type, _reason);
-  RETURN COALESCE(_new, 0);
+DECLARE _new numeric;
+BEGIN
+  UPDATE public.products
+     SET stock_qty = COALESCE(stock_qty, 0) + _qty
+   WHERE id = _product_id
+  RETURNING stock_qty INTO _new;
+
+  IF _new IS NULL THEN
+    RAISE EXCEPTION 'Produto % não encontrado', _product_id;
+  END IF;
+
+  INSERT INTO public.product_movements (product_id, qty, qty_after, type, reason)
+  VALUES (_product_id, _qty, _new, _type, _reason);
+
+  RETURN _new;
 END $$;
 
 CREATE OR REPLACE FUNCTION public.apply_order_stock_out(_order_id uuid) RETURNS void
@@ -785,15 +794,15 @@ GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO authenticated;
 
 
 INSERT INTO public.modules (id, name, description, category, main_route, default_order, is_core, status) VALUES
-  ('dashboard','Dashboard','Visão geral','operação','/dashboard',1,true,'active'),
-  ('orders','Pedidos','Gestão de pedidos','operação','/pedidos',2,true,'active'),
-  ('products','Produtos','Catálogo e estoque','operação','/produtos',3,true,'active'),
-  ('clients','Clientes','Gestão de clientes','gestão','/clientes',4,true,'active'),
-  ('suppliers','Fornecedores','Gestão de fornecedores','gestão','/fornecedores',5,true,'active'),
-  ('employees','Funcionários','Equipe','gestão','/funcionarios',6,true,'active'),
-  ('finance','Financeiro','Contas e fluxo de caixa','gestão','/financeiro',7,true,'active'),
-  ('reports','Relatórios','Relatórios e mensais','gestão','/relatorios',8,true,'active'),
-  ('automation','Automações','Regras automáticas','gestão','/automacoes',9,false,'active'),
-  ('settings','Configurações','Sistema','sistema','/configuracoes',10,true,'active')
+  ('00000000-0000-4000-8000-000000000001','Dashboard','Visão geral','operação','/dashboard',1,true,'active'),
+  ('00000000-0000-4000-8000-000000000002','Pedidos','Gestão de pedidos','operação','/pedidos',2,true,'active'),
+  ('00000000-0000-4000-8000-000000000003','Produtos','Catálogo e estoque','operação','/produtos',3,true,'active'),
+  ('00000000-0000-4000-8000-000000000004','Clientes','Gestão de clientes','gestão','/clientes',4,true,'active'),
+  ('00000000-0000-4000-8000-000000000005','Fornecedores','Gestão de fornecedores','gestão','/fornecedores',5,true,'active'),
+  ('00000000-0000-4000-8000-000000000006','Funcionários','Equipe','gestão','/funcionarios',6,true,'active'),
+  ('00000000-0000-4000-8000-000000000007','Financeiro','Contas e fluxo de caixa','gestão','/financeiro',7,true,'active'),
+  ('00000000-0000-4000-8000-000000000008','Relatórios','Relatórios e mensais','gestão','/relatorios',8,true,'active'),
+  ('00000000-0000-4000-8000-000000000009','Automações','Regras automáticas','gestão','/automacoes',9,false,'active'),
+  ('00000000-0000-4000-8000-000000000010','Configurações','Sistema','sistema','/configuracoes',10,true,'active')
 ON CONFLICT (id) DO NOTHING;
 
