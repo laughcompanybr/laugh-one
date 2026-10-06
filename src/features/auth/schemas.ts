@@ -5,8 +5,7 @@ export const signInSchema = z.object({
   password: z.string().min(6, "Mínimo de 6 caracteres").max(72),
 });
 
-export const signUpSchema = z
-  .object({
+const isValidDocument = (value: string, type: "CPF" | "CNPJ") => {\n  const digits = value.replace(/\\D/g, "");\n  return type === "CPF" ? digits.length === 11 : digits.length === 14;\n};\n\nexport const signUpSchema = z\n  .object({
     fullName: z.string().trim().min(2, "Informe seu nome").max(120),
     companyName: z.string().trim().min(2, "Informe o nome da empresa").max(120),
     legalName: z.string().trim().min(2, "Informe a razão social").max(180),
@@ -21,7 +20,7 @@ export const signUpSchema = z
     acceptedTerms: z.literal(true, { errorMap: () => ({ message: "Você precisa aceitar os Termos de Uso" }) }),
     acceptedPrivacy: z.literal(true, { errorMap: () => ({ message: "Você precisa aceitar a Política de Privacidade" }) }),
   })
-  .refine((d) => d.password === d.confirm, {
+  .refine((d) => isValidDocument(d.documentNumber, d.documentType), {\n    path: ["documentNumber"],\n    message: "Documento inválido",\n  })\n  .refine((d) => d.password === d.confirm, {
     path: ["confirm"],
     message: "As senhas não coincidem",
   });
