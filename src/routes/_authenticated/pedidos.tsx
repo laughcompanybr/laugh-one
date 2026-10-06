@@ -156,7 +156,7 @@ function PedidosPage() {
         actions={
           <Dialog open={openCreate} onOpenChange={setOpenCreate}>
             <DialogTrigger asChild>
-              <Button className="hidden md:inline-flex"><Plus className="mr-2 size-4" /> Novo pedido</Button>
+              <Button className="hidden md:inline-flex" onClick={() => setOpenCreate(true)}><Plus className="mr-2 size-4" /> Novo pedido</Button>
             </DialogTrigger>
             <DialogContent className="max-h-[92vh] max-w-3xl overflow-y-auto">
               <DialogHeader>
