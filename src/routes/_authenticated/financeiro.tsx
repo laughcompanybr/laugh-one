@@ -83,6 +83,7 @@ import {
   deleteExpense,
   deleteFinancialTransaction,
   getCashFlow,
+  getFinanceOverview,
   getPayableHistory,
   listExpenses,
   listFinancialTransactions,
@@ -158,8 +159,16 @@ function FinancePage() {
   );
 
   const cashFlowFn = useServerFn(getCashFlow);
+  const overviewFn = useServerFn(getFinanceOverview);
   const receivablesFn = useServerFn(listReceivables);
   const expensesFn = useServerFn(listExpenses);
+
+  const overviewQ = useQuery({
+    queryKey: ["finance", "overview"],
+    queryFn: () => overviewFn(),
+    staleTime: 60_000,
+    refetchInterval: 120_000,
+  });
 
   const cashQ = useQuery({
     queryKey: ["finance", "cashflow", from, to, granularity],
@@ -258,7 +267,7 @@ function FinancePage() {
         }
       />
 
-      <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
         <StatCard label="Entradas" value={formatBRL(totals?.totalIn ?? 0)} icon={ArrowUpRight} accent="success" />
         <StatCard label="Saídas" value={formatBRL(totals?.totalOut ?? 0)} icon={ArrowDownRight} accent="warning" />
         <StatCard
@@ -268,6 +277,49 @@ function FinancePage() {
           accent={(totals?.net ?? 0) >= 0 ? "success" : "warning"}
         />
         <StatCard label="Despesas" value={formatBRL(totals?.totalExpenses ?? 0)} icon={Receipt} accent="gold" />
+        <StatCard
+          label="A receber"
+          value={formatBRL((overviewQ.data as any)?.receivable ?? 0)}
+          icon={Wallet}
+          accent="gold"
+        />
+        <StatCard
+          label="A pagar"
+          value={formatBRL((overviewQ.data as any)?.payable ?? 0)}
+          icon={ArrowDownRight}
+          accent={(overviewQ.data as any)?.payableOverdue > 0 ? "warning" : "gold"}
+        />
+      </div>
+      <div className="grid gap-3 md:grid-cols-3">
+        <Card className="border-border/70">
+          <CardContent className="flex items-center justify-between p-4">
+            <div>
+              <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Saldo em aberto</p>
+              <p className={cn("mt-1 text-xl font-semibold", ((overviewQ.data as any)?.netOpen ?? 0) >= 0 ? "text-emerald-500" : "text-destructive")}>
+                {formatBRL((overviewQ.data as any)?.netOpen ?? 0)}
+              </p>
+            </div>
+            <Wallet className="size-5 text-muted-foreground" />
+          </CardContent>
+        </Card>
+        <Card className="border-border/70">
+          <CardContent className="flex items-center justify-between p-4">
+            <div>
+              <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">A receber atrasado</p>
+              <p className="mt-1 text-xl font-semibold text-amber-500">{formatBRL((overviewQ.data as any)?.receivableOverdue ?? 0)}</p>
+            </div>
+            <CalendarClock className="size-5 text-amber-500" />
+          </CardContent>
+        </Card>
+        <Card className="border-border/70">
+          <CardContent className="flex items-center justify-between p-4">
+            <div>
+              <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">A pagar atrasado</p>
+              <p className="mt-1 text-xl font-semibold text-destructive">{formatBRL((overviewQ.data as any)?.payableOverdue ?? 0)}</p>
+            </div>
+            <CalendarClock className="size-5 text-destructive" />
+          </CardContent>
+        </Card>
       </div>
 
       <Tabs value={tab} onValueChange={(v) => setTab(v as any)} className="space-y-4">
