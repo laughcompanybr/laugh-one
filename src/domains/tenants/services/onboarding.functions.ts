@@ -169,7 +169,7 @@ async function setupBusinessContext(supabase: any, companyId: string, businessTy
     p_entity_type: 'modules',
     p_entity_id: companyId,
     p_old_data: null,
-    p_new_data: { modules: modulesToEnable }
+    p_new_data: { modules: moduleIds }
   });
 
 }
