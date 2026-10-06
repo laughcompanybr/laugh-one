@@ -53,7 +53,7 @@ export const getClient = createServerFn({ method: "POST" })
         .limit(50),
       (supabase as any)
         .from("orders")
-        .select("id, order_number, status, brand, model, sale_price, quantity, created_at")
+        .select("id, order_number, status, brand, model, sale_price, amount_received, quantity, created_at, expected_delivery")
         .eq("client_id", data.id)
         .is("deleted_at", null)
         .order("created_at", { ascending: false })
