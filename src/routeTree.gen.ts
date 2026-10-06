@@ -611,7 +611,8 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedProdutosRoute: typeof AuthenticatedProdutosRoute
   AuthenticatedRelatoriosRoute: typeof AuthenticatedRelatoriosRoute
   AuthenticatedMensaisMonthRoute: typeof AuthenticatedMensaisMonthRoute
-  AuthenticatedMensaisIndexRoute: typeof AuthenticatedMensaisIndexRoute  AuthenticatedAssinaturaRoute: typeof AuthenticatedAssinaturaRoute
+  AuthenticatedMensaisIndexRoute: typeof AuthenticatedMensaisIndexRoute
+  AuthenticatedAssinaturaRoute: typeof AuthenticatedAssinaturaRoute
 
 }
 
