@@ -76,7 +76,7 @@ function MfaVerifyPage() {
     navigate({ to: "/dashboard", replace: true });
   };
 
-  const useBackup = async () => {
+  const handleBackup = async () => {
     if (backupCode.trim().length < 6) return;
     setBusy(true);
     try {
@@ -183,10 +183,10 @@ function MfaVerifyPage() {
                 onChange={(e) => setBackupCode(e.target.value)}
                 placeholder="XXXX-XXXX"
                 className="h-12 text-center font-mono tracking-widest uppercase"
-                onKeyDown={(e) => e.key === "Enter" && useBackup()}
+                onKeyDown={(e) => e.key === "Enter" && handleBackup()}
               />
             </div>
-            <Button className="h-11 w-full" onClick={useBackup} disabled={busy}>
+            <Button className="h-11 w-full" onClick={handleBackup} disabled={busy}>
               {busy ? <Loader2 className="mr-1 size-4 animate-spin" /> : null}
               Restaurar acesso
             </Button>
