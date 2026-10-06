@@ -87,7 +87,7 @@ export type ResetInput = z.infer<typeof resetSchema>;
 export const changePasswordSchema = z
   .object({
     currentPassword: z.string().min(1, "Informe a senha atual").max(72),
-    password: z.string().min(8, "Use pelo menos 8 caracteres").max(72),
+    password: z.string().min(12, "Use pelo menos 12 caracteres").max(72).regex(/[a-z]/, "Inclua pelo menos uma letra minúscula").regex(/[A-Z]/, "Inclua pelo menos uma letra maiúscula").regex(/[0-9]/, "Inclua pelo menos um número").regex(/[^A-Za-z0-9\s]/, "Inclua pelo menos um caractere especial").regex(/^\S+$/, "A senha não pode conter espaços"),
     confirm: z.string(),
   })
   .refine((d) => d.password === d.confirm, { path: ["confirm"], message: "As senhas não coincidem" })
