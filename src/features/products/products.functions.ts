@@ -206,3 +206,62 @@ export const countLowStock = createServerFn({ method: "GET" })
         .map((r) => ({ id: r.id, name: r.name, stock_qty: r.stock_qty, min_stock: r.min_stock })),
     };
   });
+
+
+export const getInventoryOverview = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const [productsRes, movementsRes] = await Promise.all([
+      context.supabase
+        .from("products")
+        .select("id, name, category, cost_price, sale_price, stock_qty, min_stock")
+        .is("deleted_at", null)
+        .eq("status", "active"),
+      context.supabase
+        .from("product_movements")
+        .select("product_id, type, created_at")
+        .gte("created_at", new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString())
+        .limit(5000),
+    ]);
+    if (productsRes.error) throw productsRes.error;
+    if (movementsRes.error) throw movementsRes.error;
+
+    const products = productsRes.data ?? [];
+    const movementByProduct = new Map<string, { in: number; out: number; lastOut: string | null }>();
+    for (const m of movementsRes.data ?? []) {
+      const row = movementByProduct.get(m.product_id) ?? { in: 0, out: 0, lastOut: null };
+      if (m.type === "in") row.in += 1;
+      if (m.type === "out") {
+        row.out += 1;
+        if (!row.lastOut || m.created_at > row.lastOut) row.lastOut = m.created_at;
+      }
+      movementByProduct.set(m.product_id, row);
+    }
+
+    const lowStock = products.filter((p) => Number(p.stock_qty ?? 0) <= Number(p.min_stock ?? 0));
+    const outOfStock = products.filter((p) => Number(p.stock_qty ?? 0) === 0);
+    const inventoryCost = products.reduce((sum, p) => sum + Number(p.stock_qty ?? 0) * Number(p.cost_price ?? 0), 0);
+    const inventorySale = products.reduce((sum, p) => sum + Number(p.stock_qty ?? 0) * Number(p.sale_price ?? 0), 0);
+    const potentialMargin = inventorySale - inventoryCost;
+    const categories = new Set(products.map((p) => p.category).filter(Boolean)).size;
+    const stale = products.filter((p) => {
+      const m = movementByProduct.get(p.id);
+      return Number(p.stock_qty ?? 0) > 0 && !m?.out;
+    }).sort((a, b) => Number(b.stock_qty ?? 0) - Number(a.stock_qty ?? 0)).slice(0, 8);
+
+    return {
+      products: products.length,
+      categories,
+      lowStock: lowStock.length,
+      outOfStock: outOfStock.length,
+      inventoryCost,
+      inventorySale,
+      potentialMargin,
+      staleProducts: stale.map((p) => ({
+        id: p.id,
+        name: p.name,
+        stock_qty: p.stock_qty,
+        cost_value: Number(p.stock_qty ?? 0) * Number(p.cost_price ?? 0),
+      })),
+    };
+  });
