@@ -82,7 +82,15 @@ function SignInForm({ onForgot, onSignUp }: { onForgot: () => void; onSignUp: ()
       toast.error("Não foi possível entrar", { description: error.message });
       return;
     }
-    await bootstrapFn();
+    try {
+      await bootstrapFn();
+    } catch (bootstrapError) {
+      toast.error("Não foi possível preparar seu espaço de trabalho", {
+        description: bootstrapError instanceof Error ? bootstrapError.message : "Tente novamente.",
+      });
+      await supabase.auth.signOut();
+      return;
+    }
     // If the account has an enrolled TOTP factor, prompt for the OTP before
     // landing on the dashboard. AAL2 upgrade happens on /mfa-verify.
     const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
