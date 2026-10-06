@@ -74,6 +74,15 @@ export function ClientDetailSheet({ clientId, open, onOpenChange }: Props) {
             <Loader2 className="size-6 animate-spin text-gold" />
           </div>
         ) : client ? (
+          <>
+            {overview ? (
+              <div className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-4">
+                <ClientStat label="Pedidos" value={String(overview.totalOrders)} />
+                <ClientStat label="Em andamento" value={String(overview.activeOrders)} />
+                <ClientStat label="Total comprado" value={formatBRL(overview.totalSpent)} />
+                <ClientStat label="Em aberto" value={formatBRL(overview.balance)} tone={overview.balance > 0 ? "warning" : "positive"} />
+              </div>
+            ) : null}
           <Tabs defaultValue="info" className="mt-6">
             <TabsList className="w-full">
               <TabsTrigger value="info" className="flex-1">Dados</TabsTrigger>
@@ -200,6 +209,7 @@ export function ClientDetailSheet({ clientId, open, onOpenChange }: Props) {
               )}
             </TabsContent>
           </Tabs>
+          </>
         ) : null}
       </SheetContent>
     </Sheet>
