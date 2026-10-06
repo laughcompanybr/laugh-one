@@ -4,6 +4,7 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "./AppSidebar";
 import { AppTopbar } from "./AppTopbar";
 import { supabase } from "@/integrations/supabase/client";
+import { ProductGuide } from "@/components/help/ProductGuide";
 
 export function AppShell({ children }: { children: ReactNode }) {
   const [email, setEmail] = useState("");
@@ -24,6 +25,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         <AppSidebar />
         <div className="flex min-w-0 flex-1 flex-col">
           <AppTopbar userEmail={email} />
+          <ProductGuide />
           <main className="flex-1 overflow-x-hidden">
             <div className="mx-auto w-full max-w-[1440px] px-4 py-5 sm:px-6 lg:py-8">{children}</div>
           </main>
