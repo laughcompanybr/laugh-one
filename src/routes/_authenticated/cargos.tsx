@@ -159,7 +159,7 @@ function RolesPage() {
         <Card className="lg:col-span-4">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-lg">Cargos</CardTitle>
-            <Button size="icon" variant="ghost" className="size-8">
+            <Button size="icon" variant="ghost" className="size-8" onClick={() => setCreateOpen(true)} aria-label="Criar cargo">
               <Plus className="size-4" />
             </Button>
           </CardHeader>
@@ -196,11 +196,11 @@ function RolesPage() {
                 <CardDescription>Configure o que este cargo pode acessar e realizar no sistema.</CardDescription>
               </div>
               <div className="flex gap-2">
-                <Button variant="outline" size="sm" className="gap-2">
+                <Button variant="outline" size="sm" className="gap-2" onClick={() => void createRole(true)} disabled={roleActionPending || !currentRole}>
                   <Copy className="size-4" /> Duplicar
                 </Button>
                 {!currentRole?.is_system && (
-                  <Button variant="destructive" size="sm" className="gap-2">
+                  <Button variant="destructive" size="sm" className="gap-2" onClick={() => void deleteRole()} disabled={roleActionPending}>
                     <Trash2 className="size-4" /> Excluir
                   </Button>
                 )}
