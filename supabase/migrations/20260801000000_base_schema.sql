@@ -460,7 +460,6 @@ CREATE TABLE IF NOT EXISTS public.subscription_payments (
   payment_date timestamptz,
   receipt_url text,
   status text NOT NULL,
-  subscription_id uuid
 );
 CREATE TABLE IF NOT EXISTS public.suppliers (
   avg_delivery_days numeric,
