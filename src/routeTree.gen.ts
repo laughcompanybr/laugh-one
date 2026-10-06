@@ -15,6 +15,9 @@ import { Route as AccessDeniedRouteImport } from './routes/access-denied'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as MfaVerifyRouteImport } from './routes/mfa-verify'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as TermosRouteImport } from './routes/termos'
+import { Route as PrivacidadeRouteImport } from './routes/privacidade'
+import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAuditoriaRouteImport } from './routes/_authenticated/auditoria'
 import { Route as AuthenticatedAutomacoesRouteImport } from './routes/_authenticated/automacoes'
@@ -63,6 +66,21 @@ const MfaVerifyRoute = MfaVerifyRouteImport.update({
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermosRoute = TermosRouteImport.update({
+  id: '/termos',
+  path: '/termos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacidadeRoute = PrivacidadeRouteImport.update({
+  id: '/privacidade',
+  path: '/privacidade',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CookiesRoute = CookiesRouteImport.update({
+  id: '/cookies',
+  path: '/cookies',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
@@ -180,6 +198,9 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/mfa-verify': typeof MfaVerifyRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/termos': typeof TermosRoute
+  '/privacidade': typeof PrivacidadeRoute
+  '/cookies': typeof CookiesRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/auditoria': typeof AuthenticatedAuditoriaRoute
   '/automacoes': typeof AuthenticatedAutomacoesRoute
@@ -207,6 +228,9 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/mfa-verify': typeof MfaVerifyRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/termos': typeof TermosRoute
+  '/privacidade': typeof PrivacidadeRoute
+  '/cookies': typeof CookiesRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/auditoria': typeof AuthenticatedAuditoriaRoute
   '/automacoes': typeof AuthenticatedAutomacoesRoute
@@ -236,6 +260,9 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/mfa-verify': typeof MfaVerifyRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/termos': typeof TermosRoute
+  '/privacidade': typeof PrivacidadeRoute
+  '/cookies': typeof CookiesRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/auditoria': typeof AuthenticatedAuditoriaRoute
   '/_authenticated/automacoes': typeof AuthenticatedAutomacoesRoute
@@ -349,6 +376,9 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   MfaVerifyRoute: typeof MfaVerifyRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  TermosRoute: typeof TermosRoute
+  PrivacidadeRoute: typeof PrivacidadeRoute
+  CookiesRoute: typeof CookiesRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -603,6 +633,9 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   MfaVerifyRoute: MfaVerifyRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  TermosRoute: TermosRoute,
+  PrivacidadeRoute: PrivacidadeRoute,
+  CookiesRoute: CookiesRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
