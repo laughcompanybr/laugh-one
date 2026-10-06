@@ -66,6 +66,7 @@ export function PremiumDashboard() {
         <Metric label="Entradas no mês" value={data ? formatBRL(data.month.inflow) : "—"} icon={ArrowUpRight} tone="positive" />
         <Metric label="Saídas no mês" value={data ? formatBRL(data.month.outflow) : "—"} icon={ArrowDownRight} tone="negative" />
         <Metric label="Estoque em atenção" value={String(data?.counts.lowStock ?? "—")} icon={Boxes} tone="warning" />
+        <Metric label="A receber" value={data ? formatBRL(data.receivables) : "—"} icon={CircleDollarSign} tone="warning" />
       </div>
 
       <div className="grid gap-4 lg:grid-cols-7">
