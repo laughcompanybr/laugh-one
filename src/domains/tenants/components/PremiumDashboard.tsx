@@ -123,7 +123,7 @@ export function PremiumDashboard({ preview = false }: { preview?: boolean }) {
           <CardContent>
             {modules.length ? (
               <div className="flex flex-wrap gap-2">
-                {modules.map((module) => (
+                {modules.map((module: string) => (
                   <span key={module} className="rounded-full border border-border bg-background/40 px-3 py-1.5 text-xs capitalize text-muted-foreground">
                     {module.replaceAll("_", " ")}
                   </span>
