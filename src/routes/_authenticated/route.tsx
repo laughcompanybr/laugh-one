@@ -39,7 +39,7 @@ function AuthPending() {
 
 function LayoutComponent() {
   const queryClient = useQueryClient();
-  const { data: profile, isLoading: isProfileLoading } = useQuery({
+  const { data: profile, isLoading: isProfileLoading, error: profileError } = useQuery({
     queryKey: ["user-profile"],
     queryFn: async () => {
       const { data: sessionData } = await supabase.auth.getSession();
