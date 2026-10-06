@@ -19,7 +19,7 @@ async function fakeAuthenticated(page: import("@playwright/test").Page) {
     const key = Object.keys(window.localStorage).find((k) => k.startsWith("sb-"));
     if (!key) {
       window.localStorage.setItem(
-        "sb-e2e-auth-token",
+        "sb-khxlvybhhzcvbtktwidt-auth-token",
         JSON.stringify({
           currentSession: {
             access_token: "e2e-token",
