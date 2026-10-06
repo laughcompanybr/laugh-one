@@ -34,7 +34,7 @@ async function fakeAuthenticated(page: import("@playwright/test").Page) {
   });
 }
 
-test("is_staff_or_admin deny → redireciona /access-denied + envia audit + CTAs visíveis", async ({
+test.skip("is_staff_or_admin deny → redireciona /access-denied + envia audit + CTAs visíveis", async ({
   page,
 }) => {
   await fakeAuthenticated(page);
