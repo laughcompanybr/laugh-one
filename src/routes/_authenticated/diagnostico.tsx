@@ -1,10 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { getRLSDiagnostics } from "@/domains/auth/services/diagnostics.functions";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ShieldCheck, ShieldAlert, Activity, Database, AlertCircle, CheckCircle2 } from "lucide-react";
+import { ShieldCheck, ShieldAlert, Activity, Database, AlertCircle, CheckCircle2, RefreshCcw } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 export const Route = createFileRoute("/_authenticated/diagnostico")({
@@ -24,6 +25,11 @@ function DiagnosticsPage() {
       <PageHeader
         title="Diagnóstico de RLS & Segurança"
         description="Monitoramento em tempo real de isolamento de tenants e recursão de políticas."
+        actions={
+          <Button variant="outline" onClick={() => void refetch()} disabled={isLoading}>
+            <RefreshCcw className="mr-2 size-4" /> Atualizar diagnóstico
+          </Button>
+        }
       />
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
