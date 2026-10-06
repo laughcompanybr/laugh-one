@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { Building2, Save, ArrowLeft, Globe, Phone, Mail, MapPin, Users, Briefcase, ShieldCheck, FileText, Cookie, ExternalLink } from "lucide-react";
 import { Link } from "@tanstack/react-router";
+import { CircleHelp } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/configuracoes")({
   component: SettingsPage,
@@ -70,6 +71,23 @@ function SettingsPage() {
         </div>
         <Building2 className="size-12 text-gold/20" />
       </div>
+
+      <section className="rounded-xl border border-gold/20 bg-gold/5 p-6 space-y-4">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h2 className="text-lg font-semibold">Precisa de ajuda para usar o sistema?</h2>
+            <p className="text-sm text-muted-foreground">Revise o tutorial passo a passo ou conheça novamente as principais funcionalidades.</p>
+          </div>
+          <Button
+            type="button"
+            variant="outline"
+            className="min-h-11 gap-2 border-gold/30 hover:border-gold/60"
+            onClick={() => window.dispatchEvent(new Event("laugh-one:restart-guide"))}
+          >
+            <CircleHelp className="size-4" /> Repetir tutorial
+          </Button>
+        </div>
+      </section>
 
       <section className="rounded-xl border border-gold/10 bg-card/50 backdrop-blur-sm p-6 space-y-6">
         <div className="flex items-center gap-2 border-b border-gold/10 pb-4">
