@@ -5,7 +5,6 @@ import { AppShell } from "@/components/layout/AppShell";
 import { LaughLogo } from "@/components/brand/LaughLogo";
 import { Button } from "@/components/ui/button";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { getProfile } from "@/domains/auth/services/AuthService";
 import { getOnboardingStatus } from "@/domains/tenants/services/onboarding.functions";
 import { OnboardingWizard } from "@/domains/tenants/components/OnboardingWizard";
 
@@ -42,7 +41,19 @@ function LayoutComponent() {
   const queryClient = useQueryClient();
   const { data: profile, isLoading: isProfileLoading } = useQuery({
     queryKey: ["user-profile"],
-    queryFn: () => getProfile(),
+    queryFn: async () => {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const userId = sessionData.session?.user?.id;
+      if (!userId) return null;
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*, companies!profiles_company_id_fkey(*), company_roles(*)")
+        .eq("id", userId)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+    retry: 2,
   });
 
   const { data: onboarding, isLoading: isOnboardingLoading } = useQuery({
