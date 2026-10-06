@@ -117,6 +117,22 @@ export function PremiumDashboard() {
           </CardContent>
         </Card>
       </div>
+
+      {(data?.lowStockProducts?.length ?? 0) > 0 ? (
+        <Card className="glass-panel">
+          <CardHeader><CardTitle className="font-display text-xl">Atenção no estoque</CardTitle></CardHeader>
+          <CardContent>
+            <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-5">
+              {data!.lowStockProducts.map((product) => (
+                <div key={product.id} className="rounded-xl border border-border bg-background/30 p-3">
+                  <p className="truncate text-sm font-medium">{product.name}</p>
+                  <p className="mt-1 text-xs text-amber-400">{product.stock} em estoque · mínimo {product.minimum}</p>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      ) : null}
     </div>
   );
 }
