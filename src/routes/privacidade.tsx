@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/privacidade" as never)({ component: PrivacyPage });
+export const Route = createFileRoute("/privacidade")({ component: PrivacyPage });
 
 function PrivacyPage() {
   return <main className="min-h-screen bg-background px-4 py-12 text-foreground"><article className="mx-auto max-w-3xl space-y-6"><Link to="/auth" className="text-sm text-gold hover:underline">← Voltar</Link><header><h1 className="text-4xl font-bold">Política de Privacidade</h1><p className="text-sm text-muted-foreground">Versão 2026-10-01</p></header><div className="space-y-4 text-sm leading-7 [&_h2]:pt-4 [&_h2]:text-lg [&_h2]:font-semibold">
