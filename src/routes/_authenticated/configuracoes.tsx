@@ -80,15 +80,15 @@ function SettingsPage() {
           Consulte os documentos jurídicos, revise as informações da empresa e utilize os canais abaixo para exercer direitos relacionados a dados pessoais.
         </p>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Link to="/termos" className="rounded-lg border border-border p-4 hover:border-gold/40 transition-colors">
+          <Link to={"/termos" as never} className="rounded-lg border border-border p-4 hover:border-gold/40 transition-colors">
             <FileText className="size-5 text-gold mb-2" /><span className="font-medium">Termos de Uso</span>
             <span className="block text-xs text-muted-foreground mt-1">Versão vigente</span>
           </Link>
-          <Link to="/privacidade" className="rounded-lg border border-border p-4 hover:border-gold/40 transition-colors">
+          <Link to={"/privacidade" as never} className="rounded-lg border border-border p-4 hover:border-gold/40 transition-colors">
             <ShieldCheck className="size-5 text-gold mb-2" /><span className="font-medium">Privacidade / LGPD</span>
             <span className="block text-xs text-muted-foreground mt-1">Direitos e tratamento</span>
           </Link>
-          <Link to="/cookies" className="rounded-lg border border-border p-4 hover:border-gold/40 transition-colors">
+          <Link to={"/cookies" as never} className="rounded-lg border border-border p-4 hover:border-gold/40 transition-colors">
             <Cookie className="size-5 text-gold mb-2" /><span className="font-medium">Política de Cookies</span>
             <span className="block text-xs text-muted-foreground mt-1">Preferências de cookies</span>
           </Link>
