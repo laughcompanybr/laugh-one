@@ -43,8 +43,6 @@ import {
   ArrowDownCircle,
   ArrowUpCircle,
   Package,
-  Copy,
-  CheckCircle2,
   AlertTriangle,
   ArrowRight,
 } from "lucide-react";
