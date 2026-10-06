@@ -147,7 +147,12 @@ function LayoutComponent() {
   // 2. Check onboarding status for the company
   if (profile.company_id && onboarding?.status === 'pending') {
     return (
-      <OnboardingWizard onComplete={() => queryClient.invalidateQueries({ queryKey: ["onboarding-status"] })} />
+      <OnboardingWizard
+        onComplete={async () => {
+          await queryClient.invalidateQueries({ queryKey: ["onboarding-status"] });
+          await queryClient.refetchQueries({ queryKey: ["onboarding-status"] });
+        }}
+      />
     );
   }
 
