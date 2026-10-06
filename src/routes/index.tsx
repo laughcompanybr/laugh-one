@@ -286,9 +286,9 @@ function LandingPage() {
                   ))}
                 </div>
 
-                <Link to="/auth" className="block">
+                <Link to="/auth" search={{ period: billingCycle }} className="block">
                   <Button className="w-full h-14 font-bold bg-gold hover:bg-gold/90 text-black text-lg">
-                    Assinar o {PLAN_NAME}
+                    Começar com período {PERIOD_LABELS[billingCycle].toLowerCase()}
                   </Button>
                 </Link>
                 <p className="text-center text-xs text-white/30">
