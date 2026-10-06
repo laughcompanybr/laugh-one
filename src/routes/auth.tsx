@@ -21,11 +21,13 @@ import {
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
+  validateSearch: z.object({ period: z.enum(["monthly", "quarterly", "semiannual", "yearly"]).optional() }),
   component: AuthPage,
 });
 
 function AuthPage() {
   const navigate = useNavigate();
+  const { period } = Route.useSearch();
   const [mode, setMode] = useState<"signin" | "signup" | "forgot">("signin");
 
   useEffect(() => {
@@ -58,7 +60,7 @@ function AuthPage() {
         {mode === "forgot" ? (
           <ForgotForm onDone={() => setMode("signin")} />
         ) : mode === "signup" ? (
-          <SignUpForm onDone={() => setMode("signin")} />
+          <SignUpForm onDone={() => setMode("signin")} selectedPeriod={period} />
         ) : (
           <SignInForm onForgot={() => setMode("forgot")} onSignUp={() => setMode("signup")} />
         )}
@@ -142,9 +144,10 @@ function SignInForm({ onForgot, onSignUp }: { onForgot: () => void; onSignUp: ()
   );
 }
 
-function SignUpForm({ onDone }: { onDone: () => void }) {
+function SignUpForm({ onDone, selectedPeriod }: { onDone: () => void; selectedPeriod?: "monthly" | "quarterly" | "semiannual" | "yearly" }) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const periodLabels = { monthly: "Mensal", quarterly: "Trimestral", semiannual: "Semestral", yearly: "Anual" } as const;
   const form = useForm<SignUpInput>({
     resolver: zodResolver(signUpSchema),
     defaultValues: { fullName: "", companyName: "", legalName: "", tradeName: "", documentType: "CNPJ", documentNumber: "", cpf: "", phone: "", email: "", password: "", confirm: "", acceptedTerms: false, acceptedPrivacy: false },
@@ -154,7 +157,7 @@ function SignUpForm({ onDone }: { onDone: () => void }) {
     const { data, error } = await supabase.auth.signUp({
       email: values.email,
       password: values.password,
-      options: { data: { full_name: values.fullName, company_name: values.companyName, legal_name: values.legalName, trade_name: values.tradeName, document_type: values.documentType, document_number: values.documentNumber, cpf: values.cpf, phone: values.phone, terms_version: "2026-10-01", privacy_version: "2026-10-01" } },
+      options: { data: { full_name: values.fullName, company_name: values.companyName, legal_name: values.legalName, trade_name: values.tradeName, document_type: values.documentType, document_number: values.documentNumber, cpf: values.cpf, phone: values.phone, terms_version: "2026-10-01", privacy_version: "2026-10-01", selected_billing_period: selectedPeriod ?? "monthly" } },
     });
     if (error) {
       toast.error("Não foi possível criar a conta", { description: error.message });
@@ -175,6 +178,7 @@ function SignUpForm({ onDone }: { onDone: () => void }) {
         {...form.register("fullName")} error={form.formState.errors.fullName?.message} />
       <Field icon={<Building2 className="size-4" />} label="Nome da empresa" id="companyName" autoComplete="organization"
         {...form.register("companyName")} error={form.formState.errors.companyName?.message} />
+      {selectedPeriod ? <div className="rounded-lg border border-gold/20 bg-gold/5 px-3 py-2 text-xs text-gold">Período escolhido: <strong>{periodLabels[selectedPeriod]}</strong>. Sua conta começa com 14 dias de teste.</div> : null}
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-1.5">
           <Label htmlFor="documentType" className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">Tipo de documento</Label>
