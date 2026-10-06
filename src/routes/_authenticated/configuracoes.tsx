@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { Building2, Save, ArrowLeft, Globe, Phone, Mail, MapPin, Users, Briefcase, Settings as SettingsIcon } from "lucide-react";
+import { Building2, Save, ArrowLeft, Globe, Phone, Mail, MapPin, Users, Briefcase, ShieldCheck, FileText, Cookie, ExternalLink } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authenticated/configuracoes")({
@@ -70,6 +70,37 @@ function SettingsPage() {
         </div>
         <Building2 className="size-12 text-gold/20" />
       </div>
+
+      <section className="rounded-xl border border-gold/10 bg-card/50 backdrop-blur-sm p-6 space-y-6">
+        <div className="flex items-center gap-2 border-b border-gold/10 pb-4">
+          <ShieldCheck className="size-5 text-gold" />
+          <h2 className="text-xl font-semibold">Privacidade e conformidade</h2>
+        </div>
+        <p className="text-sm text-muted-foreground">
+          Consulte os documentos jurídicos, revise as informações da empresa e utilize os canais abaixo para exercer direitos relacionados a dados pessoais.
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Link to="/termos" className="rounded-lg border border-border p-4 hover:border-gold/40 transition-colors">
+            <FileText className="size-5 text-gold mb-2" /><span className="font-medium">Termos de Uso</span>
+            <span className="block text-xs text-muted-foreground mt-1">Versão vigente</span>
+          </Link>
+          <Link to="/privacidade" className="rounded-lg border border-border p-4 hover:border-gold/40 transition-colors">
+            <ShieldCheck className="size-5 text-gold mb-2" /><span className="font-medium">Privacidade / LGPD</span>
+            <span className="block text-xs text-muted-foreground mt-1">Direitos e tratamento</span>
+          </Link>
+          <Link to="/cookies" className="rounded-lg border border-border p-4 hover:border-gold/40 transition-colors">
+            <Cookie className="size-5 text-gold mb-2" /><span className="font-medium">Política de Cookies</span>
+            <span className="block text-xs text-muted-foreground mt-1">Preferências de cookies</span>
+          </Link>
+        </div>
+        <div className="rounded-lg bg-muted/40 p-4 text-sm">
+          <p className="font-medium mb-1">Solicitação de direitos do titular</p>
+          <p className="text-muted-foreground mb-3">Para acesso, correção, portabilidade, eliminação quando aplicável ou outras solicitações, entre em contato pelo canal de privacidade definido nos documentos.</p>
+          <Button type="button" variant="outline" onClick={() => window.location.href="/privacidade"} className="gap-2">
+            Ver canal de privacidade <ExternalLink className="size-4" />
+          </Button>
+        </div>
+      </section>
 
       <form onSubmit={handleSubmit} className="grid gap-8">
         {/* Informações Gerais */}
