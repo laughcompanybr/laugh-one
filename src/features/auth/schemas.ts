@@ -5,9 +5,20 @@ export const signInSchema = z.object({
   password: z.string().min(6, "Mínimo de 6 caracteres").max(72),
 });
 
-// Public sign-up is disabled — users are provisioned exclusively by an admin.
-// The role architecture (admin/manager/seller) is ready in the database for
-// future expansion, but no self-service registration flow exists.
+export const signUpSchema = z
+  .object({
+    fullName: z.string().trim().min(2, "Informe seu nome").max(120),
+    companyName: z.string().trim().min(2, "Informe o nome da empresa").max(120),
+    email: z.string().trim().email("E-mail inválido").max(255),
+    password: z.string().min(8, "Use pelo menos 8 caracteres").max(72),
+    confirm: z.string(),
+  })
+  .refine((d) => d.password === d.confirm, {
+    path: ["confirm"],
+    message: "As senhas não coincidem",
+  });
+
+export type SignUpInput = z.infer<typeof signUpSchema>;
 
 export const forgotSchema = z.object({
   email: z.string().trim().email("E-mail inválido").max(255),
