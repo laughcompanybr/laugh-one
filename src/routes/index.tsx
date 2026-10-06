@@ -429,10 +429,10 @@ function LandingPage() {
           <div className="space-y-4">
             <h4 className="text-white font-bold">Legal</h4>
             <ul className="space-y-2">
-              <li><Link to="/privacidade" className="hover:text-white transition-colors">Privacidade</Link></li>
-              <li><Link to="/termos" className="hover:text-white transition-colors">Termos de uso</Link></li>
-              <li><Link to="/privacidade#lgpd" className="hover:text-white transition-colors">LGPD</Link></li>
-              <li><Link to="/cookies" className="hover:text-white transition-colors">Cookies</Link></li>
+              <li><Link to={"/privacidade" as never} className="hover:text-white transition-colors">Privacidade</Link></li>
+              <li><Link to={"/termos" as never} className="hover:text-white transition-colors">Termos de uso</Link></li>
+              <li><Link to={"/privacidade#lgpd" as never} className="hover:text-white transition-colors">LGPD</Link></li>
+              <li><Link to={"/cookies" as never} className="hover:text-white transition-colors">Cookies</Link></li>
             </ul>
           </div>
         </div>
