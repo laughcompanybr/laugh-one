@@ -68,8 +68,8 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
         const { data: profile } = await supabase.from("profiles").select("company_id, full_name, phone").eq("id", userId).maybeSingle();
         if (!profile?.company_id) return;
         const [{ data: company }, { data: existing }] = await Promise.all([
-          supabase.from("companies").select("name, business_type").eq("id", profile.company_id).maybeSingle(),
-          supabase.from("company_onboarding_data").select("business_type, responsible_name, phone, commercial_email, city, state, employee_count, main_objective").eq("company_id", profile.company_id).maybeSingle(),
+          supabase.from("companies").select("name, business_type").eq("id", companyId).maybeSingle(),
+          supabase.from("company_onboarding_data").select("business_type, responsible_name, phone, commercial_email, city, state, employee_count, main_objective").eq("company_id", companyId).maybeSingle(),
         ]);
         if (!active) return;
         form.reset({
@@ -104,6 +104,7 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
         .maybeSingle();
       if (profileError) throw profileError;
       if (!profile?.company_id) throw new Error("Usuário não está vinculado a uma empresa.");
+      const companyId = profile.company_id;
 
       const { error: companyError } = await supabase
         .from("companies")
@@ -114,13 +115,13 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
           theme: "dark",
           enabled_modules: ["dashboard", "clients", "orders", "finance", "reports"],
         } as any)
-        .eq("id", profile.company_id);
+        .eq("id", companyId);
       if (companyError) throw companyError;
 
       const { error: onboardingError } = await supabase
         .from("company_onboarding_data")
         .upsert({
-          company_id: profile.company_id,
+          company_id: companyId,
           business_type: data.businessType,
           responsible_name: data.responsibleName,
           phone: data.phone,
@@ -169,7 +170,7 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
       const { error: moduleError } = await supabase
         .from("company_modules")
         .upsert(moduleIds.map((moduleId) => ({
-          company_id: profile.company_id, module_id: moduleId, is_enabled: true, activated_at: new Date().toISOString(),
+          company_id: companyId, module_id: moduleId, is_enabled: true, activated_at: new Date().toISOString(),
         })), { onConflict: "company_id,module_id" });
       if (moduleError) throw moduleError;
 
