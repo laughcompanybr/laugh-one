@@ -389,7 +389,6 @@ export interface RootRouteChildren {
   MfaVerifyRoute: typeof MfaVerifyRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   TermosRoute: typeof TermosRoute
-  AuthenticatedAssinaturaRoute: typeof AuthenticatedAssinaturaRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
   CookiesRoute: typeof CookiesRoute
 }
@@ -612,11 +611,13 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedProdutosRoute: typeof AuthenticatedProdutosRoute
   AuthenticatedRelatoriosRoute: typeof AuthenticatedRelatoriosRoute
   AuthenticatedMensaisMonthRoute: typeof AuthenticatedMensaisMonthRoute
-  AuthenticatedMensaisIndexRoute: typeof AuthenticatedMensaisIndexRoute
+  AuthenticatedMensaisIndexRoute: typeof AuthenticatedMensaisIndexRoute  AuthenticatedAssinaturaRoute: typeof AuthenticatedAssinaturaRoute
+
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
+  AuthenticatedAssinaturaRoute: AuthenticatedAssinaturaRoute,
   AuthenticatedAuditoriaRoute: AuthenticatedAuditoriaRoute,
   AuthenticatedAutomacoesRoute: AuthenticatedAutomacoesRoute,
   AuthenticatedCargosRoute: AuthenticatedCargosRoute,
