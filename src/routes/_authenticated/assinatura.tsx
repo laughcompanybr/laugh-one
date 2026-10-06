@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { getMySubscription, getSubscriptionPricing } from "@/domains/tenants/subscriptions/subscriptions.functions";
 import { formatPrice, PERIOD_LABELS, PLAN_NAME, type BillingPeriod } from "@/domains/tenants/subscriptions/types";
 
-export const Route = createFileRoute("/assinatura")({
+export const Route = createFileRoute("/_authenticated/assinatura")({
   component: SubscriptionPage,
 });
 
