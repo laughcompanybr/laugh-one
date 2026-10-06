@@ -8,20 +8,40 @@ import { Activity, ArrowDownRight, ArrowUpRight, Boxes, CircleDollarSign, Packag
 import { Link } from "@tanstack/react-router";
 import { formatBRL } from "@/lib/format";
 
-export function PremiumDashboard() {
+export function PremiumDashboard({ preview = false }: { preview?: boolean }) {
   const snapshotFn = useServerFn(getDashboardSnapshot);
   const templateFn = useServerFn(getBusinessTemplate);
 
+  const previewSnapshot = {
+    counts: { orders: 128, clients: 342, products: 86, employees: 14, lowStock: 3 },
+    month: { inflow: 28450, outflow: 10050, net: 18400 },
+    receivables: 7350,
+    lowStockProducts: [
+      { id: "preview-1", name: "Produto em atenção", stock: 2, minimum: 5 },
+      { id: "preview-2", name: "Estoque baixo", stock: 5, minimum: 8 },
+      { id: "preview-3", name: "Item crítico", stock: 1, minimum: 4 },
+    ],
+  };
+
   const snapshot = useQuery({
-    queryKey: ["dashboard-snapshot"],
+    queryKey: ["dashboard-snapshot", preview ? "preview" : "live"],
     queryFn: () => snapshotFn(),
+    enabled: !preview,
+    initialData: preview ? previewSnapshot : undefined,
     staleTime: 60_000,
-    refetchInterval: 120_000,
+    refetchInterval: preview ? false : 120_000,
   });
 
+  const previewTemplate = {
+    display_name: "Laugh One",
+    enabled_modules: ["dashboard", "orders", "clients", "products", "finance", "reports"],
+  };
+
   const template = useQuery({
-    queryKey: ["business-template"],
+    queryKey: ["business-template", preview ? "preview" : "live"],
     queryFn: () => templateFn(),
+    enabled: !preview,
+    initialData: preview ? previewTemplate as any : undefined,
     staleTime: 300_000,
   });
 
