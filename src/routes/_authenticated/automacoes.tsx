@@ -40,8 +40,8 @@ function AutomationPage() {
     if (!company?.id) return;
     setIsLoading(true);
     const [{ data: workflowData, error: workflowError }, { data: runData, error: runError }] = await Promise.all([
-      supabase.from("automation_workflows").select("*").eq("company_id", company.id).order("created_at", { ascending: false }),
-      supabase.from("automation_runs").select("*").eq("company_id", company.id).order("started_at", { ascending: false }).limit(100),
+      supabase.from("automation_workflows" as any).select("*").eq("company_id", company.id).order("created_at", { ascending: false }),
+      supabase.from("automation_runs" as any).select("*").eq("company_id", company.id).order("started_at", { ascending: false }).limit(100),
     ]);
     if (workflowError) console.error(workflowError);
     if (runError) console.error(runError);
