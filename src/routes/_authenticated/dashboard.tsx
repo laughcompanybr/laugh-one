@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { DynamicDashboard } from "@/domains/tenants/components/DynamicDashboard";
+import { PremiumDashboard } from "@/domains/tenants/components/PremiumDashboard";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   component: DashboardPage,
@@ -15,7 +15,7 @@ function DashboardPage() {
         </p>
       </div>
 
-      <DynamicDashboard />
+      <PremiumDashboard />
     </div>
   );
 }
