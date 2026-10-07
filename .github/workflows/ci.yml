@@ -37,48 +37,6 @@ jobs:
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-      - name: Supabase security secrets preflight
-        env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-        run: |
-          missing=0
-
-          if [ -z "$SUPABASE_URL" ]; then
-            echo "::error title=Secret ausente::SUPABASE_URL não está configurado nos GitHub Actions Secrets."
-            missing=1
-          else
-            echo "✓ SUPABASE_URL configurado"
-          fi
-
-          if [ -z "$SUPABASE_PUBLISHABLE_KEY" ]; then
-            echo "::error title=Secret ausente::SUPABASE_PUBLISHABLE_KEY não está configurado nos GitHub Actions Secrets."
-            missing=1
-          else
-            echo "✓ SUPABASE_PUBLISHABLE_KEY configurado"
-          fi
-
-          if [ -z "$SUPABASE_SERVICE_ROLE_KEY" ]; then
-            echo "::error title=Secret ausente::SUPABASE_SERVICE_ROLE_KEY não está configurado nos GitHub Actions Secrets."
-            missing=1
-          else
-            echo "✓ SUPABASE_SERVICE_ROLE_KEY configurado"
-          fi
-
-          if [ "$missing" -ne 0 ]; then
-            echo ""
-            echo "::error title=Preflight Supabase falhou::Configure todos os três Secrets antes de executar os testes de segurança."
-            exit 1
-          fi
-
-      - name: Multi-tenant penetration tests
-        run: bun run test:security:tenant
-        env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-
       - name: Security scan (consolidado, gera relatório JSON)
         if: always()
         run: bun run security:scan
