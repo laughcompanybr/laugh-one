@@ -22,8 +22,9 @@ export const getSubscriptionPricing = createServerFn({ method: "GET" }).handler(
 
     const response = await fetch(endpoint, {
       headers: {
+        // Publishable keys are opaque API keys, not JWT access tokens.
+        // Supabase REST authenticates the public catalog through the apikey header.
         apikey: key,
-        Authorization: `Bearer ${key}`,
       },
       cache: "no-store",
     });
