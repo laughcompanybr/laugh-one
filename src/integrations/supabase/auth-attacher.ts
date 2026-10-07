@@ -6,8 +6,18 @@ import { supabase } from './client'
 // the browser never attaches the bearer token to serverFn RPCs.
 export const attachSupabaseAuth = createMiddleware({ type: 'function' }).client(
   async ({ next }) => {
-    const { data } = await supabase.auth.getSession()
-    const token = data.session?.access_token
+    let { data } = await supabase.auth.getSession()
+    let session = data.session
+
+    // Avoid sending an expired/stale access token to server functions.
+    // Supabase may already refresh during getSession(), but an explicit fallback
+    // prevents mutations from failing with "Unauthorized: Invalid token".
+    if (!session?.access_token || (session.expires_at && session.expires_at * 1000 <= Date.now())) {
+      const refreshed = await supabase.auth.refreshSession()
+      session = refreshed.data.session ?? undefined
+    }
+
+    const token = session?.access_token
     return next({
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     })
