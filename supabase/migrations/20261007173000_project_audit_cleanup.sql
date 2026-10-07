@@ -7,5 +7,16 @@ revoke all on function public.process_order_automations() from public, anon, aut
 drop policy if exists subscription_pricing_public_read on public.subscription_pricing;
 
 -- app_settings is a key/value table; key is its natural identifier.
-alter table public.app_settings
-  add constraint app_settings_pkey primary key (key);
+do $$
+begin
+  if not exists (
+    select 1
+    from pg_constraint
+    where conrelid = 'public.app_settings'::regclass
+      and conname = 'app_settings_pkey'
+  ) then
+    alter table public.app_settings
+      add constraint app_settings_pkey primary key (key);
+  end if;
+end
+$$;
