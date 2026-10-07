@@ -16,27 +16,25 @@ export const getSubscriptionPricing = createServerFn({ method: "GET" }).handler(
       process.env["VITE_SUPABASE_PUBLISHABLE_KEY"] ||
       "sb_publishable_Ud9ed0E_C9ykriZFIj7lqA_skx_ugHO";
 
-    const supabasePublic = createClient<Database>(url, key, {
-      auth: { persistSession: false, autoRefreshToken: false },
-      global: {
-        fetch: (input, init) => {
-          const headers = new Headers(init?.headers);
-          if (key.startsWith("sb_") && headers.get("Authorization") === `Bearer ${key}`) {
-            headers.delete("Authorization");
-          }
-          headers.set("apikey", key);
-          return fetch(input, { ...init, headers });
-        },
+    const endpoint = new URL("/rest/v1/subscription_pricing", url);
+    endpoint.searchParams.set("select", "period,label,months,days,price,savings_percent");
+    endpoint.searchParams.set("order", "months.asc");
+
+    const response = await fetch(endpoint, {
+      headers: {
+        apikey: key,
+        Authorization: `Bearer ${key}`,
       },
+      cache: "no-store",
     });
 
-    const { data, error } = await supabasePublic
-      .from("subscription_pricing")
-      .select("period, label, months, days, price, savings_percent")
-      .order("months", { ascending: true });
+    if (!response.ok) {
+      const body = await response.text();
+      throw new Error(`Falha ao carregar preços da assinatura (${response.status}): ${body || response.statusText}`);
+    }
 
-    if (error) throw new Error(error.message);
-    return (data ?? []) as SubscriptionPricing[];
+    const data = (await response.json()) as SubscriptionPricing[];
+    return Array.isArray(data) ? data : [];
   },
 );
 
