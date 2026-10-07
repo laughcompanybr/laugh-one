@@ -23,8 +23,7 @@
     "check:grants": "node scripts/check-supabase-grants.mjs",
     "check:secdef": "node scripts/check-security-definer-execute.mjs",
     "security:scan": "node scripts/security-scan.mjs",
-    "format": "prettier --write .",
-    "test:security:tenant": "node scripts/multi-tenant-rls-penetration-test.mjs"
+    "format": "prettier --write ."
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
