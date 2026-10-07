@@ -26,7 +26,7 @@ begin
           and i.indpred is null
           and i.indexprs is null
           and i.indnkeyatts >= cardinality(c.conkey)
-          and (i.indkey::smallint[])[1:cardinality(c.conkey)] = c.conkey
+          and (i.indkey::smallint[])[0:cardinality(c.conkey)-1] = c.conkey
       )
     group by c.conrelid,n.nspname,t.relname,c.conname
   loop
