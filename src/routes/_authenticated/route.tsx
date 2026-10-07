@@ -10,13 +10,13 @@ import { OnboardingWizard } from "@/domains/tenants/components/OnboardingWizard"
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
   beforeLoad: async () => {
-    const { data } = await supabase.auth.getSession();
-    if (!data.session?.user) throw redirect({ to: "/auth" });
+    const { data } = await supabase.auth.getUser();
+    if (!data.user) throw redirect({ to: "/auth" });
     const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
     if (aal?.nextLevel === "aal2" && aal.currentLevel !== "aal2") {
       throw redirect({ to: "/mfa-verify" });
     }
-    return { user: data.session.user };
+    return { user: data.user };
   },
   pendingComponent: AuthPending,
   pendingMs: 800,
