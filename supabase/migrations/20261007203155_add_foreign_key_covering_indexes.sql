@@ -31,9 +31,9 @@ begin
     group by c.conrelid,n.nspname,t.relname,c.conname
   loop
     idx_name := left(
-      regexp_replace(r.table_name || '_' || r.conname || '_idx', '[^a-zA-Z0-9_]', '_', 'g'),
-      63
-    );
+      regexp_replace(r.table_name || '_' || r.conname, '[^a-zA-Z0-9_]', '_', 'g'),
+      54
+    ) || '_' || substr(md5(r.conname), 1, 8);
     execute format(
       'create index if not exists %I on %s (%s)',
       idx_name,
