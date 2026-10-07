@@ -12,7 +12,7 @@ export const attachSupabaseAuth = createMiddleware({ type: 'function' }).client(
     // Avoid sending an expired/stale access token to server functions.
     // Supabase may already refresh during getSession(), but an explicit fallback
     // prevents mutations from failing with "Unauthorized: Invalid token".
-    if (!session?.access_token || (session.expires_at && session.expires_at * 1000 <= Date.now())) {
+    if (!session?.access_token || (session.expires_at && session.expires_at * 1000 <= Date.now() + 60_000)) {
       const refreshed = await supabase.auth.refreshSession()
       session = refreshed.data.session
     }
