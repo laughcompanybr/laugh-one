@@ -14,7 +14,7 @@ export const attachSupabaseAuth = createMiddleware({ type: 'function' }).client(
     // prevents mutations from failing with "Unauthorized: Invalid token".
     if (!session?.access_token || (session.expires_at && session.expires_at * 1000 <= Date.now())) {
       const refreshed = await supabase.auth.refreshSession()
-      session = refreshed.data.session ?? undefined
+      session = refreshed.data.session
     }
 
     const token = session?.access_token
