@@ -22,8 +22,8 @@ import { ThemeToggle } from "@/components/common/ThemeToggle";
 
 export function AppTopbar({ userEmail }: { userEmail: string }) {
   const [paletteOpen, setPaletteOpen] = useState(false);
-  const [fontScale, setFontScale] = useState(() => Number(localStorage.getItem("laugh-one:font-scale") || "1"));
-  const [reducedMotion, setReducedMotion] = useState(() => localStorage.getItem("laugh-one:reduced-motion") === "true");
+  const [fontScale, setFontScale] = useState(1);
+  const [reducedMotion, setReducedMotion] = useState(false);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -38,6 +38,16 @@ export function AppTopbar({ userEmail }: { userEmail: string }) {
     localStorage.setItem("laugh-one:font-scale", String(safeScale));
     localStorage.setItem("laugh-one:reduced-motion", String(motion));
   };
+
+  useEffect(() => {
+    const storedScale = Number(localStorage.getItem("laugh-one:font-scale") || "1");
+    const storedMotion = localStorage.getItem("laugh-one:reduced-motion") === "true";
+    const safeScale = Math.min(1.25, Math.max(1, Number.isFinite(storedScale) ? storedScale : 1));
+    setFontScale(safeScale);
+    setReducedMotion(storedMotion);
+    document.documentElement.style.fontSize = `${safeScale * 100}%`;
+    document.documentElement.classList.toggle("reduce-motion", storedMotion);
+  }, []);
 
   useEffect(() => {
     document.documentElement.style.fontSize = `${fontScale * 100}%`;
